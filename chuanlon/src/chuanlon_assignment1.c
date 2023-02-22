@@ -24,13 +24,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <strings.h>
-#include <winsock2.h>
+//#include <winsock2.h>
 //#include <sys/socket.h>
 
 
 #include "../include/common.h"
 #include "../include/global.h"
 #include "../include/logger.h"
+#include "../include/server.h"
 
 
 
@@ -46,7 +47,6 @@
 
 int main(int argc, char **argv)
 {
-    printf("%d",validNumber("123"));
 	/*Init. Logger*/
 	cse4589_init_log(argv[2]);
 
@@ -61,7 +61,10 @@ int main(int argc, char **argv)
 
     char* port = argv[2];
 
-
+    if (strcmp(argv[1],"s") == 0){
+        printf("123132");
+        s_startUp(port);
+    }
 
     return 0;
 }
