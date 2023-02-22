@@ -70,12 +70,12 @@ void cse4589_init_log(char* port)
 /**
  * Writes the C string passed in format to both STDOUT and LOGFILE.
  * Like printf, replaces the format specifiers with the given arguments.
- * Return code is written to ret_print (for printing to STDOUT) 
+ * Return code is written to ret_print (for printing to STDOUT)
  * and ret_log (for the LOGFILE printing).
  *
- * ret_print either contains the number of characters printed OR a negative value 
+ * ret_print either contains the number of characters printed OR a negative value
  * indicating the error code.
- * ret_log either contains the number of characters logged OR a negative value 
+ * ret_log either contains the number of characters logged OR a negative value
  * indicating the error code. error code -100 indicates unable to open LOGFILE.
  *
  * @param  format Format string to be printed
