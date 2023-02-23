@@ -85,12 +85,12 @@ int ret_print, ret_log;
 void cse4589_print_and_log(const char* format, ...)
 {
 	va_list args_pointer;
-
 	/* Print to STDOUT */
 	va_start(args_pointer, format);
    	ret_print = vprintf(format, args_pointer);
 
 	/* Write to LOG File */
+
 	FILE* fp;
 	if((fp = fopen(LOGFILE, "a")) == NULL){
 		ret_log = -100;
@@ -99,7 +99,7 @@ void cse4589_print_and_log(const char* format, ...)
 	}
 
 	va_start(args_pointer, format);
-	ret_log = vfprintf(fp, format, args_pointer);
+//	ret_log = vfprintf(fp, format, args_pointer); //等解开
 
 	/* clean up */
 	fclose(fp);

@@ -6,4 +6,4 @@
 #define CSE489PROJECT1_SERVER_H
 
 #endif //CSE489PROJECT1_SERVER_H
-int s_startUp(char * port);
+int s_startUp(char* port);

@@ -7,3 +7,9 @@
 
 #endif //CSE489PROJECT1_COMMON_H
 int validNumber(char *a);
+
+void show_port(char *port);
+
+void show_Author();
+
+void show_ip(int server_socket);

@@ -32,6 +32,7 @@
 #include "../include/global.h"
 #include "../include/logger.h"
 #include "../include/server.h"
+#include "../include/client.h"
 
 
 
@@ -48,22 +49,21 @@
 int main(int argc, char **argv)
 {
 	/*Init. Logger*/
-	cse4589_init_log(argv[2]);
-
+//	cse4589_init_log(argv[2]);
 	/*Clear LOGFILE*/
-	fclose(fopen(LOGFILE, "w"));
+//	fclose(fopen(LOGFILE, "w"));
 
     /*Start Here*/
-
-    if (argc < 3 || strcmp(argv[1],"c") != 0 || strcmp(argv[1],"s") != 0 || validNumber(argv[2]) != 1) {
+    if (argc < 3 || (strcmp(argv[1],"c") != 0 && strcmp(argv[1],"s") != 0) || validNumber(argv[2]) != 1) {
         return -1; // 代表指令问题
     }
 
     char* port = argv[2];
 
     if (strcmp(argv[1],"s") == 0){
-        printf("123132");
         s_startUp(port);
+    } else if(strcmp(argv[1],"c") == 0){
+        c_startUp(argc,argv);
     }
 
     return 0;
