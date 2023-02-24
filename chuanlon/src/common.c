@@ -10,6 +10,22 @@
 
 #include "../include/logger.h"
 
+int IPv4_verify(char *ip) {
+    int a,b,c,d;
+    char t;
+
+    if (4 == sscanf(ip,"%d.%d.%d.%d%c",&a,&b,&c,&d,&t)){
+        if (0<=a && a<=255
+            && 0<=b && b<=255
+            && 0<=c && c<=255
+            && 0<=d && d<=255) {
+            return 1;
+        }
+    }
+    return 0;
+}
+
+
 int validNumber(char *a) {
     for (int i = 0; i < strlen(a); i++) {
         if (!isdigit(a[i])) {

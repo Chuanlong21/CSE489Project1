@@ -6,6 +6,8 @@
 #define CSE489PROJECT1_COMMON_H
 
 #endif //CSE489PROJECT1_COMMON_H
+int IPv4_verify(char *ip);
+
 int validNumber(char *a);
 
 void show_port(char *port);

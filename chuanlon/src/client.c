@@ -74,7 +74,6 @@ int c_startUp(char *port)
     /* Zero select FD sets */
     FD_ZERO(&master_list);
     FD_ZERO(&watch_list);
-    printf("1231231");
     /* Register STDIN */
     FD_SET(STDIN, &master_list);
     head_socket = STDIN;
@@ -99,23 +98,45 @@ int c_startUp(char *port)
                     if (sock_index == STDIN){
                         char *cmd = (char*) malloc(sizeof(char)*CMD_SIZE);
                         memset(cmd, '\0', CMD_SIZE);
-
+                        cmd[strlen(cmd) - 1] = 0;
                         //COMMAND
                         if(fgets(cmd, CMD_SIZE-1, stdin) == NULL) //Mind the newline character that will be written to cmd
                             exit(-1);
 
                         //Process PA1 commands here ...
+                        if (strstr(cmd,"LOGIN ")){
+
+                            char* rev[3];
+                            int count = 0;
+                            char *pNext = strtok(cmd, " ");
+
+                            while (pNext != NULL) {
+                                rev[count] = pNext;
+                                ++count;
+                                pNext = strtok(NULL, " ");
+                            }
+
+                            if (count == 3){
+                                rev[2][strlen(rev[2])  -1 ] = 0;
+                                if (IPv4_verify(rev[1]) == 1 && validNumber(rev[2]) == 1){
+                                    //when we have login command, we will need to connect to the host sever
+                                    int server;
+                                    server = connect_to_host(rev[1], rev[2]);
+                                    if (server < 0){
+                                        perror("connect to host failed.");
+                                    }
+                                }
+                            }
+
+                            printf("sure");
+                        }
+
                         if(strcmp("PORT\n", cmd) == 0){
                             show_port(port);
                         }else if (strcmp("AUTHOR\n", cmd) == 0){
                             show_Author();
                         }else if (strcmp("IP\n", cmd) == 0){
 //                            show_ip(head_socket);
-                        }else if(strcmp("LOGIN\n", cmd) == 0){
-                            //首先要判断LOGIN 要跟随的是地址 cmd就需要重新看一下，写一个function检查
-                            //when we have login command, we will need to connect to the host sever
-                            //    int server;
-                            //    server = connect_to_host(argv[1], argv[2]);
                         }
                         printf("\nI got: %s\n", cmd);
 
