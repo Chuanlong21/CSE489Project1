@@ -32,10 +32,15 @@
 #include <arpa/inet.h>
 #include <sys/types.h>
 #include <netdb.h>
+#include <sys/select.h>
+
+#include "../include/common.h"
 
 #define TRUE 1
 #define MSG_SIZE 256
 #define BUFFER_SIZE 256
+#define STDIN 0
+#define CMD_SIZE 100
 
 
 int connect_to_host(char *server_ip, char *server_port);
@@ -47,40 +52,99 @@ int connect_to_host(char *server_ip, char *server_port);
 * @param  argv The argument list
 * @return 0 EXIT_SUCCESS
 */
-int c_startUp(int argc, char **argv)
+int c_startUp(char *port)
 {
-    if(argc != 3) {
-        printf("Usage:%s [ip] [port]\n", argv[0]);
-        exit(-1);
-    }
+//    if(argc != 3) {
+//        printf("Usage:%s [ip] [port]\n", argv[0]);
+//        exit(-1);
+//    }
+    int server_socket,head_socket, selret, sock_index,connection;
+    fd_set master_list, watch_list;
+    struct sockaddr_in addr;
 
-    int server;
-    server = connect_to_host(argv[1], argv[2]);
+
+    //create socket and connect to the addr for IP address
+//    server_socket = socket(AF_INET, SOCK_DGRAM, 0);
+//    if(server_socket < 0)
+//        perror("Cannot create socket");
+//    connection = connect(server_socket,(struct sockaddr*)&addr, sizeof(addr));
+//    if(connection < 0)
+//        perror("Cannot connect socket");
+
+    /* Zero select FD sets */
+    FD_ZERO(&master_list);
+    FD_ZERO(&watch_list);
+    printf("1231231");
+    /* Register STDIN */
+    FD_SET(STDIN, &master_list);
+    head_socket = STDIN;
+
 
     while(TRUE){
-        printf("\n[PA1-Client@CSE489/589]$ ");
-        fflush(stdout);
 
-        char *msg = (char*) malloc(sizeof(char)*MSG_SIZE);
-        memset(msg, '\0', MSG_SIZE);
-        if(fgets(msg, MSG_SIZE-1, stdin) == NULL) //Mind the newline character that will be written to msg
-            exit(-1);
+        memcpy(&watch_list, &master_list, sizeof(master_list));
 
-        printf("I got: %s(size:%d chars)", msg, strlen(msg));
+        //printf("\n[PA1-Server@CSE489/589]$ ");
+        //fflush(stdout);
 
-        printf("\nSENDing it to the remote server ... ");
-        if(send(server, msg, strlen(msg), 0) == strlen(msg))
-            printf("Done!\n");
-        fflush(stdout);
+        /* select() system call. This will BLOCK */
+        selret = select(head_socket + 1, &watch_list, NULL, NULL, NULL);
+        if(selret < 0)
+            perror("select failed.");
 
-        /* Initialize buffer to receieve response */
-        char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
-        memset(buffer, '\0', BUFFER_SIZE);
+        if(selret > 0){
+            for(sock_index=0; sock_index<=head_socket; sock_index+=1){
+                if(FD_ISSET(sock_index, &watch_list)){
+                    /* Check if new command on STDIN */
+                    if (sock_index == STDIN){
+                        char *cmd = (char*) malloc(sizeof(char)*CMD_SIZE);
+                        memset(cmd, '\0', CMD_SIZE);
 
-        if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
-            printf("Server responded: %s", buffer);
-            fflush(stdout);
+                        //COMMAND
+                        if(fgets(cmd, CMD_SIZE-1, stdin) == NULL) //Mind the newline character that will be written to cmd
+                            exit(-1);
+
+                        //Process PA1 commands here ...
+                        if(strcmp("PORT\n", cmd) == 0){
+                            show_port(port);
+                        }else if (strcmp("AUTHOR\n", cmd) == 0){
+                            show_Author();
+                        }else if (strcmp("IP\n", cmd) == 0){
+//                            show_ip(head_socket);
+                        }else if(strcmp("LOGIN\n", cmd) == 0){
+                            //首先要判断LOGIN 要跟随的是地址 cmd就需要重新看一下，写一个function检查
+                            //when we have login command, we will need to connect to the host sever
+                            //    int server;
+                            //    server = connect_to_host(argv[1], argv[2]);
+                        }
+                        printf("\nI got: %s\n", cmd);
+
+                        free(cmd);
+                    }
+                }
+            }
         }
+
+//        char *msg = (char*) malloc(sizeof(char)*MSG_SIZE);
+//        memset(msg, '\0', MSG_SIZE);
+//        if(fgets(msg, MSG_SIZE-1, stdin) == NULL) //Mind the newline character that will be written to msg
+//            exit(-1);
+//
+//        printf("I got: %s(size:%d chars)", msg, strlen(msg));
+//
+//        printf("\nSENDing it to the remote server ... ");
+//        if(send(server, msg, strlen(msg), 0) == strlen(msg))
+//            printf("Done!\n");
+//        fflush(stdout);
+//
+//        /* Initialize buffer to receieve response */
+//        char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
+//        memset(buffer, '\0', BUFFER_SIZE);
+//
+//        if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
+//            printf("Server responded: %s", buffer);
+//            fflush(stdout);
+//        }
     }
 }
 

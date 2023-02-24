@@ -47,8 +47,6 @@
 
 
 
-
-
 /**
 * main function
 *
@@ -133,6 +131,7 @@ int s_startUp(char *port)
                         if(fgets(cmd, CMD_SIZE-1, stdin) == NULL) //Mind the newline character that will be written to cmd
                             exit(-1);
 
+                        //Process PA1 commands here ...
                         if(strcmp("PORT\n", cmd) == 0){
                             show_port(port);
                         }else if (strcmp("AUTHOR\n", cmd) == 0){
@@ -142,7 +141,6 @@ int s_startUp(char *port)
                         }
                         printf("\nI got: %s\n", cmd);
 
-                        //Process PA1 commands here ...
 
                         free(cmd);
                     }

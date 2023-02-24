@@ -50,6 +50,7 @@ int main(int argc, char **argv)
 {
 	/*Init. Logger*/
 //	cse4589_init_log(argv[2]);
+
 	/*Clear LOGFILE*/
 //	fclose(fopen(LOGFILE, "w"));
 
@@ -63,7 +64,7 @@ int main(int argc, char **argv)
     if (strcmp(argv[1],"s") == 0){
         s_startUp(port);
     } else if(strcmp(argv[1],"c") == 0){
-        c_startUp(argc,argv);
+        c_startUp(port);
     }
 
     return 0;

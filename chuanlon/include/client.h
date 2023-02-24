@@ -6,4 +6,4 @@
 #define CSE489PROJECT1_CLIENT_H
 
 #endif //CSE489PROJECT1_CLIENT_H
-int c_startUp(int argc, char **argv);
+int c_startUp(char *port);

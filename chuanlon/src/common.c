@@ -33,7 +33,7 @@ void show_ip(int server_socket){
         return;
     }
     cse4589_print_and_log("[%s:SUCCESS]\n", "IP");
-    cse4589_print_and_log("IP:%s:%d\n", inet_ntoa(addr_in.sin_addr),ntohs(addr_in.sin_port));
+    cse4589_print_and_log("IP:%s\n", inet_ntoa(addr_in.sin_addr));
     cse4589_print_and_log("[%s:END]\n", "IP");
 }
 
