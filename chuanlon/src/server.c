@@ -66,6 +66,17 @@ int s_startUp(char *port)
     struct addrinfo hints, *res;
     fd_set master_list, watch_list;
     char hostName[1024];
+
+    int connected_count = 0
+    int *ptr;
+    //  Memory allocates dynamically using malloc()
+    ptr = (int*)malloc(100 * sizeof(int));
+  
+    // Checking for memory allocation
+    if (ptr == NULL) {
+        printf("Memory not allocated.\n");
+    }
+
     /* Set up hints structure */
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET;
@@ -140,7 +151,7 @@ int s_startUp(char *port)
                             show_ip(server_socket);
                         }else if (strcmp("LIST\n", cmd) == 0){
                             printf("Calling list function ....\n");
-                            list_client(master_list, head_socket);
+                            listing(ptr, connected_count);
                         };
                         printf("\nI got: %s\n", cmd);
 
@@ -159,6 +170,8 @@ int s_startUp(char *port)
                         /* Add to watched socket list */
                         FD_SET(fdaccept, &master_list);
                         if(fdaccept > head_socket) head_socket = fdaccept;
+                        ptr[connected_count] = fdaccept;
+                        connected_count += 1;
                     }
                         /* Read from existing clients */
                     else{
