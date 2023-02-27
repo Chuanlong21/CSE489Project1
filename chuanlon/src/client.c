@@ -35,6 +35,7 @@
 #include <sys/select.h>
 
 #include "../include/common.h"
+#include "../include/logger.h"
 
 #define TRUE 1
 #define MSG_SIZE 256
@@ -52,24 +53,37 @@ int connect_to_host(char *server_ip, char *server_port);
 * @param  argv The argument list
 * @return 0 EXIT_SUCCESS
 */
+
+
+
 int c_startUp(char *port)
 {
 //    if(argc != 3) {
 //        printf("Usage:%s [ip] [port]\n", argv[0]);
 //        exit(-1);
 //    }
-    int server_socket,head_socket, selret, sock_index,connection;
+
+    int client_socket,head_socket, selret, sock_index, connection;
     fd_set master_list, watch_list;
     struct sockaddr_in addr;
+    char ip_buff[16];
 
+    addr.sin_family = AF_INET;
+    addr.sin_addr.s_addr = inet_addr("8.8.8.8");
+    addr.sin_port = htons(53);
 
     //create socket and connect to the addr for IP address
-//    server_socket = socket(AF_INET, SOCK_DGRAM, 0);
-//    if(server_socket < 0)
-//        perror("Cannot create socket");
-//    connection = connect(server_socket,(struct sockaddr*)&addr, sizeof(addr));
-//    if(connection < 0)
-//        perror("Cannot connect socket");
+    client_socket = socket(AF_INET, SOCK_DGRAM, 0);
+    if(client_socket < 0){
+        error("IP");
+    }
+    connection = connect(client_socket, (struct sockaddr*) &addr,sizeof (addr));
+    if (connection < 0){
+        error("IP");
+    }
+    socklen_t len = sizeof(addr);
+    getsockname(client_socket, (struct sockaddr*) &addr, &len);
+    inet_ntop(AF_INET, &addr.sin_addr, ip_buff, 16);
 
     /* Zero select FD sets */
     FD_ZERO(&master_list);
@@ -104,7 +118,7 @@ int c_startUp(char *port)
                             exit(-1);
 
                         //Process PA1 commands here ...
-                        if (strstr(cmd,"LOGIN ")){
+                        if (strstr(cmd,"LOGIN")){
 
                             char* rev[3];
                             int count = 0;
@@ -123,22 +137,23 @@ int c_startUp(char *port)
                                     int server;
                                     server = connect_to_host(rev[1], rev[2]);
                                     if (server < 0){
-                                        perror("connect to host failed.");
+                                        error("LOGIN");
                                     }
                                 }
-                            }
+                            } else error("LOGIN");
 
-                            printf("sure");
-                        }
-
-                        if(strcmp("PORT\n", cmd) == 0){
+                        }else if(strcmp("PORT\n", cmd) == 0){
                             show_port(port);
                         }else if (strcmp("AUTHOR\n", cmd) == 0){
                             show_Author();
                         }else if (strcmp("IP\n", cmd) == 0){
-//                            show_ip(head_socket);
+                            cse4589_print_and_log("[%s:SUCCESS]\n", "IP");
+                            cse4589_print_and_log("IP:%s\n", ip_buff);
+                            cse4589_print_and_log("[%s:END]\n", "IP");
+                        }else if (strcmp("EXIT\n", cmd) == 0){
+                            //删除了之后 服务端也要把watch list里它的socket给删除
+                            exit(EXIT_SUCCESS);
                         }
-                        printf("\nI got: %s\n", cmd);
 
                         free(cmd);
                     }

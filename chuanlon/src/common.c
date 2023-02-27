@@ -110,6 +110,11 @@ void listing(int* connectd, int count){
     }
 }
 
+void error(char* cmd){
+    cse4589_print_and_log("[%s:ERROR]\n", cmd);
+    cse4589_print_and_log("[%s:END]\n", cmd);
+}
+
 // void sortedInsert(struct client** head, struct client* newNode)
 // {
 //     struct client dummy;

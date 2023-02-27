@@ -54,6 +54,8 @@
 * @param  argv The argument list
 * @return 0 EXIT_SUCCESS
 */
+
+
 int s_startUp(char *port)
 {
 //    if(argc != 2) {
@@ -161,9 +163,11 @@ int s_startUp(char *port)
                             show_ip(server_socket);
                         }else if (strcmp("LIST\n", cmd) == 0){
                             listing(ptr, connected_count);
-                        };
-                        printf("\nI got: %s\n", cmd);
+                        }else if (strcmp("EXIT\n", cmd) == 0){
+                            exit(EXIT_SUCCESS);
+                        }
 
+                        printf("\nI got: %s\n", cmd);
 
                         free(cmd);
                     }

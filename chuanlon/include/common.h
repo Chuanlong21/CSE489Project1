@@ -15,3 +15,7 @@ void show_port(char *port);
 void show_Author();
 
 void show_ip(int server_socket);
+
+void listing(int* connectd, int count);
+
+void error(char* cmd);
