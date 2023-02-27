@@ -100,7 +100,7 @@ void listing(int* connectd, int count){
             struct hostent *h_retval;
             h_retval = gethostbyaddr(&ipv4addr, sizeof(ipv4addr), AF_INET);
             if(h_retval){
-                printf("%-5d%-35s%-20s%-8d\n", fd, hostname, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
+                printf("%-5d%-35s%-20s%-8d\n", fd, h_retval->h_name, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
             }
             else{
                 printf("Error AHAHA:%s\n", hstrerror(h_errno));
