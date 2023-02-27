@@ -98,7 +98,7 @@ void listing(int* connectd, int count){
                 printf("%-5d%-35s%-20s%-8d\n", fd, hostname, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
             }else{
                 printf("getnameinfo failed: ", e);
-                printf("\n")
+                printf("\n");
             }
         }else{
             perror("getpeername");
