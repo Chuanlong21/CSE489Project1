@@ -61,6 +61,7 @@ void show_Author(){
 }
 
 void list_client(fd_set *clients, int max_fd){
+    printf("Working on listing clients....")
 
     for (int e=0; e <= max_fd; e++){
 
