@@ -96,7 +96,7 @@ void listing(int* connectd, int count){
             printf("getpeername success\n");
             //e = getnameinfo((struct sockaddr *)&client_addr, &len, hostname, 1025, serv, 32, 0);
             char ipv4addr[sizeof(struct in_addr)];
-            inet_pton(AF_INET, "128.205.36.46", ipv4addr);  
+            inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), ipv4addr);  
             struct hostent *he;
             he = gethostbyaddr(&ipv4addr, sizeof(ipv4addr), AF_INET);
             if(he){
