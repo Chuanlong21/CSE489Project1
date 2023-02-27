@@ -92,7 +92,7 @@ void listing(int* connectd, int count){
         int e;
         if (getpeername(fd, (struct sockaddr *)&client_addr, &len) == 0){
             printf("getpeername success\n");
-            e = getnameinfo(client_addr, len, hostname, sizeof(hostname), serv, sizeof(serv), 0);
+            e = getnameinfo((struct sockaddr *)&client_addr, &len, hostname, 1025, serv, 32, 0);
             if( e == 0){
                 printf("getnameinfo success\n");
                 //printf("Socket FD %i is connected to a peer at IP address %s\n", fd, inet_ntoa(client_addr.sin_addr));
