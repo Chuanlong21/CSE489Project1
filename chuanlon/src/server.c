@@ -67,6 +67,16 @@ int s_startUp(char *port)
     fd_set master_list, watch_list;
     char hostName[1024];
 
+    // // Initialization for storing client socket information
+    // struct client{
+    //     int port_num;
+    //     int sck_fd;
+
+    //     struct client *next;
+    // };
+    // // Maintain a list of connected clients
+    // struct client *clients = NULL;
+
     int connected_count = 0;
     int *ptr;
     //  Memory allocates dynamically using malloc()
@@ -150,7 +160,6 @@ int s_startUp(char *port)
                         }else if (strcmp("IP\n", cmd) == 0){
                             show_ip(server_socket);
                         }else if (strcmp("LIST\n", cmd) == 0){
-                            printf("Calling list function ....\n");
                             listing(ptr, connected_count);
                         };
                         printf("\nI got: %s\n", cmd);
@@ -170,8 +179,27 @@ int s_startUp(char *port)
                         /* Add to watched socket list */
                         FD_SET(fdaccept, &master_list);
                         if(fdaccept > head_socket) head_socket = fdaccept;
+
+                        // add to array storage
                         ptr[connected_count] = fdaccept;
                         connected_count += 1;
+
+                        // // add to linked list storage                      
+                        // if (getpeername(fdaccept, (struct sockaddr *)&client_addr, &len) == 0){
+                        //     clients -> port_num = ntohs(client_addr.sin_port);
+                        //     clients -> sck_fd = fdaccept;
+                        //     if (clients == NULL){
+                        //         struct sockaddr_in client_addr;
+                        //         socklen_t len;
+                        //     }else{
+                        //         struct client* new_client = (struct client*) malloc(sizeof(struct client));
+                        //         new_clients -> port_num = ntohs(client_addr.sin_port);
+                        //         new_clients -> sck_fd = fdaccept;                                
+                        //         sortedInsert(clients, new_client)
+                        //     }
+                        // }else{
+                        //     perror("getpeername");
+                        // }                                                    
                     }
                         /* Read from existing clients */
                     else{

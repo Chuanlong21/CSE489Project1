@@ -89,11 +89,10 @@ void listing(int* connectd, int count){
         int fd = connectd[i];
         struct sockaddr_in client_addr;
         socklen_t len;
-        struct hostent *host;
 
         if (getpeername(fd, (struct sockaddr *)&client_addr, &len) == 0){
 
-            printf("getpeername success\n");
+            //printf("getpeername success\n");
 
             char ipv4addr[sizeof(struct in_addr)];
             inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), ipv4addr);  
@@ -111,3 +110,17 @@ void listing(int* connectd, int count){
     }
 }
 
+// void sortedInsert(struct client** head, struct client* newNode)
+// {
+//     struct client dummy;
+//     struct client* current = &dummy;
+//     dummy.next = *head;
+ 
+//     while (current->next != NULL && current->next->port_num < newNode->port_num) {
+//         current = current->next;
+//     }
+ 
+//     newNode->next = current->next;
+//     current->next = newNode;
+//     *head = dummy.next;
+// }
