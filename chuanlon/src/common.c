@@ -90,17 +90,24 @@ void listing(int* connectd, int count){
         char hostname[1025];
         char serv[32];
         int e;
+        struct hostent *host;
         if (getpeername(fd, (struct sockaddr *)&client_addr, &len) == 0){
             printf("getpeername success\n");
-            e = getnameinfo((struct sockaddr *)&client_addr, &len, hostname, 1025, serv, 32, 0);
-            if( e == 0){
-                printf("getnameinfo success\n");
+            //e = getnameinfo((struct sockaddr *)&client_addr, &len, hostname, 1025, serv, 32, 0);
+            if ((host = gethostbyaddr((char *)&client_addr.sin_addr, sizeof(sin.sin_addr), AF_INET)) == NULL){
+                perror("gethostbyaddr");
+            }
+            else{
+                printf("remote host is '%s'\n", host->h_name);
+            }
+            //if( e == 0){
+                //printf("getnameinfo success\n");
                 //printf("Socket FD %i is connected to a peer at IP address %s\n", fd, inet_ntoa(client_addr.sin_addr));
-                printf("%-5d%-35s%-20s%-8d\n", fd, hostname, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
-            }else{
+                //printf("%-5d%-35s%-20s%-8d\n", fd, hostname, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
+            //}else{
                 printf(e);
                 printf("\n");
-            }
+            //}
         }else{
             perror("getpeername");
         }
