@@ -67,7 +67,7 @@ int s_startUp(char *port)
     fd_set master_list, watch_list;
     char hostName[1024];
 
-    int connected_count = 0
+    int connected_count = 0;
     int *ptr;
     //  Memory allocates dynamically using malloc()
     ptr = (int*)malloc(100 * sizeof(int));
