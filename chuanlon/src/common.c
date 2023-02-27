@@ -88,14 +88,17 @@ void listing(int* connectd, int count){
         struct sockaddr_in client_addr;
         socklen_t len;
         char hostname[256];
+        int e;
         if (getpeername(fd, (struct sockaddr *)&client_addr, &len) == 0){
             printf("getpeername success\n");
-            if(getnameinfo(client_addr, sizeof(client_addr), hostname, sizeof(hostname), NULL, 0, 0) == 0){
+            e = getnameinfo((struct sockaddr*)&client_addr, sizeof(client_addr), hostname, sizeof(hostname), NULL, 0, 0)
+            if( e == 0){
                 printf("getnameinfo success\n");
                 //printf("Socket FD %i is connected to a peer at IP address %s\n", fd, inet_ntoa(client_addr.sin_addr));
                 printf("%-5d%-35s%-20s%-8d\n", fd, hostname, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
             }else{
-                perror("getnameinfo");
+                printf("getnameinfo failed: ", e);
+                printf("\n")
             }
         }else{
             perror("getpeername");
