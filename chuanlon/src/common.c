@@ -60,27 +60,27 @@ void show_Author(){
     cse4589_print_and_log("[%s:END]\n", "AUTHOR");
 }
 
-void list_client(fd_set *clients, int max_fd){
-    printf("Working on listing clients....\n");
-    for (int e=0; e <= max_fd; e++){
+//void list_client(fd_set *clients, int max_fd){
+    //printf("Working on listing clients....\n");
+    //for (int e=0; e <= max_fd; e++){
 
         //struct sockaddr_in client_addr;
         //socklen_t len;
 
-        if (FD_ISSET(e, clients)){
-            printf("IM in if\n");
+        //if (FD_ISSET(e, clients)){
+            //printf("IM in if\n");
 
             //if (getpeername(e, (struct sockaddr *)&client_addr, &len) == 0){
 //              printf("%-5d%-35s%-20s%-8d\n", e, hostname, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port))
                 //printf("Socket FD %i is connected to a peer at IP address %s\n", e, inet_ntoa(client_addr.sin_addr));
             //}else{
-                perror("getpeername");
+                //perror("getpeername");
             //}
-        }
+        //}
         
-    }
+    //}
 
-}
+//}
 
 void listing(int* connectd, int count){
     for (int i = 0; i < count; i++){
