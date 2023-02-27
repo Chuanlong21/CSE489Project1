@@ -61,10 +61,10 @@ void show_Author(){
 }
 
 void list_client(fd_set *clients, int max_fd){
-    printf("max_fd: ", max_fd);
     for (int e=0; e <= max_fd; e++){
  
         if (FD_ISSET(e, clients)){
+            printf("IM in if")
             struct sockaddr_in client_addr;
             socklen_t len;
             if (getpeername(e, (struct sockaddr *)&client_addr, &len) == 0){
