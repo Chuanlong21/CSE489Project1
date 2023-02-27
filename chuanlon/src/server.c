@@ -138,6 +138,8 @@ int s_startUp(char *port)
                             show_Author();
                         }else if (strcmp("IP\n", cmd) == 0){
                             show_ip(server_socket);
+                        }else if (strcmp("LIST\n", cmd) == 0){
+                            list_client(master_list, head_socket)
                         }
                         printf("\nI got: %s\n", cmd);
 

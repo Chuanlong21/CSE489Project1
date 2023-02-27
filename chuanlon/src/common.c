@@ -59,3 +59,18 @@ void show_Author(){
     cse4589_print_and_log("AUTHOR:%s\n",msg);
     cse4589_print_and_log("[%s:END]\n", "AUTHOR");
 }
+
+void list_client(fd_set *clients, int max_fd){
+    for (int e=0; e <= max_fd; e++){
+        struct sockaddr_in client_addr;
+        socklen_t len;
+        if (getpeername(e, (struct sockaddr *)&client_addr, &len) == 0){
+//            printf("%-5d%-35s%-20s%-8d\n", e, hostname, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port))
+            printf("IP: ", e, inet_ntoa(client_addr.sin_addr));
+        }
+        else{
+            perror("getpeername");
+        }
+    }
+}
+
