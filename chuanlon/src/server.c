@@ -139,7 +139,7 @@ int s_startUp(char *port)
                         }else if (strcmp("IP\n", cmd) == 0){
                             show_ip(server_socket);
                         }else if (strcmp("LIST\n", cmd) == 0){
-                            printf("Calling list function ....")
+                            printf("Calling list function ....");
                             list_client(master_list, head_socket);
                         };
                         printf("\nI got: %s\n", cmd);
