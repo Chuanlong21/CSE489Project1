@@ -84,11 +84,11 @@ void show_Author(){
 
 void listing(int* connectd, int count){
     for (int i = 0; i < count; i++){
-        fd = connectd[i];
+        int fd = connectd[i];
         struct sockaddr_in client_addr;
         socklen_t len;
-        if (getpeername(i, (struct sockaddr *)&client_addr, &len) == 0){
-            printf("Socket FD %i is connected to a peer at IP address %s\n", i, inet_ntoa(client_addr.sin_addr));
+        if (getpeername(fd, (struct sockaddr *)&client_addr, &len) == 0){
+            printf("Socket FD %i is connected to a peer at IP address %s\n", fd, inet_ntoa(client_addr.sin_addr));
         }else{
             perror("getpeername");
         }
