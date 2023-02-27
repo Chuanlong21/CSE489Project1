@@ -88,7 +88,7 @@ void listing(int* connectd, int count){
         struct sockaddr_in client_addr;
         socklen_t len;
         char hostname[1025];
-        char serv[32]
+        char serv[32];
         int e;
         if (getpeername(fd, (struct sockaddr *)&client_addr, &len) == 0){
             printf("getpeername success\n");
