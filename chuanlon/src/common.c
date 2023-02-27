@@ -85,34 +85,26 @@ void show_Author(){
 
 void listing(int* connectd, int count){
     for (int i = 0; i < count; i++){
+
         int fd = connectd[i];
         struct sockaddr_in client_addr;
         socklen_t len;
-        char hostname[1025];
-        char serv[32];
-        int e;
         struct hostent *host;
+
         if (getpeername(fd, (struct sockaddr *)&client_addr, &len) == 0){
+
             printf("getpeername success\n");
-            //e = getnameinfo((struct sockaddr *)&client_addr, &len, hostname, 1025, serv, 32, 0);
+
             char ipv4addr[sizeof(struct in_addr)];
             inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), ipv4addr);  
-            struct hostent *he;
-            he = gethostbyaddr(&ipv4addr, sizeof(ipv4addr), AF_INET);
-            if(he){
-                printf("Host name: %s\n", he->h_name);
+            struct hostent *h_retval;
+            h_retval = gethostbyaddr(&ipv4addr, sizeof(ipv4addr), AF_INET);
+            if(h_retval){
+                printf("%-5d%-35s%-20s%-8d\n", fd, hostname, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
             }
             else{
                 printf("Error AHAHA:%s\n", hstrerror(h_errno));
             }
-            //if( e == 0){
-                //printf("getnameinfo success\n");
-                //printf("Socket FD %i is connected to a peer at IP address %s\n", fd, inet_ntoa(client_addr.sin_addr));
-                //printf("%-5d%-35s%-20s%-8d\n", fd, hostname, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
-            //}else{
-                //printf(e);
-                //printf("\n");
-            //}
         }else{
             perror("getpeername");
         }
