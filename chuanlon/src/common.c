@@ -89,11 +89,11 @@ void listing(int* connectd, int count){
         socklen_t len;
         char hostname[256];
         if (getpeername(fd, (struct sockaddr *)&client_addr, &len) == 0){
-            if(getnameinfo((struct sockaddr *)&sa, sizeof(sa), hostname, sizeof(hostname), NULL, 0, 0) == 0){
+            if(getnameinfo(client_addr, sizeof(client_addr), hostname, sizeof(hostname), NULL, 0, 0) == 0){
                 //printf("Socket FD %i is connected to a peer at IP address %s\n", fd, inet_ntoa(client_addr.sin_addr));
-                printf("%-5d%-35s%-20s%-8d\n", fd, hostname, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port))
+                printf("%-5d%-35s%-20s%-8d\n", fd, hostname, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
             }else{
-                perror("getnameinfo")
+                perror("getnameinfo");
             }
         }else{
             perror("getpeername");
