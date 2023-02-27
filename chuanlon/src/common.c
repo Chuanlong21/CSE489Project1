@@ -7,6 +7,7 @@
 #include <ctype.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>
+#include <netdb.h>
 
 #include "../include/logger.h"
 
@@ -94,7 +95,7 @@ void listing(int* connectd, int count){
         if (getpeername(fd, (struct sockaddr *)&client_addr, &len) == 0){
             printf("getpeername success\n");
             //e = getnameinfo((struct sockaddr *)&client_addr, &len, hostname, 1025, serv, 32, 0);
-            if ((host = gethostbyaddr((char *)&client_addr.sin_addr, sizeof(sin.sin_addr), AF_INET)) == NULL){
+            if ((host = gethostbyaddr((char *)&client_addr.sin_addr, sizeof(client_addr.sin_addr), AF_INET)) == NULL){
                 perror("gethostbyaddr");
             }
             else{
