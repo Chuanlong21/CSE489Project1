@@ -61,7 +61,7 @@ void show_Author(){
 }
 
 void list_client(fd_set *clients, int max_fd){
-    printf("max_fd: ", max_fd)
+    printf("max_fd: ", max_fd);
     for (int e=0; e <= max_fd; e++){
         struct sockaddr_in client_addr;
         socklen_t len;
