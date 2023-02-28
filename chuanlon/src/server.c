@@ -214,11 +214,14 @@ int s_startUp(char *port)
                             printf("Remote Host terminated connection!\n");
 
                             /* Remove from watched list */
-                            FD_CLR(sock_index, &master_list);
+                            FD_CLR(sock_index, &master_list);  //他这里已经把它给删掉了，那我们还需删吗？？？
                         }
                         else {
                             //Process incoming data from existing clients here ...
+                            if (strcmp("EXIT", buffer) == 0){
+                                //奇怪奇怪
 
+                            }
                             printf("\nClient sent me: %s\n", buffer);
                             printf("ECHOing it back to the remote host ... ");
                             if(send(fdaccept, buffer, strlen(buffer), 0) == strlen(buffer))

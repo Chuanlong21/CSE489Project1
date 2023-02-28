@@ -64,6 +64,7 @@ int c_startUp(char *port)
 //    }
 
     int client_socket,head_socket, selret, sock_index, connection;
+    int server = -1;
     fd_set master_list, watch_list;
     struct sockaddr_in addr;
     char ip_buff[16];
@@ -135,7 +136,6 @@ int c_startUp(char *port)
                                 rev[2][strlen(rev[2])  -1 ] = 0;
                                 if (IPv4_verify(rev[1]) == 1 && validNumber(rev[2]) == 1){
                                     //when we have login command, we will need to connect to the host sever
-                                    int server;
                                     server = connect_to_host(rev[1], rev[2]);
                                     if (server < 0){
                                         error("LOGIN");
@@ -153,7 +153,13 @@ int c_startUp(char *port)
                             cse4589_print_and_log("[%s:END]\n", "IP");
                         }else if (strcmp("EXIT\n", cmd) == 0){
                             //删除了之后 服务端也要把watch list里它的socket给删除
-                            exit(EXIT_SUCCESS);
+                            if (server > 0){
+                                send(server,"EXIT", strlen("EXIT"),0 );//发送exit给服务端，让他知道得把连接数组给删掉
+                                cse4589_print_and_log("[%s:SUCCESS]\n", "EXIT");
+                                cse4589_print_and_log("[%s:END]\n", "EXIT");
+                                exit(EXIT_SUCCESS);
+                            }else error("EXIT");
+
                         }
 
                         free(cmd);
