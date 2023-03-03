@@ -72,7 +72,7 @@ void list_client(fd_set *clients, int max_fd){
             printf("IM in if\n");
 
             if (getpeername(e, (struct sockaddr *)&client_addr, &len) == 0){
-             printf("%-5d%-35s%-20s%-8d\n", e, hostname, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port))
+            //  printf("%-5d%-35s%-20s%-8d\n", e, hostname, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
                 printf("Socket FD %i is connected to a peer at IP address %s\n", e, inet_ntoa(client_addr.sin_addr));
             }else{
                 perror("getpeername");
