@@ -48,11 +48,11 @@
 
 int main(int argc, char **argv)
 {
-//	/*Init. Logger*/
-//	cse4589_init_log(argv[2]);
-//
-//	/*Clear LOGFILE*/
-//	fclose(fopen(LOGFILE, "w"));
+	/*Init. Logger*/
+	cse4589_init_log(argv[2]);
+
+	/*Clear LOGFILE*/
+	fclose(fopen(LOGFILE, "w"));
 
     /*Start Here*/
     if (argc < 3 || (strcmp(argv[1],"c") != 0 && strcmp(argv[1],"s") != 0) || validNumber(argv[2]) != 1) {
