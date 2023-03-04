@@ -196,8 +196,8 @@ int s_startUp(char *port)
                             printf("getpeername success\n");
                             client_port[connected_count] = ntohs(client_addr.sin_port);
                         }
-                        printf("Client fd: ", client_fd, "\n");
-                        printf("Client Ports: ", client_port, "\n");
+                        // printf("Client fd: ", client_fd, "\n");
+                        // printf("Client Ports: ", client_port, "\n");
                         connected_count += 1;
 
                         // // add to linked list storage   

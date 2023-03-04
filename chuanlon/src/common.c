@@ -84,8 +84,11 @@ void show_Author(){
 // }
 
 void listing(int* fds, int ports, int count){
-    printf("Client fd: ", fds, "\n");
-    printf("Client Ports: ", ports, "\n");
+    for (int i = 0; i < count; i++){
+        printf("Client fd: \n", fds[i]);
+        printf("Client Ports: \n", ports[i]);
+    }
+
     // for (int i = 0; i < count; i++){
 
     //     int fd = connectd[i];
