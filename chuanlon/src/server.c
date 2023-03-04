@@ -190,8 +190,8 @@ int s_startUp(char *port)
 
                         // add to array storage
                         client_fd[connected_count] = fdaccept;
-                        print(fdaccept);
-                        print(client_fd[0]);
+                        printf(fdaccept);
+                        printf(client_fd[0]);
                         // struct sockaddr_in client_addr;
                         // socklen_t len;                   
                         // if (getpeername(fdaccept, (struct sockaddr *)&client_addr, &len) == 0){
