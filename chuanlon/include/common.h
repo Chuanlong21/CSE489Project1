@@ -16,6 +16,6 @@ void show_Author();
 
 void show_ip(int server_socket);
 
-void listing(int* connectd, int count);
+void listing(int* fds, int* ports, int count);
 
 void error(char* cmd);
