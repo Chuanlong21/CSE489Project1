@@ -202,13 +202,13 @@ int s_startUp(char *port)
                             printf("first getpeername success\n");
                             client_port[connected_count] = ntohs(client_addr.sin_port);
                         }
-                        int perm[100], i;
-                        int rr[100];
-                        for (i = 0 ; i < 100 ; i++) {
+                        int perm[connected_count + 1], i;
+                        int rr[connected_count + 1];
+                        for (i = 0 ; i < connected_count + 1 ; i++) {
                             perm[i] = i;
                         }
-                        qsort (perm, 100, sizeof(int), compare);
-                        for (i = 0 ; i < 100 ; i++) {
+                        qsort (perm, connected_count + 1, sizeof(int), compare);
+                        for (i = 0 ; i < connected_count + 1 ; i++) {
                             rr[i] = client_fd[perm[i]];
                         }
                         for (i = 0 ; i < connected_count + 1 ; i++) {
