@@ -87,7 +87,7 @@ int s_startUp(char *port)
     client_fd = (int*)malloc(100 * sizeof(int));
     client_port = (int*)malloc(100 * sizeof(int));
     int sort_fd[100];
-    int *sorted_fd = res;
+    int *sorted_fd = sort_fd;
     // Checking for memory allocation
     if (client_fd == NULL) {
         printf("Client fd memory not allocated.\n");
