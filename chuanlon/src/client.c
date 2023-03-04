@@ -77,6 +77,7 @@ int c_startUp(char *port)
     if(client_socket < 0){
         error("IP");
     }
+    
     connection = connect(client_socket, (struct sockaddr*) &addr,sizeof (addr));
     if (connection < 0){
         error("IP");

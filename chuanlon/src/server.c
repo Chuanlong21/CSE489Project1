@@ -55,6 +55,7 @@
 * @return 0 EXIT_SUCCESS
 */
 
+int *client_port;
 
 int s_startUp(char *port)
 {
@@ -81,7 +82,7 @@ int s_startUp(char *port)
 
     int connected_count = 0;
     int *client_fd;
-    int *client_port;
+  
     //  Memory allocates dynamically using malloc()
     client_fd = (int*)malloc(100 * sizeof(int));
     client_port = (int*)malloc(100 * sizeof(int));
@@ -198,6 +199,15 @@ int s_startUp(char *port)
                             printf("first getpeername success\n");
                             client_port[connected_count] = ntohs(client_addr.sin_port);
                         }
+                        int perm[100], i;
+                        int res[100];
+                        for (i = 0 ; i != 5 ; i++) {
+                            perm[i] = i;
+                        }
+                        qsort (perm, 5, sizeof(int), compare);
+                        for (i = 0 ; i != 5 ; i++) {
+                            res[i] = client_fd[perm[i]];
+                        }
                         // printf("Client fd: ", client_fd, "\n");
                         // printf("Client Ports: ", client_port, "\n");
                         connected_count += 1;
@@ -252,7 +262,10 @@ int s_startUp(char *port)
     return 0;
 }
 
-
+void compare (const void * a, const void * b) {
+    int diff = client_port[*(int*)a] - client_port[*(int*)b];
+    return  (0 < diff) - (diff < 0);
+}
 
 
 

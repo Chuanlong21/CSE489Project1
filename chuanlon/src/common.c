@@ -83,6 +83,27 @@ void show_Author(){
 
 // }
 
+int compare (const void * a, const void * b) {
+    int diff = array2[*(int*)a] - array2[*(int*)b];
+    return  (0 < diff) - (diff < 0);
+}
+
+int main(void) {
+    int perm[5], i;
+    int res[5];
+    for (i = 0 ; i != 5 ; i++) {
+        perm[i] = i;
+    }
+    qsort (perm, 5, sizeof(int), compare);
+    for (i = 0 ; i != 5 ; i++) {
+        res[i] = array1[perm[i]];
+    }
+    for (i = 0 ; i != 5 ; i++) {
+        printf("%d\n", res[i]);
+    }
+    return 0;
+}
+
 void listing(int* fds, int* ports, int count){
     for (int i = 0; i < count; i++){
         struct sockaddr_in client_addr;
