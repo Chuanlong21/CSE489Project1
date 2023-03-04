@@ -70,14 +70,18 @@ int c_startUp(char *port)
 
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = inet_addr("8.8.8.8");
-    addr.sin_port = htons(53);
+    addr.sin_port = htons(port);
 
     //create socket and connect to the addr for IP address
     client_socket = socket(AF_INET, SOCK_DGRAM, 0);
     if(client_socket < 0){
         error("IP");
     }
-    
+
+    if(bind(client_socket, (struct sockaddr *) &addr, sizeof(addr)) < 0){
+        perror("Bind failed");
+    }
+
     connection = connect(client_socket, (struct sockaddr*) &addr,sizeof (addr));
     if (connection < 0){
         error("IP");
