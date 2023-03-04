@@ -85,6 +85,7 @@ void show_Author(){
 
 
 void listing(int* fds, int count){
+    printf("Number of clients: %d\n", count);
     for (int i = 0; i < count; i++){
         printf("fd passed into list: %d\n", fds[i]);
         struct sockaddr_in client_addr;
