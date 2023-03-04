@@ -86,6 +86,8 @@ int s_startUp(char *port)
     //  Memory allocates dynamically using malloc()
     client_fd = (int*)malloc(100 * sizeof(int));
     client_port = (int*)malloc(100 * sizeof(int));
+    int res[100];
+    int *sorted_fd = res;
     // Checking for memory allocation
     if (client_fd == NULL) {
         printf("Client fd memory not allocated.\n");
@@ -167,7 +169,7 @@ int s_startUp(char *port)
                         }else if (strcmp("IP\n", cmd) == 0){
                             show_ip(server_socket);
                         }else if (strcmp("LIST\n", cmd) == 0){
-                            listing(client_fd, client_port, connected_count);
+                            listing(sorted_fd, client_port, connected_count);
                         }else if (strcmp("EXIT\n", cmd) == 0){
                             exit(EXIT_SUCCESS);
                         }
@@ -200,12 +202,12 @@ int s_startUp(char *port)
                             client_port[connected_count] = ntohs(client_addr.sin_port);
                         }
                         int perm[100], i;
-                        int res[100];
+                        
                         for (i = 0 ; i != 5 ; i++) {
                             perm[i] = i;
                         }
                         qsort (perm, 5, sizeof(int), compare);
-                        for (i = 0 ; i != 5 ; i++) {
+                        for (i = 0 ; i != 100 ; i++) {
                             res[i] = client_fd[perm[i]];
                         }
                         for (i = 0 ; i != 5 ; i++) {
