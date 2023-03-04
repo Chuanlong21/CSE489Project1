@@ -262,7 +262,7 @@ int s_startUp(char *port)
     return 0;
 }
 
-void compare (const void * a, const void * b) {
+int compare (const void * a, const void * b) {
     int diff = client_port[*(int*)a] - client_port[*(int*)b];
     return  (0 < diff) - (diff < 0);
 }
