@@ -208,6 +208,9 @@ int s_startUp(char *port)
                         for (i = 0 ; i != 5 ; i++) {
                             res[i] = client_fd[perm[i]];
                         }
+                        for (i = 0 ; i != 5 ; i++) {
+                            printf("%d\n", res[i]);
+                        }
                         // printf("Client fd: ", client_fd, "\n");
                         // printf("Client Ports: ", client_port, "\n");
                         connected_count += 1;
