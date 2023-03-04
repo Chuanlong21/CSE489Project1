@@ -88,8 +88,8 @@ void listing(int* fds, int* ports, int count){
         struct sockaddr_in client_addr;
         socklen_t len;                   
         if (getpeername(fds[i], (struct sockaddr *)&client_addr, &len) == 0){
-            printf("getpeername success\n");
-            printf("%-5d%-35s%-20s%-8d\n", 2, "hostname", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
+            printf("second getpeername success\n");
+            printf("%-5d%-35s%-20s%-8d\n", fds[i], "hostname", inet_ntoa(client_addr.sin_addr), ports[i]);
             // client_port[connected_count] = client_addr.sin_port;
         }
     }
