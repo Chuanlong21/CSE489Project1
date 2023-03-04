@@ -56,7 +56,7 @@
 */
 
 int *client_port;
-
+void compare (const void * a, const void * b);
 int s_startUp(char *port)
 {
 //    if(argc != 2) {
