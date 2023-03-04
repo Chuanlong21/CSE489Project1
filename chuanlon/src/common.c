@@ -83,31 +83,33 @@ void show_Author(){
 
 // }
 
-void listing(int* connectd, int count){
-    for (int i = 0; i < count; i++){
+void listing(int* fds, int ports, int count){
+    printf("Client fd: ", client_fd, "\n");
+    printf("Client Ports: ", client_port, "\n");
+    // for (int i = 0; i < count; i++){
 
-        int fd = connectd[i];
-        struct sockaddr_in client_addr;
-        socklen_t len;
+    //     int fd = connectd[i];
+    //     struct sockaddr_in client_addr;
+    //     socklen_t len;
 
-        if (getpeername(fd, (struct sockaddr *)&client_addr, &len) == 0){
+    //     if (getpeername(fd, (struct sockaddr *)&client_addr, &len) == 0){
 
-            //printf("getpeername success\n");
+    //         printf("getpeername success\n");
 
-            char ipv4addr[sizeof(struct in_addr)];
-            inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), ipv4addr);  
-            struct hostent *h_retval;
-            h_retval = gethostbyaddr(&ipv4addr, sizeof(ipv4addr), AF_INET);
-            if(h_retval){
-                printf("%-5d%-35s%-20s%-8d\n", fd, h_retval->h_name, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
-            }
-            else{
-                printf("Error AHAHA:%s\n", hstrerror(h_errno));
-            }
-        }else{
-            perror("getpeername");
-        }
-    }
+    //         char ipv4addr[sizeof(struct in_addr)];
+    //         inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), ipv4addr);  
+    //         struct hostent *h_retval;
+    //         h_retval = gethostbyaddr(&ipv4addr, sizeof(ipv4addr), AF_INET);
+    //         if(h_retval){
+    //             printf("%-5d%-35s%-20s%-8d\n", fd, h_retval->h_name, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
+    //         }
+    //         else{
+    //             printf("Error AHAHA:%s\n", hstrerror(h_errno));
+    //         }
+    //     }else{
+    //         perror("getpeername");
+    //     }
+    // }
 }
 
 void error(char* cmd){

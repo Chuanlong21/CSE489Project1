@@ -166,7 +166,7 @@ int s_startUp(char *port)
                         }else if (strcmp("IP\n", cmd) == 0){
                             show_ip(server_socket);
                         }else if (strcmp("LIST\n", cmd) == 0){
-                            listing(client_fd, connected_count);
+                            listing(client_fd, client_port, connected_count);
                         }else if (strcmp("EXIT\n", cmd) == 0){
                             exit(EXIT_SUCCESS);
                         }
@@ -193,6 +193,7 @@ int s_startUp(char *port)
                         struct sockaddr_in client_addr;
                         socklen_t len;                   
                         if (getpeername(fdaccept, (struct sockaddr *)&client_addr, &len) == 0){
+                            printf("getpeername success\n");
                             client_port[connected_count] = ntohs(client_addr.sin_port);
                         }
                         printf("Client fd: ", client_fd, "\n");
