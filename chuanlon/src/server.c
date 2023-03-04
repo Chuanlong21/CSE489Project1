@@ -203,16 +203,16 @@ int s_startUp(char *port)
                             client_port[connected_count] = ntohs(client_addr.sin_port);
                         }
                         int perm[connected_count + 1], i;
-                        int rr[connected_count + 1];
+
                         for (i = 0 ; i < connected_count + 1 ; i++) {
                             perm[i] = i;
                         }
                         qsort (perm, connected_count + 1, sizeof(int), compare);
                         for (i = 0 ; i < connected_count + 1 ; i++) {
-                            rr[i] = client_fd[perm[i]];
+                            sort_fd[i] = client_fd[perm[i]];
                         }
                         for (i = 0 ; i < connected_count + 1 ; i++) {
-                            printf("Sorted fd: %d\n", rr[i]);
+                            printf("Sorted fd: %d\n", sort_fd[i]);
                         }
                         // printf("Client fd: ", client_fd, "\n");
                         // printf("Client Ports: ", client_port, "\n");
