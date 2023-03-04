@@ -203,14 +203,14 @@ int s_startUp(char *port)
                         }
                         int perm[100], i;
                         
-                        for (i = 0 ; i != 5 ; i++) {
+                        for (i = 0 ; i != 100 ; i++) {
                             perm[i] = i;
                         }
-                        qsort (perm, 5, sizeof(int), compare);
+                        qsort (perm, 100, sizeof(int), compare);
                         for (i = 0 ; i != 100 ; i++) {
                             sort_fd[i] = client_fd[perm[i]];
                         }
-                        for (i = 0 ; i != 5 ; i++) {
+                        for (i = 0 ; i != connected_count ; i++) {
                             printf("%d\n", sort_fd[i]);
                         }
                         // printf("Client fd: ", client_fd, "\n");
