@@ -67,24 +67,18 @@ int c_startUp(char *port)
     fd_set master_list, watch_list;
     struct sockaddr_in addr;
     char ip_buff[16];
-    int p;
-    sscanf(port, "%d", &p);
-    printf("p: %d\n", p);
+    int prt;
+    sscanf(port, "%d", &prt);
 
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = inet_addr("8.8.8.8");
-    addr.sin_port = htons(p);
+    addr.sin_port = htons(prt);
 
     //create socket and connect to the addr for IP address
     client_socket = socket(AF_INET, SOCK_DGRAM, 0);
     if(client_socket < 0){
         error("IP");
     }
-
-    if(bind(client_socket, (struct sockaddr *) &addr, sizeof(addr)) < 0){
-        perror("Bind failed");
-    }
-
     connection = connect(client_socket, (struct sockaddr*) &addr,sizeof (addr));
     if (connection < 0){
         error("IP");
@@ -196,11 +190,14 @@ int connect_to_host(char *server_ip, char* server_port)
 {
     int fdsocket;
     struct addrinfo hints, *res;
+    int p;
+
 
     /* Set up hints structure */
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
+    hints.
 
     /* Fill up address structures */
     if (getaddrinfo(server_ip, server_port, &hints, &res) != 0)
