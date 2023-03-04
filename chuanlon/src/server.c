@@ -194,11 +194,10 @@ int s_startUp(char *port)
                         // printf(client_fd[0]);
                         // struct sockaddr_in client_addr;
                         // socklen_t len;                   
-                        // if (getpeername(fdaccept, (struct sockaddr *)&client_addr, &len) == 0){
-                        //     printf("getpeername success\n");
-                        //     printf("%-5d%-35s%-20s%-8d\n", 2, "hostname", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
-                        //     // client_port[connected_count] = client_addr.sin_port;
-                        // }
+                        if (getpeername(fdaccept, (struct sockaddr *)&client_addr, &len) == 0){
+                            printf("first getpeername success\n");
+                            client_port[connected_count] = ntohs(client_addr.sin_port);
+                        }
                         // printf("Client fd: ", client_fd, "\n");
                         // printf("Client Ports: ", client_port, "\n");
                         connected_count += 1;
