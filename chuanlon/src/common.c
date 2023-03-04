@@ -86,6 +86,7 @@ void show_Author(){
 
 void listing(int* fds, int* ports, int count){
     for (int i = 0; i < count; i++){
+        printf("fd passed into list: %d", fds[i]);
         struct sockaddr_in client_addr;
         socklen_t len;                   
         if (getpeername(fds[i], (struct sockaddr *)&client_addr, &len) == 0){

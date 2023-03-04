@@ -186,6 +186,7 @@ int s_startUp(char *port)
                             perror("Accept failed.");
 
                         printf("\nRemote Host connected!\n");
+                        printf("fd: %d\n", fdaccept);
 
                         /* Add to watched socket list */
                         FD_SET(fdaccept, &master_list);
@@ -203,15 +204,15 @@ int s_startUp(char *port)
                         }
                         int perm[100], i;
                         
-                        for (i = 0 ; i != 100 ; i++) {
+                        for (i = 0 ; i < 100 ; i++) {
                             perm[i] = i;
                         }
                         qsort (perm, 100, sizeof(int), compare);
-                        for (i = 0 ; i != 100 ; i++) {
+                        for (i = 0 ; i < 100 ; i++) {
                             sort_fd[i] = client_fd[perm[i]];
                         }
-                        for (i = 0 ; i != connected_count ; i++) {
-                            printf("%d\n", sort_fd[i]);
+                        for (i = 0 ; i < connected_count ; i++) {
+                            printf("Sorted fd: %d\n", sort_fd[i]);
                         }
                         // printf("Client fd: ", client_fd, "\n");
                         // printf("Client Ports: ", client_port, "\n");
