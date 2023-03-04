@@ -190,14 +190,11 @@ int connect_to_host(char *server_ip, char* server_port)
 {
     int fdsocket;
     struct addrinfo hints, *res;
-    int p;
-
 
     /* Set up hints structure */
     memset(&hints, 0, sizeof(hints));
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
-    hints.
 
     /* Fill up address structures */
     if (getaddrinfo(server_ip, server_port, &hints, &res) != 0)
