@@ -86,7 +86,7 @@ int s_startUp(char *port)
     //  Memory allocates dynamically using malloc()
     client_fd = (int*)malloc(100 * sizeof(int));
     client_port = (int*)malloc(100 * sizeof(int));
-    int res[100];
+    int sort_fd[100];
     int *sorted_fd = res;
     // Checking for memory allocation
     if (client_fd == NULL) {
@@ -208,10 +208,10 @@ int s_startUp(char *port)
                         }
                         qsort (perm, 5, sizeof(int), compare);
                         for (i = 0 ; i != 100 ; i++) {
-                            res[i] = client_fd[perm[i]];
+                            sort_fd[i] = client_fd[perm[i]];
                         }
                         for (i = 0 ; i != 5 ; i++) {
-                            printf("%d\n", res[i]);
+                            printf("%d\n", sort_fd[i]);
                         }
                         // printf("Client fd: ", client_fd, "\n");
                         // printf("Client Ports: ", client_port, "\n");
