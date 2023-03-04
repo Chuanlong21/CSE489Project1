@@ -67,10 +67,13 @@ int c_startUp(char *port)
     fd_set master_list, watch_list;
     struct sockaddr_in addr;
     char ip_buff[16];
+    int p;
+    sscanf(port, "%d", &p);
+    printf("p: %d\n", p);
 
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = inet_addr("8.8.8.8");
-    addr.sin_port = htons(port);
+    addr.sin_port = htons(p);
 
     //create socket and connect to the addr for IP address
     client_socket = socket(AF_INET, SOCK_DGRAM, 0);
