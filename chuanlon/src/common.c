@@ -85,8 +85,13 @@ void show_Author(){
 
 void listing(int* fds, int* ports, int count){
     for (int i = 0; i < count; i++){
-        printf(fds[i]);
-        printf(ports[i]);
+        struct sockaddr_in client_addr;
+        socklen_t len;                   
+        if (getpeername(fdaccept, (struct sockaddr *)&client_addr, &len) == 0){
+            printf("getpeername success\n");
+            printf("%-5d%-35s%-20s%-8d\n", 2, "hostname", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
+            // client_port[connected_count] = client_addr.sin_port;
+        }
     }
 
     // for (int i = 0; i < count; i++){
