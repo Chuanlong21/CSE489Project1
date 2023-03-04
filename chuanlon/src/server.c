@@ -80,13 +80,17 @@ int s_startUp(char *port)
     // struct client *head = NULL;
 
     int connected_count = 0;
-    int *ptr;
+    int *client_fd;
+    int *client_port;
     //  Memory allocates dynamically using malloc()
-    ptr = (int*)malloc(100 * sizeof(int));
-  
+    client_fd = (int*)malloc(100 * sizeof(int));
+    client_port = (int*)malloc(100 * sizeof(int));
     // Checking for memory allocation
-    if (ptr == NULL) {
-        printf("Memory not allocated.\n");
+    if (client_fd == NULL) {
+        printf("Client fd memory not allocated.\n");
+    }
+    if (client_port == NULL) {
+        printf("Client port memory not allocated.\n");
     }
 
     /* Set up hints structure */
@@ -162,8 +166,7 @@ int s_startUp(char *port)
                         }else if (strcmp("IP\n", cmd) == 0){
                             show_ip(server_socket);
                         }else if (strcmp("LIST\n", cmd) == 0){
-                            // listing(ptr, connected_count);
-                            list_client(watch_list, head_socket);
+                            listing(ptr, connected_count);
                         }else if (strcmp("EXIT\n", cmd) == 0){
                             exit(EXIT_SUCCESS);
                         }
@@ -185,9 +188,16 @@ int s_startUp(char *port)
                         FD_SET(fdaccept, &master_list);
                         if(fdaccept > head_socket) head_socket = fdaccept;
 
-                        // // add to array storage
-                        // ptr[connected_count] = fdaccept;
-                        // connected_count += 1;
+                        // add to array storage
+                        client_fd[connected_count] = fdaccept;
+                        struct sockaddr_in client_addr;
+                        socklen_t len;                   
+                        if (getpeername(fdaccept, (struct sockaddr *)&client_addr, &len) == 0){
+                            client_port[connected_count] = ntohs(client_addr.sin_port);
+                        }
+                        printf("Client fd: ", client_fd, "\n");
+                        printf("Client Ports: ", client_port, "\n");
+                        connected_count += 1;
 
                         // // add to linked list storage   
                         // struct sockaddr_in client_addr;
