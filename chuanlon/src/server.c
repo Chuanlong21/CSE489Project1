@@ -214,9 +214,10 @@ int s_startUp(char *port)
                         for (i = 0 ; i < connected_count + 1 ; i++) {
                             printf("Sorted fd: %d\n", sort_fd[i]);
                         }
+                        connected_count += 1
+
                         // printf("Client fd: ", client_fd, "\n");
                         // printf("Client Ports: ", client_port, "\n");
-                        connected_count += 1;
 
                         // // add to linked list storage   
                         // struct sockaddr_in client_addr;
