@@ -169,7 +169,7 @@ int s_startUp(char *port)
                         }else if (strcmp("IP\n", cmd) == 0){
                             show_ip(server_socket);
                         }else if (strcmp("LIST\n", cmd) == 0){
-                            listing(sorted_fd, client_port, connected_count);
+                            listing(sorted_fd, connected_count);
                         }else if (strcmp("EXIT\n", cmd) == 0){
                             exit(EXIT_SUCCESS);
                         }
@@ -193,6 +193,7 @@ int s_startUp(char *port)
                         if(fdaccept > head_socket) head_socket = fdaccept;
 
                         // add to array storage
+                        printf("Client Count: %d\n", connected_count);
                         client_fd[connected_count] = fdaccept;
                         // printf(fdaccept);
                         // printf(client_fd[0]);
@@ -201,7 +202,7 @@ int s_startUp(char *port)
                         if (getpeername(fdaccept, (struct sockaddr *)&client_addr, &len) == 0){
                             printf("first getpeername success\n");
                             client_port[connected_count] = ntohs(client_addr.sin_port);
-                            connected_count += 1;
+
                         }
                         int perm[connected_count], i;
 
@@ -215,7 +216,8 @@ int s_startUp(char *port)
                         for (i = 0 ; i < connected_count ; i++) {
                             printf("Sorted fd: %d\n", sort_fd[i]);
                         }
-                        
+                        connected_count += 1;
+                        printf("Updated Client Count: %d\n", connected_count);
 
                         // printf("Client fd: ", client_fd, "\n");
                         // printf("Client Ports: ", client_port, "\n");
