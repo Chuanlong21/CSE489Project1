@@ -89,7 +89,7 @@ void listing(int* fds, int count){
     for (int i = 0; i < count; i++){
         printf("fd passed into list: %d\n", fds[i]);
         struct sockaddr_in client_addr;
-        socklen_t len;                   
+        socklen_t len = sizeof(struct sockaddr_in);                   
         if (getpeername(fds[i], (struct sockaddr *)&client_addr, &len) == 0){
             printf("\nsecond getpeername success\n");
             printf("%-5d%-35s%-20s%-8d\n", fds[i], "hostname", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
