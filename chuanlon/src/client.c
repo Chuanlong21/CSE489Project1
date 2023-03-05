@@ -190,28 +190,57 @@ int connect_to_host(char *server_ip, char* server_port)
 {
     int fdsocket;
     struct addrinfo hints, *res;
+    struct sockaddr_in my_addr, my_addr1;
 
+    int client = socket(AF_INET, SOCK_STREAM, 0);
+    if (client < 0)
+    printf("Error in client creating\n");
+    else
+        printf("Client Created\n");
+    
+    my_addr.sin_family = AF_INET;
+    my_addr.sin_addr.s_addr = INADDR_ANY;
+    my_addr.sin_port = htons(7000);
+    my_addr.sin_addr.s_addr = inet_addr("128.205.36.34");
     /* Set up hints structure */
-    memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_INET;
-    hints.ai_socktype = SOCK_STREAM;
+    // memset(&hints, 0, sizeof(hints));
+    // hints.ai_family = AF_INET;
+    // hints.ai_socktype = SOCK_STREAM;
 
-    /* Fill up address structures */
-    if (getaddrinfo(server_ip, server_port, &hints, &res) != 0)
-        perror("getaddrinfo failed");
+    my_addr1.sin_family = AF_INET;
+    my_addr1.sin_addr.s_addr = INADDR_ANY;
+    my_addr1.sin_port = htons(6000);
+    my_addr1.sin_addr.s_addr = inet_addr("128.205.36.46");
 
-    /* Socket */
-    fdsocket = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-    if(fdsocket < 0)
-        perror("Failed to create socket");
+    if (bind(client, (struct sockaddr*) &my_addr1, sizeof(struct sockaddr_in)) == 0)
+        printf("Binded Correctly\n");
+    else
+        printf("Unable to bind\n");
+
+    socklen_t addr_size = sizeof my_addr;
+    int con = connect(client, (struct sockaddr*) &my_addr, sizeof my_addr);
+    if (con == 0)
+        printf("Client Connected\n");
+    else
+        printf("Error in Connection\n");
+ 
+    // /* Fill up address structures */
+    // if (getaddrinfo(server_ip, server_port, &hints, &res) != 0)
+    //     perror("getaddrinfo failed");
+
+    // /* Socket */
+    // fdsocket = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
+    // if(fdsocket < 0)
+    //     perror("Failed to create socket");
 
     /* Connect */
-    if(connect(fdsocket, res->ai_addr, res->ai_addrlen) < 0)
-        perror("Connect failed");
+    // if(connect(fdsocket, res->ai_addr, res->ai_addrlen) < 0)
+    //     perror("Connect failed");
 
-    freeaddrinfo(res);
+    // freeaddrinfo(res);
 
-    return fdsocket;
+    // return fdsocket;
+    return client;
 }
 
 
