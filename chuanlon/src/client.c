@@ -201,7 +201,7 @@ int connect_to_host(char *server_ip, char* server_port)
     my_addr.sin_family = AF_INET;
     my_addr.sin_addr.s_addr = INADDR_ANY;
     my_addr.sin_port = htons(7000);
-    my_addr.sin_addr.s_addr = inet_addr("128.205.36.34");
+    my_addr.sin_addr.s_addr = inet_addr("128.205.36.46");
     /* Set up hints structure */
     // memset(&hints, 0, sizeof(hints));
     // hints.ai_family = AF_INET;
