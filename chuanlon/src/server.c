@@ -198,7 +198,7 @@ int s_startUp(char *port)
                         // printf(fdaccept);
                         // printf(client_fd[0]);
                         struct sockaddr_in client_addr;
-                        socklen_t len;                   
+                        socklen_t len = sizeof(struct sockaddr_in);                   
                         if (getpeername(fdaccept, (struct sockaddr *)&client_addr, &len) == 0){
                             printf("first getpeername success\n");
                             client_port[connected_count] = ntohs(client_addr.sin_port);
