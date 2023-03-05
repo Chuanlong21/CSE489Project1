@@ -215,7 +215,7 @@ int connect_to_host(char *server_ip, char* server_port)
     if (bind(client, (struct sockaddr*) &my_addr1, sizeof(struct sockaddr_in)) == 0)
         printf("Binded Correctly\n");
     else
-        printf("Unable to bind\n");
+        perror("Bind failed");
 
     socklen_t addr_size = sizeof my_addr;
     int con = connect(client, (struct sockaddr*) &my_addr, sizeof my_addr);
