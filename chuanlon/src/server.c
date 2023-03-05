@@ -83,7 +83,7 @@ int s_startUp(char *port)
     int *ptr;
     //  Memory allocates dynamically using malloc()
     ptr = (int*)malloc(100 * sizeof(int));
-  
+
     // Checking for memory allocation
     if (ptr == NULL) {
         printf("Memory not allocated.\n");
@@ -186,7 +186,7 @@ int s_startUp(char *port)
                         ptr[connected_count] = fdaccept;
                         connected_count += 1;
 
-                        // // add to linked list storage                      
+                        // // add to linked list storage
                         // if (getpeername(fdaccept, (struct sockaddr *)&client_addr, &len) == 0){
                         //     clients -> port_num = ntohs(client_addr.sin_port);
                         //     clients -> sck_fd = fdaccept;
@@ -196,12 +196,12 @@ int s_startUp(char *port)
                         //     }else{
                         //         struct client* new_client = (struct client*) malloc(sizeof(struct client));
                         //         new_clients -> port_num = ntohs(client_addr.sin_port);
-                        //         new_clients -> sck_fd = fdaccept;                                
+                        //         new_clients -> sck_fd = fdaccept;
                         //         sortedInsert(clients, new_client)
                         //     }
                         // }else{
                         //     perror("getpeername");
-                        // }                                                    
+                        // }
                     }
                         /* Read from existing clients */
                     else{
@@ -212,16 +212,13 @@ int s_startUp(char *port)
                         if(recv(sock_index, buffer, BUFFER_SIZE, 0) <= 0){
                             close(sock_index);
                             printf("Remote Host terminated connection!\n");
+                            //删除arr
 
                             /* Remove from watched list */
                             FD_CLR(sock_index, &master_list);  //他这里已经把它给删掉了，那我们还需删吗？？？
                         }
                         else {
                             //Process incoming data from existing clients here ...
-                            if (strcmp("EXIT", buffer) == 0){
-                                //奇怪奇怪
-
-                            }
                             printf("\nClient sent me: %s\n", buffer);
                             printf("ECHOing it back to the remote host ... ");
                             if(send(fdaccept, buffer, strlen(buffer), 0) == strlen(buffer))
