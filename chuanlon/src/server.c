@@ -201,6 +201,7 @@ int s_startUp(char *port)
                         if (getpeername(fdaccept, (struct sockaddr *)&client_addr, &len) == 0){
                             printf("first getpeername success\n");
                             client_port[connected_count] = ntohs(client_addr.sin_port);
+                            connected_count += 1;
                         }
                         int perm[connected_count + 1], i;
 
@@ -214,7 +215,7 @@ int s_startUp(char *port)
                         for (i = 0 ; i < connected_count + 1 ; i++) {
                             printf("Sorted fd: %d\n", sort_fd[i]);
                         }
-                        connected_count += 1;
+                        
 
                         // printf("Client fd: ", client_fd, "\n");
                         // printf("Client Ports: ", client_port, "\n");
