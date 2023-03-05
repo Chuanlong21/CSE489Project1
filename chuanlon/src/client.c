@@ -210,7 +210,7 @@ int connect_to_host(char *server_ip, char* server_port)
     my_addr1.sin_family = AF_INET;
     my_addr1.sin_addr.s_addr = INADDR_ANY;
     my_addr1.sin_port = htons(6000);
-    my_addr1.sin_addr.s_addr = inet_addr("128.205.36.34");
+    my_addr1.sin_addr.s_addr = inet_addr("128.205.36.46");
 
     if (bind(client, (struct sockaddr*) &my_addr1, sizeof(struct sockaddr_in)) == 0)
         printf("Binded Correctly\n");
