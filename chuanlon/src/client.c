@@ -72,7 +72,7 @@ int c_startUp(char *port)
 
     addr.sin_family = AF_INET;
     addr.sin_addr.s_addr = inet_addr("8.8.8.8");
-    addr.sin_port = atoi(prt);
+    addr.sin_port = atoi(port);
 
     //create socket and connect to the addr for IP address
     client_socket = socket(AF_INET, SOCK_DGRAM, 0);
