@@ -214,7 +214,7 @@ int s_startUp(char *port)
                         for (i = 0 ; i < connected_count + 1 ; i++) {
                             printf("Sorted fd: %d\n", sort_fd[i]);
                         }
-                        connected_count += 1
+                        connected_count += 1;
 
                         // printf("Client fd: ", client_fd, "\n");
                         // printf("Client Ports: ", client_port, "\n");
