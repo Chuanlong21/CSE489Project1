@@ -140,6 +140,9 @@ int c_startUp(char *port)
                                     server = connect_to_host(rev[1], rev[2]);
                                     if (server < 0){
                                         error("LOGIN");
+                                    }else{
+                                        cse4589_print_and_log("[%s:SUCCESS]\n", "LOGIN");
+                                        cse4589_print_and_log("[%s:END]\n", "LOGIN");
                                     }
                                 }
                             } else error("LOGIN");
