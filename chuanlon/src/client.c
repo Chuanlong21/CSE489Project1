@@ -151,6 +151,8 @@ int c_startUp(char *port)
                             show_port(port);
                         }else if (strcmp("AUTHOR\n", cmd) == 0){
                             show_Author();
+                        }else if(strcmp("REFRESH\n",cmd) == 0){
+                            //写在这
                         }else if (strcmp("IP\n", cmd) == 0){
                             cse4589_print_and_log("[%s:SUCCESS]\n", "IP");
                             cse4589_print_and_log("IP:%s\n", ip_buff);
