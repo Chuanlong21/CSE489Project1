@@ -87,6 +87,7 @@ int s_startUp(char *port)
     client_fd = (int*)malloc(100 * sizeof(int));
     client_port = (int*)malloc(100 * sizeof(int));
     int sort_fd[100];
+    memset(sort_fd, -1, 100);
     int *sorted_fd = sort_fd;
     // Checking for memory allocation
     if (client_fd == NULL) {
@@ -195,9 +196,9 @@ int s_startUp(char *port)
                         client_fd[connected_count] = fdaccept;
                         // printf(fdaccept);
                         // printf(client_fd[0]);
-                        struct sockaddr_in client_addr;
+                        struct sockaddr_in client;
                         socklen_t len = sizeof(struct sockaddr_in);                   
-                        if (getpeername(fdaccept, (struct sockaddr *)&client_addr, &len) == 0){
+                        if (getpeername(fdaccept, (struct sockaddr *)&client, &len) == 0){
                             printf("first getpeername success\n");
                             client_port[connected_count] = ntohs(client_addr.sin_port);
 
@@ -235,7 +236,12 @@ int s_startUp(char *port)
                         //     }
                         // }else{
                         //     perror("getpeername");
-                        // }                                                    
+                        // }        
+                        if(send(fdaccept, sort_fd, 100, 0) == 100){
+                            printf("Done sending clients list!\n");
+                            fflush(stdout);
+                        }        
+                                                            
                     }
                         /* Read from existing clients */
                     else{

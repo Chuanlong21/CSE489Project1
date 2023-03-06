@@ -196,6 +196,12 @@ int c_startUp(char *port)
             printf("Server responded: %s", buffer);
             fflush(stdout);
         } else if(recv(server, des, DES_SIZE, 0) >= 0){
+            printf("Server sent fd array: \n")
+            for (int i = 0; i < DES_SIZE; i ++;){
+                if(des[i] != -1){
+                    printf("Active Client: %d\n", des[i]);
+                }
+            }
             fflush(stdout);
         }
     }
