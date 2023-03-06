@@ -43,6 +43,7 @@
 #define BUFFER_SIZE 256
 #define STDIN 0
 #define CMD_SIZE 100
+#define DES_SIZE 100
 
 
 int connect_to_host(char *server_ip, char *server_port,  char* port);
@@ -69,6 +70,7 @@ int c_startUp(char *port)
     fd_set master_list, watch_list;
     struct addrinfo hints, *res;
     char hostName[1024];
+    int* des = (int*)malloc(sizeof (int*) * DES_SIZE);
 
     /* Set up hints structure */
     memset(&hints, 0, sizeof(hints));
@@ -187,13 +189,15 @@ int c_startUp(char *port)
 //        fflush(stdout);
 //
 //        /* Initialize buffer to receieve response */
-//        char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
-//        memset(buffer, '\0', BUFFER_SIZE);
-//
-//        if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
-//            printf("Server responded: %s", buffer);
-//            fflush(stdout);
-//        }
+        char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
+        memset(buffer, '\0', BUFFER_SIZE);
+        memset(des, -1, DES_SIZE);
+        if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
+            printf("Server responded: %s", buffer);
+            fflush(stdout);
+        } else if(recv(server, des, DES_SIZE, 0) >= 0){
+            fflush(stdout);
+        }
     }
 }
 
