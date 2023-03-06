@@ -143,6 +143,9 @@ int c_startUp(char *port)
                                     server = connect_to_host(rev[1], rev[2], port);
                                     if (server < 0){
                                         error("LOGIN");
+                                    }else{
+                                        cse4589_print_and_log("[%s:SUCCESS]\n", "LOGIN");
+                                        cse4589_print_and_log("[%s:END]\n", "LOGIN");
                                     }
                                 }
                             } else error("LOGIN");
@@ -152,6 +155,8 @@ int c_startUp(char *port)
                             show_port(port);
                         }else if (strcmp("AUTHOR\n", cmd) == 0){
                             show_Author();
+                        }else if(strcmp("REFRESH\n",cmd) == 0){
+                            //写在这
                         }else if (strcmp("IP\n", cmd) == 0){
                             show_ip(client_socket);
                         }else if (strcmp("EXIT\n", cmd) == 0){
