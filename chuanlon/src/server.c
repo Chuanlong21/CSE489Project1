@@ -174,8 +174,6 @@ int s_startUp(char *port)
                             exit(EXIT_SUCCESS);
                         }
 
-                        printf("\nI got: %s\n", cmd);
-
                         free(cmd);
                     }
                         /* Check if new client is requesting connection */
