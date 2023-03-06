@@ -57,6 +57,8 @@
 
 int *client_port;
 int compare (const void * a, const void * b);
+void intArrToString(char* str,int count, int arr[]);
+
 int s_startUp(char *port)
 {
 //    if(argc != 2) {
@@ -87,7 +89,8 @@ int s_startUp(char *port)
     client_fd = (int*)malloc(100 * sizeof(int));
     client_port = (int*)malloc(100 * sizeof(int));
     int sort_fd[100];
-    memset(sort_fd, -1, 100);
+
+    memset(sort_fd,0,100);
     int *sorted_fd = sort_fd;
     // Checking for memory allocation
     if (client_fd == NULL) {
@@ -236,11 +239,14 @@ int s_startUp(char *port)
                         //     }
                         // }else{
                         //     perror("getpeername");
-                        // }        
-                        if(send(fdaccept, sort_fd, 100, 0) == 100){
+                        // }
+
+                        char str[connected_count * 2 + 1];
+                        intArrToString(str,connected_count,sort_fd);
+                        if(send(fdaccept, str, strlen(str), 0) == strlen(str)){
                             printf("Done sending clients list!\n");
                             fflush(stdout);
-                        }        
+                        }
                                                             
                     }
                         /* Read from existing clients */
@@ -258,12 +264,19 @@ int s_startUp(char *port)
                         }
                         else {
                             //Process incoming data from existing clients here ...
-
-                            printf("\nClient sent me: %s\n", buffer);
-                            printf("ECHOing it back to the remote host ... ");
-                            if(send(fdaccept, buffer, strlen(buffer), 0) == strlen(buffer))
-                                printf("Done!\n");
-                            fflush(stdout);
+                            if (strcmp("REFRESH",buffer) == 0){
+                                char str[connected_count * 2 + 1];
+                                intArrToString(str,connected_count,sort_fd);
+                                if(send(sock_index, str, strlen(str), 0) == strlen(str)){
+                                    printf("Done sending clients list!\n");
+                                    fflush(stdout);
+                                }
+                            }
+//                            printf("\nClient sent me: %s\n", buffer);
+//                            printf("ECHOing it back to the remote host ... ");
+//                            if(send(fdaccept, buffer, strlen(buffer), 0) == strlen(buffer))
+//                                printf("Done!\n");
+//                            fflush(stdout);
                         }
 
                         free(buffer);
@@ -281,6 +294,13 @@ int compare (const void * a, const void * b) {
     return  (0 < diff) - (diff < 0);
 }
 
+void intArrToString(char* str,int count, int arr[]){
+//    char str[count * 2 + 1];
+    int x, y = 0;
+    for (x = 0; x < count; x++) {
+        y += sprintf(str + y, "%d ", arr[x]);
+    }
+}
 
 
 

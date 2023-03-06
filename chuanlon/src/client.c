@@ -47,7 +47,7 @@
 
 
 int connect_to_host(char *server_ip, char *server_port,  char* port);
-
+int stringToInt(int* arr, char* buff);
 /**
 * main function
 *
@@ -149,16 +149,33 @@ int c_startUp(char *port)
                                         cse4589_print_and_log("[%s:SUCCESS]\n", "LOGIN");
                                         cse4589_print_and_log("[%s:END]\n", "LOGIN");
                                     }
+
+                                    char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
+                                    memset(buffer, '\0', BUFFER_SIZE);
+                                    if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
+                                        fflush(stdout);
+                                    }
+                                    if (stringToInt(des,buffer) < 0) error("LOGIN");
                                 }
                             } else error("LOGIN");
 
                         }else if(strcmp("PORT\n", cmd) == 0){
-
                             show_port(port);
                         }else if (strcmp("AUTHOR\n", cmd) == 0){
                             show_Author();
                         }else if(strcmp("REFRESH\n",cmd) == 0){
-                            //写在这
+                            send(server,"REFRESH", strlen("REFRESH"), 0);
+                            char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
+                            memset(buffer, '\0', BUFFER_SIZE);
+                            if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
+                                fflush(stdout);
+                            }
+//                            int temp = stringToInt(des,buffer);
+//                            printf("temp %d\n", temp);
+                            if(stringToInt(des,buffer) < 0) error("REFRESH");
+//                            for (int i = 0; i < temp; ++i) {
+//                                printf("%d\n", des[i]);
+//                            }
                         }else if (strcmp("IP\n", cmd) == 0){
                             show_ip(client_socket);
                         }else if (strcmp("EXIT\n", cmd) == 0){
@@ -189,21 +206,9 @@ int c_startUp(char *port)
 //        fflush(stdout);
 //
 //        /* Initialize buffer to receieve response */
-        char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
-        memset(buffer, '\0', BUFFER_SIZE);
-        memset(des, -1, DES_SIZE);
-        if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
-            printf("Server responded: %s", buffer);
-            fflush(stdout);
-        } else if(recv(server, des, DES_SIZE, 0) >= 0){
-            printf("Server sent fd array: \n")
-            for (int i = 0; i < DES_SIZE; i ++;){
-                if(des[i] != -1){
-                    printf("Active Client: %d\n", des[i]);
-                }
-            }
-            fflush(stdout);
-        }
+//        char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
+//        memset(buffer, '\0', BUFFER_SIZE);
+
     }
 }
 
@@ -244,4 +249,14 @@ int connect_to_host(char *server_ip, char* server_port, char* port)
     return fdsocket;
 }
 
+int stringToInt(int* arr, char* buff){
+    int i = 0;
+    char *token = strtok(buff, " ");
+    while (token != NULL) {
+        arr[i++] = atoi(token);
+        token = strtok(NULL, " ");
+    }
+    return i;
+
+}
 
