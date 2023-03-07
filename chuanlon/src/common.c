@@ -55,9 +55,8 @@ void show_ip(int server_socket){
 }
 
 void show_Author(){
-    char* msg = "I, chuanlon have read and understood the course academic integrity policy.";
     cse4589_print_and_log("[%s:SUCCESS]\n", "AUTHOR");
-    cse4589_print_and_log("%s\n",msg);
+    cse4589_print_and_log("I, %s, have read and understood the course academic integrity policy.\n", "chuanlon");
     cse4589_print_and_log("[%s:END]\n", "AUTHOR");
 }
 
