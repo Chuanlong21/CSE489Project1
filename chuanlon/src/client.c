@@ -71,6 +71,7 @@ int c_startUp(char *port)
     struct addrinfo hints, *res;
     char hostName[1024];
     int* des = (int*)malloc(sizeof (int*) * DES_SIZE);
+    int login = -1;
 
     /* Set up hints structure */
     memset(&hints, 0, sizeof(hints));
@@ -102,7 +103,6 @@ int c_startUp(char *port)
 
 
     while(TRUE){
-
         memcpy(&watch_list, &master_list, sizeof(master_list));
 
         //printf("\n[PA1-Server@CSE489/589]$ ");
@@ -110,36 +110,47 @@ int c_startUp(char *port)
 
         /* select() system call. This will BLOCK */
         selret = select(head_socket + 1, &watch_list, NULL, NULL, NULL);
-        if(selret < 0)
-            perror("select failed.");
-
-        if(selret > 0){
+        if(selret < 0) {
+            perror("select fail");
+            exit(-1);
+        }
+        else{
             for(sock_index=0; sock_index<=head_socket; sock_index+=1){
                 if(FD_ISSET(sock_index, &watch_list)){
                     /* Check if new command on STDIN */
                     if (sock_index == STDIN){
+                        char *input = (char*) malloc(sizeof(char)*CMD_SIZE);
+                        memset(input, '\0', CMD_SIZE);
                         char *cmd = (char*) malloc(sizeof(char)*CMD_SIZE);
                         memset(cmd, '\0', CMD_SIZE);
-                        cmd[strlen(cmd) - 1] = 0;
-                        //COMMAND
-                        if(fgets(cmd, CMD_SIZE-1, stdin) == NULL) //Mind the newline character that will be written to cmd
+                        if(fgets(input, CMD_SIZE-1, stdin) == NULL) //Mind the newline character that will be written to cmd
+                        {
                             exit(-1);
-
-                        //Process PA1 commands here ...
-                        if (strstr(cmd,"LOGIN")){
-
-                            char* rev[3];
-                            int count = 0;
-                            char *pNext = strtok(cmd, " ");
-
-                            while (pNext != NULL) {
-                                rev[count] = pNext;
-                                ++count;
-                                pNext = strtok(NULL, " ");
+                        }
+                        char* rev[3];
+                        int count = 0;
+                        char *pNext = strtok(input, " ");
+                        while (pNext != NULL) {
+                            if (count >= 3){
+                                break;
                             }
+                            rev[count] = pNext;
+                            ++count;
+                            pNext = strtok(NULL, " ");
+                        }
 
+                        if (count == 1){
+                            rev[0][strlen(rev[0])-1] = '\0';
+                        }
+                        strcpy(cmd, rev[0]);
+
+//                        printf("right now %d\n", strcmp(cmd,"LOGIN"));
+//                        Process PA1 commands here ...
+                        if (strcmp(cmd,"LOGIN") == 0){
                             if (count == 3){
-                                rev[2][strlen(rev[2])  -1 ] = 0;
+                                rev[2][strlen(rev[2]) - 1 ] = '\0';
+                                printf("IP: %s\n",rev[1]);
+                                printf("PORT: %s\n",rev[2]);
                                 if (IPv4_verify(rev[1]) == 1 && validNumber(rev[2]) == 1){
                                     //when we have login command, we will need to connect to the host sever
                                     server = connect_to_host(rev[1], rev[2], port);
@@ -148,6 +159,7 @@ int c_startUp(char *port)
                                         if (server > head_socket) {
                                             head_socket = server;
                                         }
+                                        login = 1;
                                         cse4589_print_and_log("[%s:SUCCESS]\n", rev[0]);
                                         cse4589_print_and_log("[%s:END]\n", rev[0]);
                                     }
@@ -155,52 +167,52 @@ int c_startUp(char *port)
                                         cse4589_print_and_log("[%s:ERROR]\n", rev[0]);
                                         cse4589_print_and_log("[%s:END]\n", rev[0]);
                                     }
-
                                     char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
                                     memset(buffer, '\0', BUFFER_SIZE);
                                     if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
                                         fflush(stdout);
                                     }
                                     if (stringToInt(des,buffer) < 0) error(rev[0]);
-                                }
-                            } else error(rev[0]);
-
-                        }else if(strcmp("PORT\n", cmd) == 0){
+                                } else error(cmd);
+                            } else error(cmd);
+                        }else if(strcmp("PORT", cmd) == 0){
                             show_port(port);
-                        }else if (strcmp("AUTHOR\n", cmd) == 0){
+                        }else if (strcmp("AUTHOR", cmd) == 0){
                             show_Author();
-                        }else if(strcmp("REFRESH\n",cmd) == 0){
-                            send(server,"REFRESH", strlen("REFRESH"), 0);
-                            char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
-                            memset(buffer, '\0', BUFFER_SIZE);
-                            if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
-                                fflush(stdout);
-                            }
-                            cmd[strlen(cmd) - 1] = '\0';
-//                            int temp = stringToInt(des,buffer);
-//                            printf("temp %d\n", temp);
-                            if(stringToInt(des,buffer) < 0) {
-                                error(cmd);
-                            }else{
-                                cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
-                                cse4589_print_and_log("[%s:END]\n", cmd);
-                            }
+                        }else if (strcmp("IP", cmd) == 0){
+                            show_ip(client_socket);
+                        }
+                        if (login == 1 ){
+                             if(strcmp("REFRESH",cmd) == 0){
+                                send(server,"REFRESH", strlen("REFRESH"), 0);
+                                char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
+                                memset(buffer, '\0', BUFFER_SIZE);
+                                if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
+                                    fflush(stdout);
+                                }
+                                if(stringToInt(des,buffer) < 0) {
+                                    error(cmd);
+                                }else{
+                                    cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
+                                    cse4589_print_and_log("[%s:END]\n", cmd);
+                                }
 //                            for (int i = 0; i < temp; ++i) {
 //                                printf("%d\n", des[i]);
 //                            }
-                        }else if (strcmp("IP\n", cmd) == 0){
-                            show_ip(client_socket);
-                        }else if (strcmp("EXIT\n", cmd) == 0){
-                            cmd[strlen(cmd) - 1] = '\0';
-                            //删除了之后 服务端也要把watch list里它的socket给删除
-                            if (server > 0){
-                                send(server,"EXIT", strlen("EXIT"),0 );//发送exit给服务端，让他知道得把连接数组给删掉
-                                cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
-                                cse4589_print_and_log("[%s:END]\n", cmd);
-                                exit(EXIT_SUCCESS);
-                            }else error(cmd);
+                            }else if (strcmp("EXIT", cmd) == 0){
+                                //删除了之后 服务端也要把watch list里它的socket给删除
+                                if (server > 0){
+                                    send(server,"EXIT", strlen("EXIT"),0 );//发送exit给服务端，让他知道得把连接数组给删掉
+                                    cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
+                                    cse4589_print_and_log("[%s:END]\n", cmd);
+                                    exit(EXIT_SUCCESS);
+                                }else error(cmd);
+                            }
+                        }else{
+                            error(cmd);
                         }
                         free(cmd);
+
                     }
                 }
             }
@@ -227,6 +239,7 @@ int c_startUp(char *port)
 
 int connect_to_host(char *server_ip, char* server_port, char* port)
 {
+//    printf("connecting////");
     int fdsocket;
     struct sockaddr_in addr;
     struct addrinfo hints, *res;
@@ -246,19 +259,25 @@ int connect_to_host(char *server_ip, char* server_port, char* port)
 
     /* Socket */
     fdsocket = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
-    if(fdsocket < 0)
+    if(fdsocket < 0){
         perror("Failed to create socket");
+        return -1;
+    }
 
     if (bind(fdsocket, (struct sockaddr *)&addr, sizeof(addr)) < 0){
         perror("Bind fail");
+        return -1;
+    }
+    /* Connect */
+//    printf("%d\n", connect(fdsocket, res->ai_addr, res->ai_addrlen));
+    if(connect(fdsocket, res->ai_addr, res->ai_addrlen) < 0)
+    {
+        perror("Connect failed");
+        return -1;
     }
 
-    /* Connect */
-    if(connect(fdsocket, res->ai_addr, res->ai_addrlen) < 0)
-        perror("Connect failed");
 
     freeaddrinfo(res);
-
     return fdsocket;
 }
 
