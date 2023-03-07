@@ -91,12 +91,13 @@ void listing(int* fds, int count){
         printf("fd passed into list: %d\n", fds[i]);
         struct sockaddr_in client_addr;
         socklen_t len = sizeof(struct sockaddr_in);
-        char hostname[50];              
+        char hostname[NI_MAXHOST];              
         if (getpeername(fds[i], (struct sockaddr *)&client_addr, &len) == 0){
             printf("\nsecond getpeername success\n");
             client_addr.sin_addr.s_addr = inet_addr("128.205.36.34");
+            printf("IP updated\n");
             // printf(client_addr.sin_addr.in_addr);
-            if (getnameinfo((struct sockaddr*)&(client_addr), sizeof(client_addr), hostname, sizeof(hostname), NULL, 0, 0) == 0){
+            if (getnameinfo((struct sockaddr*)&(client_addr), sizeof(client_addr), hostname, NI_MAXHOST, NULL, 0, 0) == 0){
                 printf("getnameinfo succeeded!");
                 printf("%-5d%-35s%-20s%-8d\n", list_id, fds[i], hostname, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
                 list_id += 1;
