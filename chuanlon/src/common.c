@@ -95,7 +95,7 @@ void listing(int* fds, int count){
         if (getpeername(fds[i], (struct sockaddr *)&client_addr, &len) == 0){
             printf("\nsecond getpeername success\n");
             // printf(client_addr.sin_addr.in_addr);
-            if (getnameinfo((struct sockaddr*)&(client_addr.sin_addr.in_addr), sizeof(client_addr.sin_addr.in_addr), hostname, sizeof(hostname), NULL, 0, 0) == 0){
+            if (getnameinfo((struct sockaddr*)&(client_addr.sin_addr.s_addr), sizeof(client_addr.sin_addr.s_addr), hostname, sizeof(hostname), NULL, 0, 0) == 0){
                 printf("getnameinfo succeeded!");
                 printf("%-5d%-35s%-20s%-8d\n", list_id, fds[i], hostname, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
                 list_id += 1;
