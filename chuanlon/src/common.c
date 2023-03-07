@@ -97,7 +97,7 @@ void listing(int* fds, int count){
             client_addr.sin_addr.s_addr = inet_addr("128.205.36.34");
             printf("IP updated\n");
             // printf(client_addr.sin_addr.in_addr);
-            if (getnameinfo((struct sockaddr*)&client_addr, $len, hostname, NI_MAXHOST, NULL, 0, 0) == 0){
+            if (getnameinfo((struct sockaddr*)&client_addr, &len, hostname, NI_MAXHOST, NULL, 0, 0) == 0){
                 printf("getnameinfo succeeded!");
                 printf("%-5d%-35s%-20s%-8d\n", list_id, fds[i], hostname, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
                 list_id += 1;
