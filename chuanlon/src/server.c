@@ -177,7 +177,7 @@ int s_startUp(char *port)
                             cmd[strlen(cmd) - 1] ='\0';
                             cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
                             listing(sorted_fd, connected_count);
-                            cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
+                            cse4589_print_and_log("[%s:END]\n", cmd);
                         }
 
                         free(cmd);
