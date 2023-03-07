@@ -148,6 +148,8 @@ int c_startUp(char *port)
                                         if (server > head_socket) {
                                             head_socket = server;
                                         }
+                                        cse4589_print_and_log("[%s:SUCCESS]\n", rev[0]);
+                                        cse4589_print_and_log("[%s:END]\n", rev[0]);
                                     }
                                     else {
                                         cse4589_print_and_log("[%s:ERROR]\n", rev[0]);

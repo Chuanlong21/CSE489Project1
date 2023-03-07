@@ -189,22 +189,22 @@ int s_startUp(char *port)
                         if(fdaccept < 0)
                             perror("Accept failed.");
 
-                        printf("\nRemote Host connected!\n");
-                        printf("fd: %d\n", fdaccept);
+//                        printf("\nRemote Host connected!\n");
+//                        printf("fd: %d\n", fdaccept);
 
                         /* Add to watched socket list */
                         FD_SET(fdaccept, &master_list);
                         if(fdaccept > head_socket) head_socket = fdaccept;
 
                         // add to array storage
-                        printf("Client Count: %d\n", connected_count);
+//                        printf("Client Count: %d\n", connected_count);
                         client_fd[connected_count] = fdaccept;
                         // printf(fdaccept);
                         // printf(client_fd[0]);
                         struct sockaddr_in client;
                         socklen_t len = sizeof(struct sockaddr_in);                   
                         if (getpeername(fdaccept, (struct sockaddr *)&client, &len) == 0){
-                            printf("first getpeername success\n");
+//                            printf("first getpeername success\n");
                             client_port[connected_count] = ntohs(client_addr.sin_port);
 
                         }
@@ -217,11 +217,11 @@ int s_startUp(char *port)
                         for (i = 0 ; i < connected_count + 1; i++) {
                             sort_fd[i] = client_fd[perm[i]];
                         }
-                        for (i = 0 ; i < connected_count + 1; i++) {
-                            printf("Sorted fd: %d\n", sort_fd[i]);
-                        }
+//                        for (i = 0 ; i < connected_count + 1; i++) {
+//                            printf("Sorted fd: %d\n", sort_fd[i]);
+//                        }
                         connected_count += 1;
-                        printf("Updated Client Count: %d\n", connected_count);
+//                        printf("Updated Client Count: %d\n", connected_count);
 
                         // printf("Client fd: ", client_fd, "\n");
                         // printf("Client Ports: ", client_port, "\n");
