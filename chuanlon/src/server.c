@@ -58,6 +58,7 @@
 int *client_port;
 int compare (const void * a, const void * b);
 void intArrToString(char* str,int count, int arr[]);
+void remove_sck(int fds[100], int pts[100], int sck_idx, int count);
 
 int s_startUp(char *port)
 {
