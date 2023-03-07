@@ -261,6 +261,14 @@ int s_startUp(char *port)
 
                             /* Remove from watched list */
                             FD_CLR(sock_index, &master_list);
+                            remove_sck(sort_fd, client_port, sock_index, connected_count);
+                            connected_count -= 1;
+                            printf("New Connected Count: %d\n", connected_count);
+                            for(int k=0; k < connected_count; k++){
+                                printf("Active Client fd: %d", sort_fd[k]);
+                                printf("  Port: %d\n", client_port[k]);
+
+                            }
                         }
                         else {
                             //Process incoming data from existing clients here ...
@@ -299,6 +307,20 @@ void intArrToString(char* str,int count, int arr[]){
     int x, y = 0;
     for (x = 0; x < count; x++) {
         y += sprintf(str + y, "%d ", arr[x]);
+    }
+}
+
+void remove_sck(int fds[100], int pts[100], int sck_idx, int count){
+    int pos = 0;
+    for (int i = 0; i < count; i++){
+        if (fds[i] == sck_idx){
+            pos = i;
+            break;
+        }
+    }
+    for (int j = pos; j < count - 1; i++){
+        fds[j] = fds[j + 1];
+        pts[j] = pts[j + 1];
     }
 }
 

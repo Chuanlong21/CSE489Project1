@@ -85,15 +85,20 @@ void show_Author(){
 
 
 void listing(int* fds, int count){
+    int list_id = 1;
     printf("Number of clients: %d\n", count);
     for (int i = 0; i < count; i++){
         printf("fd passed into list: %d\n", fds[i]);
         struct sockaddr_in client_addr;
-        socklen_t len = sizeof(struct sockaddr_in);                   
+        socklen_t len = sizeof(struct sockaddr_in);
+        char hostname[50];              
         if (getpeername(fds[i], (struct sockaddr *)&client_addr, &len) == 0){
             printf("\nsecond getpeername success\n");
-            printf("%-5d%-35s%-20s%-8d\n", fds[i], "hostname", inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
-            // client_port[connected_count] = client_addr.sin_port;
+            if (getnameinfo(client_addr, sizeof(client_addr), hostname, sizeof(hostname), null, 0) == 0){
+                printf("getnameinfo succeeded!");
+                printf("%-5d%-35s%-20s%-8d\n", list_id, fds[i], hostname, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
+                list_id += 1;
+            }
         }
     }
 
