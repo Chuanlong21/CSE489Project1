@@ -143,10 +143,14 @@ int c_startUp(char *port)
                                 if (IPv4_verify(rev[1]) == 1 && validNumber(rev[2]) == 1){
                                     //when we have login command, we will need to connect to the host sever
                                     server = connect_to_host(rev[1], rev[2], port);
-                                    if (server < 0){
-                                        error(rev[0]);
-                                    }else{
-                                        cse4589_print_and_log("[%s:SUCCESS]\n", rev[0]);
+                                    if (server > -1) {
+                                        FD_SET(server, &master_list);
+                                        if (server > head_socket) {
+                                            head_socket = server;
+                                        }
+                                    }
+                                    else {
+                                        cse4589_print_and_log("[%s:ERROR]\n", rev[0]);
                                         cse4589_print_and_log("[%s:END]\n", rev[0]);
                                     }
 
@@ -155,9 +159,9 @@ int c_startUp(char *port)
                                     if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
                                         fflush(stdout);
                                     }
-                                    if (stringToInt(des,buffer) < 0) error("LOGIN");
+                                    if (stringToInt(des,buffer) < 0) error(rev[0]);
                                 }
-                            } else error("LOGIN");
+                            } else error(rev[0]);
 
                         }else if(strcmp("PORT\n", cmd) == 0){
                             show_port(port);

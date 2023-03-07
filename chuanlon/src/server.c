@@ -246,7 +246,7 @@ int s_startUp(char *port)
                         char str[connected_count * 2 + 1];
                         intArrToString(str,connected_count,sort_fd);
                         if(send(fdaccept, str, strlen(str), 0) == strlen(str)){
-                            printf("Done sending clients list!\n");
+//                            printf("Done sending clients list!\n");
                             fflush(stdout);
                         }
                                                             
@@ -259,18 +259,17 @@ int s_startUp(char *port)
 
                         if(recv(sock_index, buffer, BUFFER_SIZE, 0) <= 0){
                             close(sock_index);
-                            printf("Remote Host terminated connection!\n");
-
+//                            printf("Remote Host terminated connection!\n");
                             /* Remove from watched list */
                             FD_CLR(sock_index, &master_list);
                             remove_sck(sort_fd, client_port, sock_index, connected_count);
                             connected_count -= 1;
-                            printf("New Connected Count: %d\n", connected_count);
-                            for(int k=0; k < connected_count; k++){
-                                printf("Active Client fd: %d", sort_fd[k]);
-                                printf("  Port: %d\n", client_port[k]);
-
-                            }
+//                            printf("New Connected Count: %d\n", connected_count);
+//                            for(int k=0; k < connected_count; k++){
+//                                printf("Active Client fd: %d", sort_fd[k]);
+//                                printf("  Port: %d\n", client_port[k]);
+//
+//                            }
                         }
                         else {
                             //Process incoming data from existing clients here ...
@@ -278,7 +277,7 @@ int s_startUp(char *port)
                                 char str[connected_count * 2 + 1];
                                 intArrToString(str,connected_count,sort_fd);
                                 if(send(sock_index, str, strlen(str), 0) == strlen(str)){
-                                    printf("Done sending clients list!\n");
+//                                    printf("Done sending clients list!\n");
                                     fflush(stdout);
                                 }
                             }
