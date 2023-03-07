@@ -175,8 +175,6 @@ int s_startUp(char *port)
                             show_ip(server_socket);
                         }else if (strcmp("LIST\n", cmd) == 0){
                             listing(sorted_fd, connected_count);
-                        }else if (strcmp("EXIT\n", cmd) == 0){
-                            exit(EXIT_SUCCESS);
                         }
 
                         free(cmd);

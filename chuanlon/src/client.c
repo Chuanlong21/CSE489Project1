@@ -172,7 +172,12 @@ int c_startUp(char *port)
                             }
 //                            int temp = stringToInt(des,buffer);
 //                            printf("temp %d\n", temp);
-                            if(stringToInt(des,buffer) < 0) error("REFRESH");
+                            if(stringToInt(des,buffer) < 0) {
+                                error("REFRESH");
+                            }else{
+                                cse4589_print_and_log("[%s:SUCCESS]\n", "REFRESH");
+                                cse4589_print_and_log("[%s:END]\n", "REFRESH");
+                            }
 //                            for (int i = 0; i < temp; ++i) {
 //                                printf("%d\n", des[i]);
 //                            }
