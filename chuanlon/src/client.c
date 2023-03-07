@@ -79,7 +79,7 @@ int c_startUp(char *port)
     hints.ai_flags = AI_PASSIVE;
     gethostname(hostName, 1024);
     /* Fill up address structures */
-    if (getaddrinfo(hostName, port, &hints, &res) != 0)
+    if (getaddrinfo(hostName, NULL, &hints, &res) != 0)
         perror("getaddrinfo failed");
 
     /* Socket */
@@ -144,10 +144,10 @@ int c_startUp(char *port)
                                     //when we have login command, we will need to connect to the host sever
                                     server = connect_to_host(rev[1], rev[2], port);
                                     if (server < 0){
-                                        error("LOGIN");
+                                        error(rev[0]);
                                     }else{
-                                        cse4589_print_and_log("[%s:SUCCESS]\n", "LOGIN");
-                                        cse4589_print_and_log("[%s:END]\n", "LOGIN");
+                                        cse4589_print_and_log("[%s:SUCCESS]\n", rev[0]);
+                                        cse4589_print_and_log("[%s:END]\n", rev[0]);
                                     }
 
                                     char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
@@ -170,13 +170,14 @@ int c_startUp(char *port)
                             if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
                                 fflush(stdout);
                             }
+                            cmd[strlen(cmd) - 1] = '\0';
 //                            int temp = stringToInt(des,buffer);
 //                            printf("temp %d\n", temp);
                             if(stringToInt(des,buffer) < 0) {
-                                error("REFRESH");
+                                error(cmd);
                             }else{
-                                cse4589_print_and_log("[%s:SUCCESS]\n", "REFRESH");
-                                cse4589_print_and_log("[%s:END]\n", "REFRESH");
+                                cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
+                                cse4589_print_and_log("[%s:END]\n", cmd);
                             }
 //                            for (int i = 0; i < temp; ++i) {
 //                                printf("%d\n", des[i]);
@@ -184,13 +185,14 @@ int c_startUp(char *port)
                         }else if (strcmp("IP\n", cmd) == 0){
                             show_ip(client_socket);
                         }else if (strcmp("EXIT\n", cmd) == 0){
+                            cmd[strlen(cmd) - 1] = '\0';
                             //删除了之后 服务端也要把watch list里它的socket给删除
                             if (server > 0){
                                 send(server,"EXIT", strlen("EXIT"),0 );//发送exit给服务端，让他知道得把连接数组给删掉
-                                cse4589_print_and_log("[%s:SUCCESS]\n", "EXIT");
-                                cse4589_print_and_log("[%s:END]\n", "EXIT");
+                                cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
+                                cse4589_print_and_log("[%s:END]\n", cmd);
                                 exit(EXIT_SUCCESS);
-                            }else error("EXIT");
+                            }else error(cmd);
                         }
                         free(cmd);
                     }
