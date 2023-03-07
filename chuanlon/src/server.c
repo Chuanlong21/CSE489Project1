@@ -318,7 +318,7 @@ void remove_sck(int fds[100], int pts[100], int sck_idx, int count){
             break;
         }
     }
-    for (int j = pos; j < count - 1; i++){
+    for (int j = pos; j < count - 1; j++){
         fds[j] = fds[j + 1];
         pts[j] = pts[j + 1];
     }
