@@ -90,7 +90,7 @@ void listing(int* fds, int count){
     for (int i = 0; i < count; i++){
         printf("fd passed into list: %d\n", fds[i]);
         struct sockaddr_in client_addr;
-        client_addr = (struct sockaddr_in *) malloc(sizeof(struct sockaddr_in));
+        client_addr = (struct sockaddr_in) malloc(sizeof(struct sockaddr_in));
         socklen_t len = sizeof(struct sockaddr_in);
         char hostname[50];              
         if (getpeername(fds[i], (struct sockaddr *)&client_addr, &len) == 0){
