@@ -36,9 +36,15 @@ int validNumber(char *a) {
     return 1;
 }
 
-void show_port(char *port){
+void show_port(int server_socket){
+    struct sockaddr_in addr_in;
+    socklen_t  len = sizeof (addr_in);
+    getsockname(server_socket,(struct sockaddr*)&addr_in, &len);
+    if (addr_in.sin_family != AF_INET){
+        return;
+    }
     cse4589_print_and_log("[%s:SUCCESS]\n", "PORT");
-    cse4589_print_and_log("PORT:%s\n",port);
+    cse4589_print_and_log("PORT:%d\n", ntohs(addr_in.sin_port));
     cse4589_print_and_log("[%s:END]\n", "PORT");
 }
 

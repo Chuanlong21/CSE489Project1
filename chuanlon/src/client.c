@@ -79,7 +79,7 @@ int c_startUp(char *port)
     hints.ai_flags = AI_PASSIVE;
     gethostname(hostName, 1024);
     /* Fill up address structures */
-    if (getaddrinfo(hostName, NULL, &hints, &res) != 0)
+    if (getaddrinfo(hostName, port, &hints, &res) != 0)
         perror("getaddrinfo failed");
 
     /* Socket */
@@ -160,7 +160,7 @@ int c_startUp(char *port)
                             } else error("LOGIN");
 
                         }else if(strcmp("PORT\n", cmd) == 0){
-                            show_port(port);
+                            show_port(client_socket);
                         }else if (strcmp("AUTHOR\n", cmd) == 0){
                             show_Author();
                         }else if(strcmp("REFRESH\n",cmd) == 0){
