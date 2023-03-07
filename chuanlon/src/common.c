@@ -100,13 +100,13 @@ void listing(int* fds, int count){
         struct hostent *result;
           
         if (getpeername(fds[i], (struct sockaddr *)&client_addr, &len) == 0){
-            printf("\nsecond getpeername success\n");
+//            printf("\nsecond getpeername success\n");
             char addr[sizeof(struct in_addr)];
             inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), addr);  
             struct hostent *gethost_rtval;
             gethost_rtval = gethostbyaddr(&addr, sizeof(addr), AF_INET);
             if(gethost_rtval){
-                printf("%-5d%-35s%-20s%-8d\n", list_id, gethost_rtval->h_name, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
+                cse4589_print_and_log("%-5d%-35s%-20s%-8d\n", list_id, gethost_rtval->h_name, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
             }
             else{
                 printf("Get Host Failed:%s\n", hstrerror(h_errno));

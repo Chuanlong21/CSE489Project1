@@ -174,7 +174,10 @@ int s_startUp(char *port)
                         }else if (strcmp("IP\n", cmd) == 0){
                             show_ip(server_socket);
                         }else if (strcmp("LIST\n", cmd) == 0){
+                            cmd[strlen(cmd) - 1] ='\0';
+                            cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
                             listing(sorted_fd, connected_count);
+                            cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
                         }
 
                         free(cmd);
