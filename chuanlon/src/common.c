@@ -96,9 +96,8 @@ void listing(int* fds, int count){
             printf("\nsecond getpeername success\n");
             client_addr.sin_addr.s_addr = inet_addr("128.205.36.34");
             printf("IP updated\n");
-            client_addr.sin_family = AF_INET;
             // printf(client_addr.sin_addr.in_addr);
-            if (getnameinfo((struct sockaddr*)&client_addr, sizeof(client_addr), hostname, NI_MAXHOST, NULL, 0, 0) == 0){
+            if (getnameinfo((struct sockaddr*)&client_addr, $len, hostname, NI_MAXHOST, NULL, 0, 0) == 0){
                 printf("getnameinfo succeeded!");
                 printf("%-5d%-35s%-20s%-8d\n", list_id, fds[i], hostname, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
                 list_id += 1;
