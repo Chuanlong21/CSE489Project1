@@ -10,7 +10,7 @@ int IPv4_verify(char *ip);
 
 int validNumber(char *a);
 
-void show_port(int server_socket);
+void show_port(char* port);
 
 void show_Author();
 

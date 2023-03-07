@@ -160,7 +160,7 @@ int c_startUp(char *port)
                             } else error("LOGIN");
 
                         }else if(strcmp("PORT\n", cmd) == 0){
-                            show_port(client_socket);
+                            show_port(port);
                         }else if (strcmp("AUTHOR\n", cmd) == 0){
                             show_Author();
                         }else if(strcmp("REFRESH\n",cmd) == 0){
