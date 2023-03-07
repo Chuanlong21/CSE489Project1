@@ -106,7 +106,10 @@ void listing(int* fds, int count){
             else{
                 printf("Get Host Failed:%s\n", hstrerror(h_errno));
             }
+        }else{
+            printf("Getpeername failed.");
         }
+        list_id += 1;
     }
 
     // for (int i = 0; i < count; i++){
