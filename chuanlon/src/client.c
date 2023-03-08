@@ -181,8 +181,7 @@ int c_startUp(char *port)
                             show_Author();
                         }else if (strcmp("IP", cmd) == 0){
                             show_ip(client_socket);
-                        }
-                        if (login == 1 ){
+                        }else if (login == 1 ){
                              if(strcmp("REFRESH",cmd) == 0){
                                 send(server,"REFRESH", strlen("REFRESH"), 0);
                                 char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
@@ -205,9 +204,38 @@ int c_startUp(char *port)
                                     send(server,"EXIT", strlen("EXIT"),0 );//发送exit给服务端，让他知道得把连接数组给删掉
                                     cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
                                     cse4589_print_and_log("[%s:END]\n", cmd);
-                                    exit(EXIT_SUCCESS);
+                                    exit(0);
                                 }else error(cmd);
-                            }
+                            }else if(strcmp("LIST", cmd) == 0){
+                                 send(server, "LIST", strlen("LIST"), 0);
+                                 char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
+                                 memset(buffer, '\0', BUFFER_SIZE);
+                                 cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
+                                 if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
+                                     fflush(stdout);
+                                 }
+                                 cse4589_print_and_log("%s",buffer);
+//                                 while (1) {
+//                                     int num_bytes_received = recv(server, buffer, BUFFER_SIZE - 1, 0);
+//                                     if (num_bytes_received < 0) {
+//                                         // 接收出错
+//                                         break;
+//                                     } else if (num_bytes_received == 0) {
+//                                         // 服务器关闭连接
+//                                         break;
+//                                     } else {
+//                                         buffer[num_bytes_received] = '\0'; // 将接收到的数据转换成字符串
+//                                         if (strstr(buffer, "finish") != NULL) {
+//                                             // 接收到了指定的字符串，跳出循环
+//                                             break;
+//                                         }
+//                                         cse4589_print_and_log("%s", buffer);
+//                                         fflush(stdout);
+//                                         memset(buffer, 0, BUFFER_SIZE); // 清空缓冲区
+//                                     }
+//                                 }
+                                 cse4589_print_and_log("[%s:END]\n", cmd);
+                             }
                         }else{
                             error(cmd);
                         }

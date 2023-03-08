@@ -280,6 +280,8 @@ int s_startUp(char *port)
 //                                    printf("Done sending clients list!\n");
                                     fflush(stdout);
                                 }
+                            }else if (strcmp("LIST",buffer) == 0){
+                                client_list(sock_index,sort_fd, connected_count);
                             }
 //                            printf("\nClient sent me: %s\n", buffer);
 //                            printf("ECHOing it back to the remote host ... ");

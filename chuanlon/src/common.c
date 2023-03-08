@@ -81,7 +81,43 @@ void show_Author(){
 //     }
 
 // }
+void client_list(int sock_index,int* fds, int count){
+    int list_id = 1;
+//    printf("Number of clients: %d\n", count);
+    char *msg = (char*) malloc(1000 * sizeof(char));
+    memset(msg, '\0', 1000);
+    for (int i = 0; i < count; i++){
+//        printf("fd passed into list: %d\n", fds[i]);
+        struct sockaddr_in client_addr;
+        socklen_t len = sizeof(struct sockaddr_in);
+        char addr[sizeof(struct in_addr)];
+        struct hostent *result;
 
+        if (getpeername(fds[i], (struct sockaddr *)&client_addr, &len) == 0){
+//            printf("\nsecond getpeername success\n");
+            char addr[sizeof(struct in_addr)];
+            inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), addr);
+            struct hostent *gethost_rtval;
+            gethost_rtval = gethostbyaddr(&addr, sizeof(addr), AF_INET);
+            if(gethost_rtval){
+                char str[100];
+                sprintf(str,"%-5d%-35s%-20s%-8d\n",list_id, gethost_rtval->h_name, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
+                strcat(msg, str);
+            }
+            else{
+                printf("Get Host Failed:%s\n", hstrerror(h_errno));
+            }
+        }else{
+            printf("Getpeername failed.");
+        }
+        list_id += 1;
+    }
+    int bytes_sent = send(sock_index, msg, strlen(msg), 0);
+    if (bytes_sent < 0){
+        fflush(stdout);
+    }
+    free(msg);
+}
 
 void listing(int* fds, int count){
     int list_id = 1;

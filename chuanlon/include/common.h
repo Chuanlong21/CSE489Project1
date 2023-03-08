@@ -19,3 +19,5 @@ void show_ip(int server_socket);
 void listing(int* fds, int count);
 
 void error(char* cmd);
+
+void client_list(int sock_index,int* fds, int count);
