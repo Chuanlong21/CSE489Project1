@@ -262,8 +262,6 @@ int s_startUp(char *port)
 //                            printf("Remote Host terminated connection!\n");
                             /* Remove from watched list */
                             FD_CLR(sock_index, &master_list);
-                            remove_sck(sort_fd, client_port, sock_index, connected_count);
-                            connected_count -= 1;
 //                            printf("New Connected Count: %d\n", connected_count);
 //                            for(int k=0; k < connected_count; k++){
 //                                printf("Active Client fd: %d", sort_fd[k]);
@@ -282,6 +280,9 @@ int s_startUp(char *port)
                                 }
                             }else if (strcmp("LIST",buffer) == 0){
                                 client_list(sock_index,sort_fd, connected_count);
+                            }else if (strcmp("EXIT", buffer) == 0){
+                                remove_sck(sort_fd, client_port, sock_index, connected_count);
+                                connected_count -= 1;
                             }
 //                            printf("\nClient sent me: %s\n", buffer);
 //                            printf("ECHOing it back to the remote host ... ");
