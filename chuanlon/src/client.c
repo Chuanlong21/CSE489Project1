@@ -78,6 +78,7 @@ int c_startUp(char *port)
     hints.ai_family = AF_INET;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
+
     gethostname(hostName, 1024);
     /* Fill up address structures */
     if (getaddrinfo(hostName, NULL, &hints, &res) != 0)
@@ -100,6 +101,7 @@ int c_startUp(char *port)
     /* Register STDIN */
     FD_SET(STDIN, &master_list);
     head_socket = STDIN;
+    char *msg = (char*) malloc(1000 * sizeof(char));
 
 
     while(TRUE){
@@ -160,19 +162,20 @@ int c_startUp(char *port)
                                             head_socket = server;
                                         }
                                         login = 1;
-                                        cse4589_print_and_log("[%s:SUCCESS]\n", rev[0]);
-                                        cse4589_print_and_log("[%s:END]\n", rev[0]);
+                                        cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
+                                        cse4589_print_and_log("[%s:END]\n", cmd);
                                     }
                                     else {
-                                        cse4589_print_and_log("[%s:ERROR]\n", rev[0]);
-                                        cse4589_print_and_log("[%s:END]\n", rev[0]);
+                                        cse4589_print_and_log("[%s:ERROR]\n", cmd);
+                                        cse4589_print_and_log("[%s:END]\n", cmd);
                                     }
-                                    char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
-                                    memset(buffer, '\0', BUFFER_SIZE);
-                                    if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
+
+//                                    char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
+                                    memset(msg, '\0', 1000);
+                                    if(recv(server, msg, 1000, 0) >= 0){
                                         fflush(stdout);
                                     }
-                                    if (stringToInt(des,buffer) < 0) error(rev[0]);
+//                                    if (stringToInt(des,buffer) < 0) error(rev[0]);
                                 } else error(cmd);
                             } else error(cmd);
                         }else if(strcmp("PORT", cmd) == 0){
@@ -184,17 +187,22 @@ int c_startUp(char *port)
                         }else if (login == 1 ){
                              if(strcmp("REFRESH",cmd) == 0){
                                 send(server,"REFRESH", strlen("REFRESH"), 0);
-                                char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
-                                memset(buffer, '\0', BUFFER_SIZE);
-                                if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
-                                    fflush(stdout);
-                                }
-                                if(stringToInt(des,buffer) < 0) {
-                                    error(cmd);
-                                }else{
-                                    cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
-                                    cse4589_print_and_log("[%s:END]\n", cmd);
-                                }
+//                                char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
+//                                memset(buffer, '\0', BUFFER_SIZE);
+//                                if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
+//                                    fflush(stdout);
+//                                }
+//                                if(stringToInt(des,buffer) < 0) {
+//                                    error(cmd);
+//                                }
+                                 memset(msg, '\0', 1000);
+                                 if(recv(server, msg, 1000, 0) >= 0){
+                                     fflush(stdout);
+                                 }
+//                                 printf("%s",msg);
+                                 cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
+                                 cse4589_print_and_log("[%s:END]\n", cmd);
+
 //                            for (int i = 0; i < temp; ++i) {
 //                                printf("%d\n", des[i]);
 //                            }
@@ -207,14 +215,15 @@ int c_startUp(char *port)
                                     exit(0);
                                 }else error(cmd);
                             }else if(strcmp("LIST", cmd) == 0){
-                                 send(server, "LIST", strlen("LIST"), 0);
-                                 char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
-                                 memset(buffer, '\0', BUFFER_SIZE);
+//                                 send(server, "LIST", strlen("LIST"), 0);
+//                                 char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
+//                                 memset(buffer, '\0', BUFFER_SIZE);
                                  cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
-                                 if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
-                                     fflush(stdout);
-                                 }
-                                 cse4589_print_and_log("%s",buffer);
+//                                 if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
+//                                     fflush(stdout);
+//                                 }
+                                 cse4589_print_and_log("%s",msg);
+//                                 cse4589_print_and_log("%s",buffer);
 //                                 while (1) {
 //                                     int num_bytes_received = recv(server, buffer, BUFFER_SIZE - 1, 0);
 //                                     if (num_bytes_received < 0) {
@@ -245,22 +254,6 @@ int c_startUp(char *port)
                 }
             }
         }
-
-//        char *msg = (char*) malloc(sizeof(char)*MSG_SIZE);
-//        memset(msg, '\0', MSG_SIZE);
-//        if(fgets(msg, MSG_SIZE-1, stdin) == NULL) //Mind the newline character that will be written to msg
-//            exit(-1);
-//
-//        printf("I got: %s(size:%d chars)", msg, strlen(msg));
-//
-//        printf("\nSENDing it to the remote server ... ");
-//        if(send(server, msg, strlen(msg), 0) == strlen(msg))
-//            printf("Done!\n");
-//        fflush(stdout);
-//
-//        /* Initialize buffer to receieve response */
-//        char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
-//        memset(buffer, '\0', BUFFER_SIZE);
 
     }
 }

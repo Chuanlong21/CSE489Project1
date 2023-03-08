@@ -10,6 +10,7 @@
 #include <netdb.h>
 
 #include "../include/logger.h"
+#define BUFFER_SIZE 256
 
 int IPv4_verify(char *ip) {
     int a,b,c,d;
@@ -112,8 +113,10 @@ void client_list(int sock_index,int* fds, int count){
         }
         list_id += 1;
     }
-    int bytes_sent = send(sock_index, msg, strlen(msg), 0);
+//    printf("%s",msg);
+    int bytes_sent = send(sock_index, msg, 1000, 0);
     if (bytes_sent < 0){
+//        printf("123123");
         fflush(stdout);
     }
     free(msg);

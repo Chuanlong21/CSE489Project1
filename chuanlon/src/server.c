@@ -242,13 +242,13 @@ int s_startUp(char *port)
                         // }else{
                         //     perror("getpeername");
                         // }
-
-                        char str[connected_count * 2 + 1];
-                        intArrToString(str,connected_count,sort_fd);
-                        if(send(fdaccept, str, strlen(str), 0) == strlen(str)){
-//                            printf("Done sending clients list!\n");
-                            fflush(stdout);
-                        }
+                        client_list(fdaccept,sort_fd, connected_count);
+//                        char str[connected_count * 2 + 1];
+//                        intArrToString(str,connected_count,sort_fd);
+//                        if(send(fdaccept, str, strlen(str), 0) == strlen(str)){
+////                            printf("Done sending clients list!\n");
+//                            fflush(stdout);
+//                        }
                                                             
                     }
                         /* Read from existing clients */
@@ -272,15 +272,18 @@ int s_startUp(char *port)
                         else {
                             //Process incoming data from existing clients here ...
                             if (strcmp("REFRESH",buffer) == 0){
-                                char str[connected_count * 2 + 1];
-                                intArrToString(str,connected_count,sort_fd);
-                                if(send(sock_index, str, strlen(str), 0) == strlen(str)){
+//                                char str[connected_count * 2 + 1];
+//                                intArrToString(str,connected_count,sort_fd);
+//                                if(send(sock_index, str, strlen(str), 0) == strlen(str)){
 //                                    printf("Done sending clients list!\n");
-                                    fflush(stdout);
-                                }
-                            }else if (strcmp("LIST",buffer) == 0){
+//                                    fflush(stdout);
+//                                }
                                 client_list(sock_index,sort_fd, connected_count);
-                            }else if (strcmp("EXIT", buffer) == 0){
+                            }
+//                            else if (strcmp("LIST",buffer) == 0){
+//                                client_list(sock_index,sort_fd, connected_count);
+//                            }
+                            else if (strcmp("EXIT", buffer) == 0){
                                 remove_sck(sort_fd, client_port, sock_index, connected_count);
                                 connected_count -= 1;
                             }
