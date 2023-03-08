@@ -206,6 +206,7 @@ int c_startUp(char *port)
                                     send(server,"EXIT", strlen("EXIT"),0 );//发送exit给服务端，让他知道得把连接数组给删掉
                                     cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
                                     cse4589_print_and_log("[%s:END]\n", cmd);
+                                    close(client_socket);
                                     exit(0);
                                 }else error(cmd);
                             }else if(strcmp("LIST", cmd) == 0){
