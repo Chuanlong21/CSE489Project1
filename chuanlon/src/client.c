@@ -184,17 +184,14 @@ int c_startUp(char *port)
                             show_Author();
                         }else if (strcmp("IP", cmd) == 0){
                             show_ip(client_socket);
-                        }else if (login == 1 ){
+                        } else if (strcmp("EXIT", cmd) == 0){
+                            cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
+                            cse4589_print_and_log("[%s:END]\n", cmd);
+                            exit(-1);
+                        }
+                        else if (login == 1 ){
                              if(strcmp("REFRESH",cmd) == 0){
                                 send(server,"REFRESH", strlen("REFRESH"), 0);
-//                                char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
-//                                memset(buffer, '\0', BUFFER_SIZE);
-//                                if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
-//                                    fflush(stdout);
-//                                }
-//                                if(stringToInt(des,buffer) < 0) {
-//                                    error(cmd);
-//                                }
                                  memset(msg, '\0', 1000);
                                  if(recv(server, msg, 1000, 0) >= 0){
                                      fflush(stdout);
@@ -203,9 +200,6 @@ int c_startUp(char *port)
                                  cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
                                  cse4589_print_and_log("[%s:END]\n", cmd);
 
-//                            for (int i = 0; i < temp; ++i) {
-//                                printf("%d\n", des[i]);
-//                            }
                             }else if (strcmp("EXIT", cmd) == 0){
                                 //删除了之后 服务端也要把watch list里它的socket给删除
                                 if (server > 0){
@@ -215,34 +209,8 @@ int c_startUp(char *port)
                                     exit(0);
                                 }else error(cmd);
                             }else if(strcmp("LIST", cmd) == 0){
-//                                 send(server, "LIST", strlen("LIST"), 0);
-//                                 char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
-//                                 memset(buffer, '\0', BUFFER_SIZE);
                                  cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
-//                                 if(recv(server, buffer, BUFFER_SIZE, 0) >= 0){
-//                                     fflush(stdout);
-//                                 }
                                  cse4589_print_and_log("%s",msg);
-//                                 cse4589_print_and_log("%s",buffer);
-//                                 while (1) {
-//                                     int num_bytes_received = recv(server, buffer, BUFFER_SIZE - 1, 0);
-//                                     if (num_bytes_received < 0) {
-//                                         // 接收出错
-//                                         break;
-//                                     } else if (num_bytes_received == 0) {
-//                                         // 服务器关闭连接
-//                                         break;
-//                                     } else {
-//                                         buffer[num_bytes_received] = '\0'; // 将接收到的数据转换成字符串
-//                                         if (strstr(buffer, "finish") != NULL) {
-//                                             // 接收到了指定的字符串，跳出循环
-//                                             break;
-//                                         }
-//                                         cse4589_print_and_log("%s", buffer);
-//                                         fflush(stdout);
-//                                         memset(buffer, 0, BUFFER_SIZE); // 清空缓冲区
-//                                     }
-//                                 }
                                  cse4589_print_and_log("[%s:END]\n", cmd);
                              }
                         }else{
