@@ -236,7 +236,7 @@ int s_startUp(char *port)
                         }
                         printf("ip sorted\n");
                         for (i = 0 ; i < connected_count; i++){
-                            print("i: \n", i);
+                            printf("i: \n", i);
                             printf(client_ip[i]);
                         }
 //                        printf("Updated Client Count: %d\n", connected_count);
