@@ -85,12 +85,12 @@ int s_startUp(char *port)
 
     int connected_count = 0;
     int *client_fd;
-    int *client_ip;
+    char *client_ip;
   
     //  Memory allocates dynamically using malloc()
     client_fd = (int*)malloc(100 * sizeof(int));
     client_port = (int*)malloc(100 * sizeof(int));
-    client_ip = (int*)malloc(100 * sizeof(int));
+    client_ip = (char*)malloc(100 * sizeof(int));
     int sort_fd[100];
 
     memset(sort_fd,0,100);
@@ -231,12 +231,13 @@ int s_startUp(char *port)
                             if (getpeername(client_fd[i], (struct sockaddr *)&client, &len) == 0){
                                 printf("getpeername succeeded\n");
                                 client_ip[i] = inet_ntoa(client.sin_addr);
-                                printf("ip inserted\n");
+                                printf("ip: %s\n", client_ip[i]);
                             }
                         }
                         printf("ip sorted\n");
                         for (i = 0 ; i < connected_count; i++){
-                            printf("Sorted Client IP: %s\n", client_ip[i]);
+                            print("i: \n", i);
+                            printf(client_ip[i]);
                         }
 //                        printf("Updated Client Count: %d\n", connected_count);
 
