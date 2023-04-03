@@ -218,38 +218,8 @@ int s_startUp(char *port)
                         for (i = 0 ; i < connected_count + 1; i++) {
                             sort_fd[i] = client_fd[perm[i]];
                         }
-//                        for (i = 0 ; i < connected_count + 1; i++) {
-//                            printf("Sorted fd: %d\n", sort_fd[i]);
-//                        }
                         connected_count += 1;
-//                        printf("Updated Client Count: %d\n", connected_count);
-
-                        // printf("Client fd: ", client_fd, "\n");
-                        // printf("Client Ports: ", client_port, "\n");
-
-                        // // add to linked list storage   
-                        // struct sockaddr_in client_addr;
-                        // socklen_t len;                   
-                        // if (getpeername(fdaccept, (struct sockaddr *)&client_addr, &len) == 0){
-                        //     if (head == NULL){
-                        //         head -> port_num = ntohs(client_addr.sin_port);
-                        //         head -> sck_fd = fdaccept;
-                        //     }else{
-                        //         struct client* new_client = (struct client*) malloc(sizeof(struct client));
-                        //         new_clients -> port_num = ntohs(client_addr.sin_port);
-                        //         new_clients -> sck_fd = fdaccept;                                
-                        //         sortedInsert(clients, new_client)
-                        //     }
-                        // }else{
-                        //     perror("getpeername");
-                        // }
                         client_list(fdaccept,sort_fd, connected_count);
-//                        char str[connected_count * 2 + 1];
-//                        intArrToString(str,connected_count,sort_fd);
-//                        if(send(fdaccept, str, strlen(str), 0) == strlen(str)){
-////                            printf("Done sending clients list!\n");
-//                            fflush(stdout);
-//                        }
                                                             
                     }
                         /* Read from existing clients */
@@ -261,15 +231,6 @@ int s_startUp(char *port)
 
                         if(recv(sock_index, buffer, BUFFER_SIZE, 0) <= 0){
                             close(sock_index);
-//                            printf("Remote Host terminated connection!\n");
-                            /* Remove from watched list */
-                            FD_CLR(sock_index, &master_list);
-//                            printf("New Connected Count: %d\n", connected_count);
-//                            for(int k=0; k < connected_count; k++){
-//                                printf("Active Client fd: %d", sort_fd[k]);
-//                                printf("  Port: %d\n", client_port[k]);
-//
-//                            }
                         }
                         else {
                             char *cmd = (char*) malloc(sizeof(char)*CMD_SIZE);
@@ -295,17 +256,8 @@ int s_startUp(char *port)
                             //Process incoming data from existing clients here ...
 
                             if (strcmp("REFRESH",cmd) == 0){
-//                                char str[connected_count * 2 + 1];
-//                                intArrToString(str,connected_count,sort_fd);
-//                                if(send(sock_index, str, strlen(str), 0) == strlen(str)){
-//                                    printf("Done sending clients list!\n");
-//                                    fflush(stdout);
-//                                }
                                 client_list(sock_index,sort_fd, connected_count);
                             }
-//                            else if (strcmp("LIST",buffer) == 0){
-//                                client_list(sock_index,sort_fd, connected_count);
-//                            }
                             else if (strcmp("EXIT", cmd) == 0){
 
                                 remove_sck(sort_fd, client_port, sock_index, connected_count);
@@ -319,10 +271,7 @@ int s_startUp(char *port)
                                 printf("%s\n",rev[1]); // MSG
                             }
                             printf("\nClient sent me: %s\n", cmd);
-//                            printf("ECHOing it back to the remote host ... ");
-//                            if(send(fdaccept, buffer, strlen(buffer), 0) == strlen(buffer))
-//                                printf("Done!\n");
-//                            fflush(stdout);
+
                         }
 
                         free(buffer);
