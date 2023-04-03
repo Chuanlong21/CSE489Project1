@@ -225,7 +225,7 @@ int s_startUp(char *port)
                         connected_count += 1;
 
                         for (i = 0 ; i < connected_count; i++) {
-                            print("get IP for client %d\n", i);
+                            printf("get IP for client %d\n", i);
                             struct sockaddr_in client;
                             socklen_t len = sizeof(struct sockaddr_in);                   
                             if (getpeername(client_fd[i], (struct sockaddr *)&client, &len) == 0){
