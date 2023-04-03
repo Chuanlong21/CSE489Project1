@@ -76,10 +76,11 @@ int s_startUp(char *port)
     // Initialization for storing client socket information
     struct client {
         int client_fd;
-        int* block_list;
+        char* IP;
+        char** block_list;
     };
 
-    struct client clients[100];
+    struct client clientList[100];
 
     // Maintain a list of connected clients
     // struct client *head = NULL;
@@ -189,9 +190,14 @@ int s_startUp(char *port)
                         fdaccept = accept(server_socket, (struct sockaddr *)&client_addr, &caddr_len);
                         if(fdaccept < 0)
                             perror("Accept failed.");
-
 //                        printf("\nRemote Host connected!\n");
 //                        printf("fd: %d\n", fdaccept);
+                        struct client new_client;
+                        new_client.client_fd = fdaccept;
+                        new_client.IP = malloc(strlen("192.168.1.1") + 1); // +1 用于存储结尾的 null 字符
+                        strcpy(new_client.IP, "192.168.1.1");
+                        new_client.block_list= (char**)malloc(100 * sizeof (char *));
+                        clientList[connected_count] = new_client;
 
                         /* Add to watched socket list */
                         FD_SET(fdaccept, &master_list);
