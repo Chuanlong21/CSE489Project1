@@ -85,10 +85,12 @@ int s_startUp(char *port)
 
     int connected_count = 0;
     int *client_fd;
+    int *client_ip;
   
     //  Memory allocates dynamically using malloc()
     client_fd = (int*)malloc(100 * sizeof(int));
     client_port = (int*)malloc(100 * sizeof(int));
+    client_ip = (int*)malloc(100 * sizeof(int));
     int sort_fd[100];
 
     memset(sort_fd,0,100);
@@ -221,7 +223,7 @@ int s_startUp(char *port)
 //                            printf("Sorted fd: %d\n", sort_fd[i]);
 //                        }
                         connected_count += 1;
-                        
+
                         for (i = 0 ; i < connected_count; i++) {
                             struct sockaddr_in client;
                             socklen_t len = sizeof(struct sockaddr_in);                   
@@ -230,7 +232,7 @@ int s_startUp(char *port)
                             }
                         }
                         for (i = 0 ; i < connected_count; i++){
-                            printf("Sorted Client IP: %s\n", client_ip[i])
+                            printf("Sorted Client IP: %s\n", client_ip[i]);
                         }
 //                        printf("Updated Client Count: %d\n", connected_count);
 
