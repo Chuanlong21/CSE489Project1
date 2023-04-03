@@ -229,9 +229,11 @@ int s_startUp(char *port)
                             struct sockaddr_in client;
                             socklen_t len = sizeof(struct sockaddr_in);                   
                             if (getpeername(client_fd[i], (struct sockaddr *)&client, &len) == 0){
-                                client_ip[i] = inet_ntoa(client_addr.sin_addr);
+                                printf("getpeername succeeded\n");
+                                client_ip[i] = inet_ntoa(client.sin_addr);
                             }
                         }
+
                         for (i = 0 ; i < connected_count; i++){
                             printf("Sorted Client IP: %s\n", client_ip[i]);
                         }
