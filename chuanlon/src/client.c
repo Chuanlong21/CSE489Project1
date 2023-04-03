@@ -148,7 +148,7 @@ int c_startUp(char *port)
 
 //                        printf("right now %d\n", strcmp(cmd,"LOGIN"));
 //                        Process PA1 commands here ...
-                        if (strcmp(cmd,"LOGIN") == 0){
+                        if (strcmp(cmd,"LOGIN") == 0 && login == -1){
                             if (count == 3){
                                 rev[2][strlen(rev[2]) - 1 ] = '\0';
                                 printf("IP: %s\n",rev[1]);
@@ -213,11 +213,33 @@ int c_startUp(char *port)
                                  cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
                                  cse4589_print_and_log("%s",msg);
                                  cse4589_print_and_log("[%s:END]\n", cmd);
+                             }else if(strcmp("SEND", cmd) == 0){
+                                 if (count == 3){
+                                     if (IPv4_verify(rev[1]) == 1 && strlen(rev[2]) < 256){ // 257？
+                                         rev[2][strlen(rev[2]) - 1 ] = '\0';
+                                         char result[6 + strlen(rev[1]) + strlen(rev[2])];
+                                         strcpy(result, "SEND ");
+                                         strcat(result, rev[1]);
+                                         strcat(result," ");
+                                         strcat(result, rev[2]);
+                                         printf("result: %s\n", result);
+                                         send(server, result, strlen(result), 0);
+                                     }
+                                 }else error(cmd);
+                             }else if(strcmp("BROADCAST", cmd) == 0){
+                                 rev[1][strlen(rev[1]) - 1 ] = '\0';
+                                 char result[10 + strlen(rev[1])];
+                                 strcpy(result, "BROADCAST ");
+                                 strcat(result, rev[1]);
+                                 printf("result: %s\n", result);
+                                 send(server, result, strlen(result), 0);
                              }
+
                         }else{
                             error(cmd);
                         }
                         free(cmd);
+                        free(input);
 
                     }
                 }
@@ -279,6 +301,5 @@ int stringToInt(int* arr, char* buff){
         token = strtok(NULL, " ");
     }
     return i;
-
 }
 

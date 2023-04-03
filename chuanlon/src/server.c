@@ -74,12 +74,13 @@ int s_startUp(char *port)
     char hostName[1024];
 
     // Initialization for storing client socket information
-    // struct client{
-    //     int port_num;
-    //     int sck_fd;
+    struct client {
+        int client_fd;
+        int* block_list;
+    };
 
-    //     struct client *next;
-    // };
+    struct client clients[100];
+
     // Maintain a list of connected clients
     // struct client *head = NULL;
 
@@ -257,6 +258,7 @@ int s_startUp(char *port)
                         char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
                         memset(buffer, '\0', BUFFER_SIZE);
 
+
                         if(recv(sock_index, buffer, BUFFER_SIZE, 0) <= 0){
                             close(sock_index);
 //                            printf("Remote Host terminated connection!\n");
@@ -270,8 +272,29 @@ int s_startUp(char *port)
 //                            }
                         }
                         else {
+                            char *cmd = (char*) malloc(sizeof(char)*CMD_SIZE);
+                            memset(cmd, '\0', CMD_SIZE);
+
+                            char* rev[3];
+                            int count = 0;
+                            char *pNext = strtok(buffer, " ");
+
+                            while (pNext != NULL) {
+                                if (count >= 3){
+                                    break;
+                                }
+                                rev[count] = pNext;
+                                ++count;
+                                pNext = strtok(NULL, " ");
+                            }
+
+                            if (count == 1){
+                                rev[0][strlen(rev[0])-1] = '\0';
+                            }
+                            strcpy(cmd, rev[0]);
                             //Process incoming data from existing clients here ...
-                            if (strcmp("REFRESH",buffer) == 0){
+
+                            if (strcmp("REFRESH",cmd) == 0){
 //                                char str[connected_count * 2 + 1];
 //                                intArrToString(str,connected_count,sort_fd);
 //                                if(send(sock_index, str, strlen(str), 0) == strlen(str)){
@@ -283,11 +306,19 @@ int s_startUp(char *port)
 //                            else if (strcmp("LIST",buffer) == 0){
 //                                client_list(sock_index,sort_fd, connected_count);
 //                            }
-                            else if (strcmp("EXIT", buffer) == 0){
+                            else if (strcmp("EXIT", cmd) == 0){
+
                                 remove_sck(sort_fd, client_port, sock_index, connected_count);
                                 connected_count -= 1;
                             }
-//                            printf("\nClient sent me: %s\n", buffer);
+                            else if(strcmp("SEND", cmd) == 0){
+                                printf("right here\n");
+                                printf("%s\n",rev[1]); // IP
+                                printf("%s\n",rev[2]); // MSG
+                            }else if(strcmp("BROADCAST", cmd) == 0){
+                                printf("%s\n",rev[1]); // MSG
+                            }
+                            printf("\nClient sent me: %s\n", cmd);
 //                            printf("ECHOing it back to the remote host ... ");
 //                            if(send(fdaccept, buffer, strlen(buffer), 0) == strlen(buffer))
 //                                printf("Done!\n");
