@@ -74,14 +74,13 @@ int s_startUp(char *port)
     char hostName[1024];
 
     // Initialization for storing client socket information
-    // struct client{
-    //     int port_num;
-    //     int sck_fd;
+    struct client {
+        int client_fd;
+        char* IP;
+        char** block_list;
+    };
 
-    //     struct client *next;
-    // };
-    // Maintain a list of connected clients
-    // struct client *head = NULL;
+    struct client clientList[100];
 
     int connected_count = 0;
     int *client_fd;
@@ -219,54 +218,33 @@ int s_startUp(char *port)
                         for (i = 0 ; i < connected_count + 1; i++) {
                             sort_fd[i] = client_fd[perm[i]];
                         }
-//                        for (i = 0 ; i < connected_count + 1; i++) {
-//                            printf("Sorted fd: %d\n", sort_fd[i]);
-//                        }
+
+                        // add to client struct list
+                        struct client c = {.client_fd = fdaccept, .IP = inet_ntoa(client.sin_addr)};
+                        client_list[connected_count] = c;
+                        printf("added ip: %s\n", c.IP);
+
                         connected_count += 1;
 
-                        for (i = 0 ; i < connected_count; i++) {
-                            printf("get IP for client %d\n", i);
-                            struct sockaddr_in client;
-                            socklen_t len = sizeof(struct sockaddr_in);                   
-                            if (getpeername(client_fd[i], (struct sockaddr *)&client, &len) == 0){
-                                printf("getpeername succeeded\n");
-                                client_ip[i] = inet_ntoa(client.sin_addr);
-                                printf("ip: %s\n", client_ip[i]);
-                            }
-                        }
-                        printf("ip sorted\n");
-                        for (i = 0 ; i < connected_count; i++){
-                            printf("i: \n", i);
-                            printf(client_ip[i]);
-                        }
+                        // for (i = 0 ; i < connected_count; i++) {
+                        //     printf("get IP for client %d\n", i);
+                        //     struct sockaddr_in client;
+                        //     socklen_t len = sizeof(struct sockaddr_in);                   
+                        //     if (getpeername(client_fd[i], (struct sockaddr *)&client, &len) == 0){
+                        //         printf("getpeername succeeded\n");
+                        //         client_ip[i] = inet_ntoa(client.sin_addr);
+                        //         printf("ip: %s\n", client_ip[i]);
+                        //     }
+                        // }
+                        // printf("ip sorted\n");
+                        // for (i = 0 ; i < connected_count; i++){
+                        //     printf("i: \n", i);
+                        //     printf(client_ip[i]);
+                        // }
 //                        printf("Updated Client Count: %d\n", connected_count);
 
-                        // printf("Client fd: ", client_fd, "\n");
-                        // printf("Client Ports: ", client_port, "\n");
 
-                        // // add to linked list storage   
-                        // struct sockaddr_in client_addr;
-                        // socklen_t len;                   
-                        // if (getpeername(fdaccept, (struct sockaddr *)&client_addr, &len) == 0){
-                        //     if (head == NULL){
-                        //         head -> port_num = ntohs(client_addr.sin_port);
-                        //         head -> sck_fd = fdaccept;
-                        //     }else{
-                        //         struct client* new_client = (struct client*) malloc(sizeof(struct client));
-                        //         new_clients -> port_num = ntohs(client_addr.sin_port);
-                        //         new_clients -> sck_fd = fdaccept;                                
-                        //         sortedInsert(clients, new_client)
-                        //     }
-                        // }else{
-                        //     perror("getpeername");
-                        // }
                         client_list(fdaccept,sort_fd, connected_count);
-//                        char str[connected_count * 2 + 1];
-//                        intArrToString(str,connected_count,sort_fd);
-//                        if(send(fdaccept, str, strlen(str), 0) == strlen(str)){
-////                            printf("Done sending clients list!\n");
-//                            fflush(stdout);
-//                        }
                                                             
                     }
                         /* Read from existing clients */
