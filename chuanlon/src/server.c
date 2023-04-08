@@ -268,6 +268,7 @@ int s_startUp(char *port)
 //                            }
                         }
                         else {
+                            
                             //Process incoming data from existing clients here ...
                             if (strcmp("REFRESH",buffer) == 0){
 //                                char str[connected_count * 2 + 1];
@@ -285,7 +286,33 @@ int s_startUp(char *port)
                                 remove_sck(sort_fd, client_port, sock_index, connected_count);
                                 connected_count -= 1;
                             }
-                            else if(strcmp(""))
+                            else if(send_command(buffer) == 0){
+                                // Parse received data
+                                char* client_command;
+                                char* ip_to_sent;
+                                char* msg;
+                                client_command = strtok(buffer, " ");
+                                ip_to_sent =  strtok(NULL, " ");
+                                printf("ip to sent: %s\n", ip_to_sent);
+                                msg = strtok(NULL, " ");
+                                printf("msg: %s\n", msg);
+
+                                // Find fd based on ip to sent
+                                int fd_to_sent;
+                                for(int k=0; k < connected_count; k++){
+                                    if(strcmp(clientList[k].IP, ip_to_sent) == 0){
+                                        fd_to_sent = clientList[k].client_fd;
+                                        printf("fd found: %d\n", fd_to_sent);
+                                        break;
+                                    }
+                                }
+
+                                int sending_result = send(fd_to_sent, msg, strlen(msg), 0);
+
+                                if(sending_result < 0){
+                                    printf("sent failed\n");
+                                }
+                            }
 //                            printf("\nClient sent me: %s\n", buffer);
 //                            printf("ECHOing it back to the remote host ... ");
 //                            if(send(fdaccept, buffer, strlen(buffer), 0) == strlen(buffer))
@@ -316,6 +343,14 @@ void intArrToString(char* str,int count, int arr[]){
     }
 }
 
+int send_command(char* received){
+    char substr[5];
+    strncpy(substr, &received[0], 4);
+    substr[4] = '\0';
+    printf("command from client: %s\n", substr);
+    return strcmp("SEND", substr);
+}
+
 void remove_sck(int fds[100], int pts[100], int sck_idx, int count){
     int pos = 0;
     for (int i = 0; i < count; i++){
@@ -329,6 +364,7 @@ void remove_sck(int fds[100], int pts[100], int sck_idx, int count){
         pts[j] = pts[j + 1];
     }
 }
+
 
 
 
