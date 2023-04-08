@@ -220,9 +220,11 @@ int s_startUp(char *port)
                         }
 
                         // add to client struct list
-                        struct client c = {.client_fd = fdaccept, .IP = inet_ntoa(client.sin_addr)};
-                        client_list[connected_count] = c;
-                        printf("added ip: %s\n", c.IP);
+                        char c_ip[INET_ADDRSTRLEN]; // stores the client side IP address
+                        
+                        struct client c = {.client_fd = fdaccept, .IP = inet_ntop(AF_INET, &client.sin_addr, c_ip, sizeof(c_ip))};
+                        clientList[connected_count] = c;
+                        printf("added ip: %s\n", c_ip);
 
                         connected_count += 1;
 
@@ -283,6 +285,7 @@ int s_startUp(char *port)
                                 remove_sck(sort_fd, client_port, sock_index, connected_count);
                                 connected_count -= 1;
                             }
+                            else if(strcmp(""))
 //                            printf("\nClient sent me: %s\n", buffer);
 //                            printf("ECHOing it back to the remote host ... ");
 //                            if(send(fdaccept, buffer, strlen(buffer), 0) == strlen(buffer))
