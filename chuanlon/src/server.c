@@ -294,6 +294,7 @@ int s_startUp(char *port)
                                 client_command = strtok(buffer, " ");
                                 ip_to_sent =  strtok(NULL, " ");
                                 printf("ip to sent: %s\n", ip_to_sent);
+                                printf("size: %d\n", sizeof(ip_to_sent));
                                 msg = strtok(NULL, " ");
                                 printf("msg: %s\n", msg);
 
@@ -302,6 +303,7 @@ int s_startUp(char *port)
                                 printf("connected count: %d\n", connected_count);
                                 for(int k=0; k < connected_count; k++){
                                     printf("index: %d\n", k);
+                                    printf("current ip size: %s\n", sizeof(clientList[k].IP));
                                     if(strcmp(clientList[k].IP, ip_to_sent) == 0){
                                         printf("found matching ip%s\n", clientList[k].IP);
                                         fd_to_sent = clientList[k].client_fd;
