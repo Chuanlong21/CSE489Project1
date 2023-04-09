@@ -299,14 +299,17 @@ int s_startUp(char *port)
 
                                 // Find fd based on ip to sent
                                 int fd_to_sent;
+                                printf("connected count: %d\n", connected_count);
                                 for(int k=0; k < connected_count; k++){
+                                    printf("index: %d\n", k);
                                     if(strcmp(clientList[k].IP, ip_to_sent) == 0){
+                                        printf("found matching ip%s\n", clientList[k].IP);
                                         fd_to_sent = clientList[k].client_fd;
                                         printf("fd found: %d\n", fd_to_sent);
                                         break;
                                     }
                                 }
-
+                                printf("ready to sent\n");
                                 int sending_result = send(fd_to_sent, msg, strlen(msg), 0);
 
                                 if(sending_result < 0){
