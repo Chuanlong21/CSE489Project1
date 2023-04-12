@@ -221,8 +221,8 @@ int s_startUp(char *port)
 
                         // add to client struct list
                         char c_ip[INET_ADDRSTRLEN]; // stores the client side IP address
-                        
-                        struct client c = {.client_fd = fdaccept, .IP = inet_ntop(AF_INET, &client.sin_addr, c_ip, sizeof(c_ip))};
+                        inet_ntop(AF_INET, &client.sin_addr, c_ip, sizeof(c_ip));
+                        struct client c = {.client_fd = fdaccept, .IP = c_ip};
                         clientList[connected_count] = c;
                         printf("added ip: %s\n", c_ip);
 
@@ -303,7 +303,7 @@ int s_startUp(char *port)
                                 printf("connected count: %d\n", connected_count);
                                 for(int k=0; k < connected_count; k++){
                                     printf("index: %d\n", k);
-                                    printf("current ip size: %s\n", sizeof(clientList[k].IP));
+                                    printf("current ip size: %d\n", sizeof(clientList[k].IP));
                                     if(strcmp(clientList[k].IP, ip_to_sent) == 0){
                                         printf("found matching ip%s\n", clientList[k].IP);
                                         fd_to_sent = clientList[k].client_fd;
