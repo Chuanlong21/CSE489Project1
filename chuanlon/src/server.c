@@ -78,6 +78,9 @@ int s_startUp(char *port)
         int client_fd;
         char* IP;
         char** block_list;
+        int mSend;
+        int mRev;
+        int exit;
     };
 
     struct client clientList[100];
