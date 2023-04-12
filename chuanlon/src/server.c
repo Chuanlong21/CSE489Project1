@@ -283,6 +283,8 @@ int s_startUp(char *port)
                             } else if (strcmp("UNBLOCK", cmd) == 0){
                                 printf("%s\n",rev[1]); // MSG
                                 send(sock_index,"YES",3,0);
+                            } else if(strcmp("LOGOUT", cmd) == 0){
+
                             }
                             printf("\nClient sent me: %s\n", cmd);
 

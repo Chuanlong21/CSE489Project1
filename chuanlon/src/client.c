@@ -189,7 +189,7 @@ int c_startUp(char *port)
                             cse4589_print_and_log("[%s:END]\n", cmd);
                             exit(-1);
                         }
-                        else if (login == 1 ){
+                        else if (login == 1){
                              if(strcmp("REFRESH",cmd) == 0){
                                 send(server,"REFRESH", strlen("REFRESH"), 0);
                                  memset(msg, '\0', 1000);
@@ -271,8 +271,10 @@ int c_startUp(char *port)
                                          } else error(cmd);
                                      } else error(cmd);
                                  } else error(cmd);
+                             }else if (strcmp("LOGOUT", cmd) == 0){
+                                 send(server, "LOGOUT",6, 0);
+                                 login = 0;
                              }
-
                         }else{
                             error(cmd);
                         }
