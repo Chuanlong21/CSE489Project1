@@ -265,7 +265,6 @@ int s_startUp(char *port)
                                 client_list(sock_index,sort_fd, connected_count);
                             }
                             else if (strcmp("EXIT", cmd) == 0){
-
                                 remove_sck(sort_fd, client_port, sock_index, connected_count);
                                 connected_count -= 1;
                             }
@@ -275,6 +274,12 @@ int s_startUp(char *port)
                                 printf("%s\n",rev[2]); // MSG
                             }else if(strcmp("BROADCAST", cmd) == 0){
                                 printf("%s\n",rev[1]); // MSG
+                            } else if(strcmp("BLOCK", cmd) == 0){
+                                printf("%s\n",rev[1]); // MSG
+                                send(sock_index,"YES",3,0);
+                            } else if (strcmp("UNBLOCK", cmd) == 0){
+                                printf("%s\n",rev[1]); // MSG
+                                send(sock_index,"YES",3,0);
                             }
                             printf("\nClient sent me: %s\n", cmd);
 
