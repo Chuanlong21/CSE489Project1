@@ -78,6 +78,7 @@ int s_startUp(char *port)
         int client_fd;
         char* IP;
         char** block_list;
+        int block_count;
     };
 
     struct client clientList[100];
@@ -298,17 +299,36 @@ int s_startUp(char *port)
                                 msg = strtok(NULL, " ");
                                 printf("msg: %s\n", msg);
 
+                                // Find sender's block list
+                                char** blocked;
+                                int block_c = 0;
+                                for (int i = 0; i < connected_count; i++){
+                                    if(strcmp(clientList[i].client_fd == sock_index)){
+                                        blocked = clientList[i].block_list;
+                                        block_c = clientList[i].block_count;
+                                        break;
+                                    }
+                                }
+                                printf("THis user had %d blocked-users", block_c);
+
                                 // Find fd based on ip to sent
                                 int fd_to_sent;
+                                int fd_found = 0;
                                 printf("connected count: %d\n", connected_count);
                                 for(int k=0; k < connected_count; k++){
                                     printf("index: %d\n", k);
-                                    printf("current ip size: %d\n", sizeof(clientList[k].IP));
+                                    printf("current ip: %s\n", clientList[k].IP);
                                     if(strcmp(clientList[k].IP, ip_to_sent) == 0){
                                         printf("found matching ip%s\n", clientList[k].IP);
                                         fd_to_sent = clientList[k].client_fd;
+                                        fd_found = 1;
                                         printf("fd found: %d\n", fd_to_sent);
                                         break;
+                                    }
+                                }
+                                if (fd_found == 1){
+                                    if (is_blocked(blocked, block_c, ip_to_sent) == 1){
+                                        printf("This receipient has been blocked.\n")
                                     }
                                 }
                                 printf("ready to sent\n");
@@ -370,6 +390,17 @@ void remove_sck(int fds[100], int pts[100], int sck_idx, int count){
     }
 }
 
+int is_blocked(char **block_list, int block_count, char *client_ip){
+    if (block_count == 0){
+        return 0;
+    }
+    for (int i = 0; i < block_count; i++){
+        if(strcmp(client_ip, block_list[i]) == 0){
+            return 1;
+        }
+    }
+    return 0
+}
 
 
 
