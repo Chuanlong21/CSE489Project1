@@ -21,3 +21,11 @@ void listing(int* fds, int count);
 void error(char* cmd);
 
 void client_list(int sock_index,int* fds, int count);
+
+struct client {
+    int client_fd;
+    char* IP;
+    char** block_list;
+    int block_count;
+    int status; //0 for logout; 1 for login
+};

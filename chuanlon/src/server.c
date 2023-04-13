@@ -79,6 +79,7 @@ int s_startUp(char *port)
         char* IP;
         char** block_list;
         int block_count;
+        int status; //0 for logout; 1 for login
     };
 
     struct client clientList[100];
@@ -179,6 +180,10 @@ int s_startUp(char *port)
                             cmd[strlen(cmd) - 1] ='\0';
                             cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
                             listing(sorted_fd, connected_count);
+                            cse4589_print_and_log("[%s:END]\n", cmd);
+                        }else if (blocked_cmd(cmd) == 0){
+                            cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
+                            get_block_list(cmd, clientList, connected_count);
                             cse4589_print_and_log("[%s:END]\n", cmd);
                         }
 
@@ -287,6 +292,33 @@ int s_startUp(char *port)
                                 remove_sck(sort_fd, client_port, sock_index, connected_count);
                                 connected_count -= 1;
                             }
+                            else if(block_command(buffer) == 0){
+                                // Parse received data
+                                char* client_command;
+                                char* ip_to_block;
+                                client_command = strtok(buffer, " ");
+                                ip_to_block = strtok(NULL, " ");
+                                printf("ip to block: %s\n", ip_to_block);
+                                struct client sender;
+                                int current_block_count;
+                                for(int i = 0; i < connected_count; i++){
+                                    if(clientList[i].client_fd == sock_index){
+                                        current_block_count = clientList[i].block_count;
+                                        if(is_blocked(clientList[i].block_list, current_block_count, ip_to_block) == 0){
+                                            clientList[i].block_list[current_block_count] = ip_to_block;
+                                            clientList[i].block_count ++;
+                                            printf("Blocked client with ip: %s\n", ip_to_block);
+                                            send(sock_index, "YES", 3, 0);
+                                            printf("sent yes to client");
+                                        }else{
+                                            printf("This ip is already in block list: %s\n", ip_to_block);
+                                            send(sock_index, "NO", 2, 0);
+                                            printf("sent no to client");
+                                        }
+                                        break;
+                                    }
+                                }
+                            }
                             else if(send_command(buffer) == 0){
                                 // Parse received data
                                 char* client_command;
@@ -303,7 +335,7 @@ int s_startUp(char *port)
                                 char** blocked;
                                 int block_c = 0;
                                 for (int i = 0; i < connected_count; i++){
-                                    if(strcmp(clientList[i].client_fd == sock_index)){
+                                    if(clientList[i].client_fd == sock_index){
                                         blocked = clientList[i].block_list;
                                         block_c = clientList[i].block_count;
                                         break;
@@ -328,7 +360,7 @@ int s_startUp(char *port)
                                 }
                                 if (fd_found == 1){
                                     if (is_blocked(blocked, block_c, ip_to_sent) == 1){
-                                        printf("This receipient has been blocked.\n")
+                                        printf("This receipient has been blocked.\n");
                                     }
                                 }
                                 printf("ready to sent\n");
@@ -376,6 +408,55 @@ int send_command(char* received){
     return strcmp("SEND", substr);
 }
 
+int block_command(char* received){
+    char substr[6];
+    strncpy(substr, &received[0], 5);
+    substr[5] = '\0';
+    printf("command from client: %s\n", substr);
+    return strcmp("BLOCK", substr);
+}
+
+int blocked_cmd(char* input){
+    char substr[8];
+    strncpy(substr, &input[0], 7);
+    substr[7] = '\0';
+    printf("user input: %s\n", substr);
+    return strcmp("BLOCKED", substr);
+}
+
+void get_block_list(char* cmd, struct client * c_lst, int connect_count){
+    char* s = strchr(cmd, '<');
+    char* e = strchr(cmd, '>');
+    char ip[16];
+    // Extract the IP address substring
+    if (s && e && e > s) {
+        strncpy(ip, s+1, e-s-1);
+        ip[e-s-1] = '\0';
+        printf("Getting block list for ip:%s\n", ip);
+    }else{
+        printf("Invalid IP");
+    }
+
+    // Get block list for this client
+    char *c_ip = ip;
+    char **block_list;
+    int block_count;
+    for(int i = 0; i < connect_count; i++){
+        if(strcmp(c_lst[i].IP, c_ip) == 0){
+            block_list = c_lst[i].block_list;
+            block_count = c_lst[i].block_count;
+            printf("Get block count: %d\n", block_count);
+            break;
+        }
+    }
+    for(int i = 0; i < block_count; i++){
+        printf("Blocked: %s\n", block_list[i]);
+    }
+    // Display blocked list
+
+
+}
+
 void remove_sck(int fds[100], int pts[100], int sck_idx, int count){
     int pos = 0;
     for (int i = 0; i < count; i++){
@@ -399,7 +480,7 @@ int is_blocked(char **block_list, int block_count, char *client_ip){
             return 1;
         }
     }
-    return 0
+    return 0;
 }
 
 

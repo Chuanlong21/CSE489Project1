@@ -148,7 +148,7 @@ int c_startUp(char *port)
 
 //                        printf("right now %d\n", strcmp(cmd,"LOGIN"));
 //                        Process PA1 commands here ...
-                        if (strcmp(cmd,"LOGIN") == 0){
+                        if (strcmp(cmd,"LOGIN") == 0 && login == -1){
                             if (count == 3){
                                 rev[2][strlen(rev[2]) - 1 ] = '\0';
                                 printf("IP: %s\n",rev[1]);
@@ -189,7 +189,7 @@ int c_startUp(char *port)
                             cse4589_print_and_log("[%s:END]\n", cmd);
                             exit(-1);
                         }
-                        else if (login == 1 ){
+                        else if (login == 1){
                              if(strcmp("REFRESH",cmd) == 0){
                                 send(server,"REFRESH", strlen("REFRESH"), 0);
                                  memset(msg, '\0', 1000);
@@ -213,7 +213,7 @@ int c_startUp(char *port)
                                  cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
                                  cse4589_print_and_log("%s",msg);
                                  cse4589_print_and_log("[%s:END]\n", cmd);
-                            }else if(strcmp("SEND", cmd) == 0){
+                             }else if(strcmp("SEND", cmd) == 0){
                                  if (count == 3){
                                      if (IPv4_verify(rev[1]) == 1 && strlen(rev[2]) < 256){ // 257？
                                          rev[2][strlen(rev[2]) - 1 ] = '\0';
@@ -222,7 +222,7 @@ int c_startUp(char *port)
                                          strcat(result, rev[1]);
                                          strcat(result," ");
                                          strcat(result, rev[2]);
-                                         printf("msg to sent: %s\n", result);
+                                         printf("result: %s\n", result);
                                          send(server, result, strlen(result), 0);
                                      }
                                  }else error(cmd);
@@ -231,13 +231,55 @@ int c_startUp(char *port)
                                  char result[10 + strlen(rev[1])];
                                  strcpy(result, "BROADCAST ");
                                  strcat(result, rev[1]);
-                                 printf("broadcast msg: %s\n", result);
+                                 printf("result: %s\n", result);
                                  send(server, result, strlen(result), 0);
+                             }else if (strcmp("BLOCK", cmd) == 0){
+                                 if (count == 2){
+                                     rev[1][strlen(rev[1]) - 1 ] = '\0';
+                                     if (IPv4_verify(rev[1]) == 1){
+                                         char result[6 + strlen(rev[1])];
+                                         strcpy(result, "BLOCK ");
+                                         strcat(result, rev[1]);
+                                         send(server, result, strlen(result), 0);
+                                         //看一下是否block成功了, yes or no
+                                         memset(msg, '\0', 1000);
+                                         if(recv(server, msg, 1000, 0) >= 0){
+                                             fflush(stdout);
+                                         }
+                                         if (strcmp(msg, "YES") == 0){
+                                             cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
+                                             cse4589_print_and_log("[%s:END]\n", cmd);
+                                         } else error(cmd);
+                                     } else error(cmd);
+                                 } else error(cmd);
+                             }else if (strcmp("UNBLOCK", cmd) == 0){
+                                 if (count == 2){
+                                     rev[1][strlen(rev[1]) - 1 ] = '\0';
+                                     if (IPv4_verify(rev[1]) == 1){
+                                         char result[8 + strlen(rev[1])];
+                                         strcpy(result, "UNBLOCK ");
+                                         strcat(result, rev[1]);
+                                         send(server, result, strlen(result), 0);
+                                         //看一下是否block成功了, yes or no
+                                         memset(msg, '\0', 1000);
+                                         if(recv(server, msg, 1000, 0) >= 0){
+                                             fflush(stdout);
+                                         }
+                                         if (strcmp(msg, "YES") == 0){
+                                             cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
+                                             cse4589_print_and_log("[%s:END]\n", cmd);
+                                         } else error(cmd);
+                                     } else error(cmd);
+                                 } else error(cmd);
+                             }else if (strcmp("LOGOUT", cmd) == 0){
+                                 send(server, "LOGOUT",6, 0);
+                                 login = 0;
                              }
                         }else{
                             error(cmd);
                         }
                         free(cmd);
+                        free(input);
 
                     }
                 }
@@ -299,6 +341,5 @@ int stringToInt(int* arr, char* buff){
         token = strtok(NULL, " ");
     }
     return i;
-
 }
 
