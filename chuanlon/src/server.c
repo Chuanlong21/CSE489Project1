@@ -238,7 +238,6 @@ int s_startUp(char *port)
                         else {
                             char *cmd = (char*) malloc(sizeof(char)*CMD_SIZE);
                             memset(cmd, '\0', CMD_SIZE);
-
                             char* rev[3];
                             int count = 0;
                             char *pNext = strtok(buffer, " ");
@@ -248,17 +247,16 @@ int s_startUp(char *port)
                                     break;
                                 }
                                 rev[count] = pNext;
+                                printf("%s\n",pNext);
                                 ++count;
                                 pNext = strtok(NULL, " ");
                             }
 
-                            if (count == 1){
-                                rev[0][strlen(rev[0])-1] = '\0';
-                            }
                             strcpy(cmd, rev[0]);
                             //Process incoming data from existing clients here ...
 
                             if (strcmp("REFRESH",cmd) == 0){
+                                printf("!23132");
                                 client_list(sock_index,sort_fd, connected_count);
                             }
                             else if (strcmp("EXIT", cmd) == 0){

@@ -154,8 +154,10 @@ int c_startUp(char *port)
                                 printf("IP: %s\n",rev[1]);
                                 printf("PORT: %s\n",rev[2]);
                                 if (IPv4_verify(rev[1]) == 1 && validNumber(rev[2]) == 1){
+                                    printf("123");
                                     //when we have login command, we will need to connect to the host sever
                                     server = connect_to_host(rev[1], rev[2], port);
+                                    printf("%d\n",server);
                                     if (server > -1) {
                                         FD_SET(server, &master_list);
                                         if (server > head_socket) {
@@ -166,6 +168,7 @@ int c_startUp(char *port)
                                         cse4589_print_and_log("[%s:END]\n", cmd);
                                     }
                                     else {
+                                        printf("1");
                                         cse4589_print_and_log("[%s:ERROR]\n", cmd);
                                         cse4589_print_and_log("[%s:END]\n", cmd);
                                     }
@@ -177,6 +180,17 @@ int c_startUp(char *port)
 //                                    if (stringToInt(des,buffer) < 0) error(rev[0]);
                                 } else error(cmd);
                             } else error(cmd);
+                        }else if (strcmp(cmd,"LOGIN") == 0 && login == 0){
+                            if (count == 3){
+                                rev[2][strlen(rev[2]) - 1 ] = '\0';
+                                printf("IP: %s\n",rev[1]);
+                                printf("PORT: %s\n",rev[2]);
+                                if (IPv4_verify(rev[1]) == 1 && validNumber(rev[2]) == 1){
+                                    login = 1;
+                                    cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
+                                    cse4589_print_and_log("[%s:END]\n", cmd);
+                                }
+                            }
                         }else if(strcmp("PORT", cmd) == 0){
                             show_port(port);
                         }else if (strcmp("AUTHOR", cmd) == 0){
@@ -271,7 +285,9 @@ int c_startUp(char *port)
                                      } else error(cmd);
                                  } else error(cmd);
                              }else if (strcmp("LOGOUT", cmd) == 0){
-                                 send(server, "LOGOUT",6, 0);
+                                 send(server, "LOGOUT", strlen("LOGOUT"), 0);
+                                 cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
+                                 cse4589_print_and_log("[%s:END]\n", cmd);
                                  login = 0;
                              }
                         }else{
