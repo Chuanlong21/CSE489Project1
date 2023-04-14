@@ -175,7 +175,15 @@ int s_startUp(char *port)
                             listing(sorted_fd, connected_count);
                             cse4589_print_and_log("[%s:END]\n", cmd);
                         }
-
+//                        else if (strcmp("STATISTICS\n",cmd) == 0){
+//                            for (int i = 0; i < connected_count; ++i) {
+//                                char * logIN = "logged-in";
+//                                if (clientList[i].status == 0){
+//                                    logIN = "logged-out";
+//                                }
+//                                cse4589_print_and_log("%-5d%-35s%-8d%-8d%-8s\n", i+1, hostname, clientList[i].mSend, clientList[i].mRev, logIN);
+//                            }
+//                        }
                         free(cmd);
                     }
                         /* Check if new client is requesting connection */
