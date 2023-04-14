@@ -297,6 +297,7 @@ int s_startUp(char *port)
                                     if(clientList[i].client_fd == sock_index){
                                         current_block_count = clientList[i].block_count;
                                         // Check if the client(to block) is already being blocked
+                                        // Check if the client(to block) is already being blocked
                                         if(is_blocked(clientList[i].block_list, current_block_count, ip_to_block) == 0){
                                             int b_fd;
                                             int b_port;
@@ -329,6 +330,7 @@ int s_startUp(char *port)
                                             clientList[i].block_list[current_block_count] = b;
                                             clientList[i].block_count ++;
                                             printf("Blocked client with ip: %s\n", ip_to_block);
+                                            // Notify client about finishing the blocking event
                                             // Notify client about finishing the blocking event
                                             send(sock_index, "YES", 3, 0);
                                             printf("sent yes to client");
