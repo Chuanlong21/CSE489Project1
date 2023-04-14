@@ -266,6 +266,15 @@ int s_startUp(char *port)
                                 printf("right here\n");
                                 printf("%s\n",rev[1]); // IP
                                 printf("%s\n",rev[2]); // MSG
+                                char* from;
+                                for (int i = 0; i < connected_count; ++i) {
+                                    if (sock_index == clientList[i].client_fd){
+                                        from = clientList[i].IP;
+                                    }
+                                }
+                                cse4589_print_and_log("[%s:SUCCESS]\n", "RELAYED");
+                                cse4589_print_and_log("msg from:%s, to:%s\n[msg]:%s\n", from, rev[1], rev[2]);
+                                cse4589_print_and_log("[%s:END]\n", "RELAYED");
                             }else if(strcmp("BROADCAST", cmd) == 0){
                                 printf("%s\n",rev[1]); // MSG
                             } else if(strcmp("BLOCK", cmd) == 0){
