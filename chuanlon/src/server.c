@@ -284,10 +284,40 @@ int s_startUp(char *port)
                                 for(int i = 0; i < connected_count; i++){
                                     if(clientList[i].client_fd == sock_index){
                                         current_block_count = clientList[i].block_count;
+                                        // Check if the client(to block) is already being blocked
                                         if(is_blocked(clientList[i].block_list, current_block_count, ip_to_block) == 0){
-                                            struct blocked b = {.IP = ip_to_block};
+                                            int b_fd;
+                                            int b_port;
+                                            char *b_hostname;
+                                            for (int k = 0; k < connected_count; k++){
+                                                if(strcmp(clientList[k].IP, ip_to_block) == 0){
+                                                    b_fd = clientList[k].client_fd;
+                                                    printf("blocked client fd: %d\n", b_fd);
+                                                    break;
+                                                }
+                                            }
+                                            // Get port number for blocked client
+                                            struct sockaddr_in client;
+                                            socklen_t len = sizeof(struct sockaddr_in);                
+                                            if (getpeername(fdaccept, (struct sockaddr *)&client, &len) == 0){
+                                                b_port = ntohs(client.sin_port);
+                                                printf("blocked client port number: %d\n", b_port);
+                                            }else{
+                                                printf("gepteername failed\n");
+                                            }
+                                            // Get hostname for blocked client
+                                            char addr[sizeof(struct in_addr)];
+                                            inet_pton(AF_INET, inet_ntoa(client.sin_addr), addr);
+                                            struct hostent *gethost_rtval;
+                                            gethost_rtval = gethostbyaddr(&addr, sizeof(addr), AF_INET);
+                                            b_hostname = gethost_rtval->h_name;
+                                            printf("blocked client hostname: %s\n", b_hostname);
+                                            // Initialize blocked client
+                                            struct blocked b = {.IP = ip_to_block, .host_name = b_hostname, .port = b_port};
+                                            clientList[i].block_list[current_block_count] = b;
                                             clientList[i].block_count ++;
                                             printf("Blocked client with ip: %s\n", ip_to_block);
+                                            // Notify client about finishing the blocking event
                                             send(sock_index, "YES", 3, 0);
                                             printf("sent yes to client");
                                         }else{
