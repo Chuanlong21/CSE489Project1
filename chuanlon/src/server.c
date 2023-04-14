@@ -33,7 +33,7 @@
 #include <unistd.h>
 #include <sys/types.h>
 #include <netdb.h>
-
+#include <arpa/inet.h>
 
 #include <../include/logger.h>
 #include <../include/common.h>
@@ -59,6 +59,7 @@ int *client_port;
 int compare (const void * a, const void * b);
 void intArrToString(char* str,int count, int arr[]);
 void remove_sck(int fds[100], int pts[100], int sck_idx, int count);
+int is_blocked(struct blocked* block_list, int block_count, char* client_ip);
 
 int s_startUp(char *port)
 {
@@ -74,15 +75,6 @@ int s_startUp(char *port)
     char hostName[1024];
 
     // Initialization for storing client socket information
-    struct client {
-        int client_fd;
-        char* IP;
-        char** block_list;
-        int mSend;
-        int mRev;
-        int exit;
-    };
-
     struct client clientList[100];
 
     // Maintain a list of connected clients
@@ -115,7 +107,6 @@ int s_startUp(char *port)
     /* Fill up address structures */
     if (getaddrinfo(hostName, port, &hints, &res) != 0)
         perror("getaddrinfo failed");
-
     /* Socket */
     server_socket = socket(res->ai_family, res->ai_socktype, res->ai_protocol);
     if(server_socket < 0)
@@ -195,12 +186,7 @@ int s_startUp(char *port)
                             perror("Accept failed.");
 //                        printf("\nRemote Host connected!\n");
 //                        printf("fd: %d\n", fdaccept);
-                        struct client new_client;
-                        new_client.client_fd = fdaccept;
-                        new_client.IP = malloc(strlen("192.168.1.1") + 1); // +1 用于存储结尾的 null 字符
-                        strcpy(new_client.IP, "192.168.1.1");
-                        new_client.block_list= (char**)malloc(100 * sizeof (char *));
-                        clientList[connected_count] = new_client;
+
 
                         /* Add to watched socket list */
                         FD_SET(fdaccept, &master_list);
@@ -227,9 +213,17 @@ int s_startUp(char *port)
                         for (i = 0 ; i < connected_count + 1; i++) {
                             sort_fd[i] = client_fd[perm[i]];
                         }
+                        char c_ip[INET_ADDRSTRLEN]; // stores the client side IP address
+                        inet_ntop(AF_INET, &client.sin_addr, c_ip, sizeof(c_ip));
+                        struct blocked* newBlocked = malloc(sizeof (struct blocked) * 100);
+                        struct client c = {.client_fd = fdaccept, .IP = c_ip ,
+                                .block_list = newBlocked, .block_count = 0, .status = 1, .mRev = 0, .mSend =0 };
+                        clientList[connected_count] = c;
+                        char* tem = clientList[connected_count].IP;
+                        printf("added ip: %s\n", tem);
                         connected_count += 1;
                         client_list(fdaccept,sort_fd, connected_count);
-                                                            
+
                     }
                         /* Read from existing clients */
                     else{
@@ -279,7 +273,25 @@ int s_startUp(char *port)
                                 printf("%s\n",rev[1]); // MSG
                             } else if(strcmp("BLOCK", cmd) == 0){
                                 printf("%s\n",rev[1]); // MSG
-                                send(sock_index,"YES",3,0);
+                                int current_block_count;
+                                char* ip_to_block = rev[1];
+                                for(int i = 0; i < connected_count; i++){
+                                    if(clientList[i].client_fd == sock_index){
+                                        current_block_count = clientList[i].block_count;
+                                        if(is_blocked(clientList[i].block_list, current_block_count, ip_to_block) == 0){
+                                            struct blocked b = {.IP = ip_to_block};
+                                            clientList[i].block_count ++;
+                                            printf("Blocked client with ip: %s\n", ip_to_block);
+                                            send(sock_index, "YES", 3, 0);
+                                            printf("sent yes to client");
+                                        }else{
+                                            printf("This ip is already in block list: %s\n", ip_to_block);
+                                            send(sock_index, "NO", 2, 0);
+                                            printf("sent no to client");
+                                        }
+                                        break;
+                                    }
+                                }
                             } else if (strcmp("UNBLOCK", cmd) == 0){
                                 printf("%s\n",rev[1]); // MSG
                                 send(sock_index,"YES",3,0);
@@ -297,8 +309,23 @@ int s_startUp(char *port)
         }
     }
 
+
     return 0;
 }
+
+int is_blocked(struct blocked* block_list, int block_count, char* client_ip){
+    if (block_count == 0){
+        return 0;
+    }
+    for (int i = 0; i < block_count; i++){
+        if(strcmp(client_ip, block_list[i].IP) == 0){
+            return 1;
+        }
+    }
+    return 0;
+}
+
+
 
 int compare (const void * a, const void * b) {
     int diff = client_port[*(int*)a] - client_port[*(int*)b];
