@@ -60,6 +60,8 @@ int compare (const void * a, const void * b);
 void intArrToString(char* str,int count, int arr[]);
 void remove_sck(int fds[100], int pts[100], int sck_idx, int count);
 int is_blocked(struct blocked* block_list, int block_count, char* client_ip);
+void get_block_list(char* ip, struct client * c_lst, int connect_count);
+int blocked_cmd(char* input);
 
 int s_startUp(char *port)
 {
@@ -174,6 +176,16 @@ int s_startUp(char *port)
                             cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
                             listing(sorted_fd, connected_count);
                             cse4589_print_and_log("[%s:END]\n", cmd);
+                        }else if (blocked_cmd(cmd) == 0){
+                            char* client_command;
+                            char* client_ip;
+                            client_command = strtok(cmd, " ");
+                            client_ip = strtok(NULL, " ");
+                            printf("Passed in client IP: %s\n", client_ip);
+                            cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
+                            get_block_list(client_ip, clientList, connected_count);
+                            cse4589_print_and_log("[%s:END]\n", cmd);
+
                         }
 //                        else if (strcmp("STATISTICS\n",cmd) == 0){
 //                            for (int i = 0; i < connected_count; ++i) {
@@ -354,6 +366,7 @@ int s_startUp(char *port)
                                     if(clientList[i].client_fd == sock_index){
                                         current_block_count = clientList[i].block_count;
                                         // Check if the client(to block) is already being blocked
+                                        // Check if the client(to block) is already being blocked
                                         if(is_blocked(clientList[i].block_list, current_block_count, ip_to_block) == 0){
                                             int b_fd;
                                             int b_port = 0;
@@ -368,7 +381,7 @@ int s_startUp(char *port)
                                             // Get port number for blocked client
                                             struct sockaddr_in client;
                                             socklen_t len = sizeof(struct sockaddr_in);                
-                                            if (getpeername(fdaccept, (struct sockaddr *)&client, &len) == 0){
+                                            if (getpeername(b_fd, (struct sockaddr *)&client, &len) == 0){
                                                 b_port = ntohs(client.sin_port);
                                                 printf("blocked client port number: %d\n", b_port);
                                             }else{
@@ -386,6 +399,7 @@ int s_startUp(char *port)
                                             clientList[i].block_list[current_block_count] = b;
                                             clientList[i].block_count ++;
                                             printf("Blocked client with ip: %s\n", ip_to_block);
+                                            // Notify client about finishing the blocking event
                                             // Notify client about finishing the blocking event
                                             send(sock_index, "YES", 3, 0);
                                             printf("sent yes to client");
@@ -432,6 +446,43 @@ int is_blocked(struct blocked* block_list, int block_count, char* client_ip){
         }
     }
     return 0;
+}
+
+int blocked_cmd(char* input){
+    char substr[8];
+    strncpy(substr, &input[0], 7);
+    substr[7] = '\0';
+    printf("user input: %s\n", substr);
+    return strcmp("BLOCKED", substr);
+}
+
+int compareByPort(const void* a, const void* b) {
+    const struct blocked* blockedA = (const struct blocked*) a;
+    const struct blocked* blockedB = (const struct blocked*) b;
+    return blockedA->port - blockedB->port;
+}
+
+void get_block_list(char* ip, struct client * c_lst, int connect_count){
+
+    // Get block list for this client
+    int block_count;
+    struct blocked *blc;
+    for(int i = 0; i < connect_count; i++){
+        if(strcmp(c_lst[i].IP, ip) == 0){
+            block_count = c_lst[i].block_count;
+            blc = c_lst[i].block_list;
+            printf("Get block count: %d\n", block_count);
+            break;
+        }
+    }
+    // Sort blocked list by increasing port number
+    qsort(blc, block_count, sizeof(struct blocked), compareByPort);
+    printf("Finishing sorting\n");
+    for(int i = 0; i < block_count; i++){
+        struct blocked blocked_client = blc[i];
+        cse4589_print_and_log("%-5d%-35s%-20s%-8d\n", i+1, blocked_client.host_name, blocked_client.IP, blocked_client.port);
+    }
+
 }
 
 

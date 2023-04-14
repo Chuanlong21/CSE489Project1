@@ -7,21 +7,23 @@
 
 #endif //CSE489PROJECT1_COMMON_H
 
+struct blocked{
+    int port;
+    char* IP;
+    char* host_name;
+};
+
 struct client {
     int client_fd;
     char* IP;
-    struct blocked* block_list;
+    struct blocked *block_list;
     int block_count;
     int status; //0 for logout; 1 for login
     int mSend;
     int mRev;
 };
 
-struct blocked{
-    int port;
-    char* IP;
-    char* host_name;
-};
+
 
 
 
