@@ -321,11 +321,13 @@ int s_startUp(char *port)
                                 cse4589_print_and_log("msg from:%s, to:%s\n[msg]:%s\n", from, "255.255.255.255", rev[1]);
                                 cse4589_print_and_log("[%s:END]\n", "RELAYED");
                                 for (int i = 0; i < connected_count; i++) {
+                                    printf("status %d : %d\n", clientList[i].client_fd, clientList[i].status);
                                     if (sock_index == clientList[i].client_fd || clientList[i].status == 0){
                                         continue;
                                     }
                                     int check = 1;
                                     for (int j = 0; j < clientList[i].block_count; j++) {
+                                        printf("block : %s\n",clientList[i].block_list[j].IP);
                                         if (strcmp(from, clientList[i].block_list[j].IP) == 0){
                                             check = 0;
                                             break;
@@ -349,7 +351,7 @@ int s_startUp(char *port)
                                             int b_port = 0;
                                             char *b_hostname;
                                             for (int k = 0; k < connected_count; k++){
-                                                if(strcmp(clientList[k].IP, ip_to_block) == 0){
+                                                if(strcmp(clientList[k].IP, ip_to_block) == 0){ //有问题呀
                                                     b_fd = clientList[k].client_fd;
                                                     printf("blocked client fd: %d\n", b_fd);
                                                     break;
