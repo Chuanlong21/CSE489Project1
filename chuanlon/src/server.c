@@ -287,7 +287,7 @@ int s_startUp(char *port)
                                         // Check if the client(to block) is already being blocked
                                         if(is_blocked(clientList[i].block_list, current_block_count, ip_to_block) == 0){
                                             int b_fd;
-                                            int b_port;
+                                            int b_port = 0;
                                             char *b_hostname;
                                             for (int k = 0; k < connected_count; k++){
                                                 if(strcmp(clientList[k].IP, ip_to_block) == 0){
