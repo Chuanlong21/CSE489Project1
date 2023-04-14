@@ -296,7 +296,11 @@ int s_startUp(char *port)
                                 printf("%s\n",rev[1]); // MSG
                                 send(sock_index,"YES",3,0);
                             } else if(strcmp("LOGOUT", cmd) == 0){
-
+                                for (int i = 0; i < connected_count; i++) {
+                                    if (sock_index == clientList[i].client_fd){
+                                        clientList->status = 0;
+                                    }
+                                }
                             }
                             printf("\nClient sent me: %s\n", cmd);
 

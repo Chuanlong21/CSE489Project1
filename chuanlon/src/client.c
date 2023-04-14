@@ -169,7 +169,6 @@ int c_startUp(char *port)
                                         cse4589_print_and_log("[%s:ERROR]\n", cmd);
                                         cse4589_print_and_log("[%s:END]\n", cmd);
                                     }
-
 //                                    char *buffer = (char*) malloc(sizeof(char)*BUFFER_SIZE);
                                     memset(msg, '\0', 1000);
                                     if(recv(server, msg, 1000, 0) >= 0){
