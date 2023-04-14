@@ -185,7 +185,6 @@ int s_startUp(char *port)
                             cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
                             get_block_list(client_ip, clientList, connected_count);
                             cse4589_print_and_log("[%s:END]\n", cmd);
-
                         }
 //                        else if (strcmp("STATISTICS\n",cmd) == 0){
 //                            for (int i = 0; i < connected_count; ++i) {
@@ -291,6 +290,7 @@ int s_startUp(char *port)
                                 int isValid = 1;
                                 int to = -1;
                                 int toIndex = -1;
+                                int toStatus = 0;
                                 for (int i = 0; i < connected_count; i++) {
                                     if (sock_index == clientList[i].client_fd){
                                         from = clientList[i].IP;
@@ -300,24 +300,32 @@ int s_startUp(char *port)
                                 for (int i = 0; i < connected_count; i++) {
                                     if (strcmp(rev[1],clientList[i].IP) == 0){
                                         toIndex = i;
+                                        toStatus = clientList[i].status;
                                         to = clientList[i].client_fd;
                                         if (is_blocked(clientList[i].block_list,clientList[i].block_count,from) == 1){
                                             isValid = 0;
                                         }
                                     }
                                 }
-                                if (isValid == 1 && to != -1 && toIndex != -1){
+                                char result[6 + strlen(from) +strlen(rev[2])];
+                                strcpy(result, "msg: ");
+                                strcat(result,from);
+                                strcat(result, " ");
+                                strcat(result,rev[2]);
+                                printf("result-> %s\n",result);
+
+                                if (isValid == 1 && to != -1 && toIndex != -1 && toStatus == 1){
+                                    //运行条件是：不能被block，存在to，并且他的状态为登入
                                     clientList[toIndex].mRev += 1; //只有我成功接收到了，才算接收
                                     cse4589_print_and_log("[%s:SUCCESS]\n", "RELAYED");
                                     cse4589_print_and_log("msg from:%s, to:%s\n[msg]:%s\n", from, rev[1], rev[2]);
                                     cse4589_print_and_log("[%s:END]\n", "RELAYED");
-                                    char result[6 + strlen(from) +strlen(rev[2])];
-                                    strcpy(result, "msg: ");
-                                    strcat(result,from);
-                                    strcat(result, " ");
-                                    strcat(result,rev[2]);
-                                    printf("result-> %s\n",result);
                                     send(to,result, strlen(result),0);
+                                } else if (isValid == 1 && to != -1 && toIndex != -1 && toStatus == 0){ //(待测)
+                                    //如果他的是登出状态，就缓存消息给他
+                                    printf("he log out");
+                                    clientList[toIndex].bufferList[clientList[toIndex].buffer_count] = result;
+                                    clientList[toIndex].buffer_count+=1;
                                 }
 
                             }else if(strcmp("BROADCAST", cmd) == 0){ ///////// -----------
@@ -342,7 +350,7 @@ int s_startUp(char *port)
                                 cse4589_print_and_log("[%s:END]\n", "RELAYED");
                                 for (int i = 0; i < connected_count; i++) {
                                     printf("status %d : %d\n", clientList[i].client_fd, clientList[i].status);
-                                    if (sock_index == clientList[i].client_fd || clientList[i].status == 0){
+                                    if (sock_index == clientList[i].client_fd){
                                         continue;
                                     }
                                     int check = 1;
@@ -354,8 +362,13 @@ int s_startUp(char *port)
                                         }
                                     }
                                     if (check == 1){
-                                        clientList[i].mRev += 1; //收到广播就算接收
-                                        send(clientList[i].client_fd, result, strlen(result), 0);
+                                        if (clientList[i].status == 0){ //缓存信息给不在线的用户(待测)
+                                            clientList[i].bufferList[clientList[i].buffer_count] = result;
+                                            clientList[i].buffer_count+=1;
+                                        } else{
+                                            clientList[i].mRev += 1; //收到广播就算接收
+                                            send(clientList[i].client_fd, result, strlen(result), 0);
+                                        }
                                     }
                                 }
                             } else if(strcmp("BLOCK", cmd) == 0){
@@ -417,7 +430,26 @@ int s_startUp(char *port)
                             } else if(strcmp("LOGOUT", cmd) == 0){
                                 for (int i = 0; i < connected_count; i++) {
                                     if (sock_index == clientList[i].client_fd){
-                                        clientList->status = 0;
+                                        clientList[i].status = 0;
+                                    }
+                                }
+                            } else if (strcmp("RELOGIN", cmd) == 0){//(待测)
+                                for (int i = 0; i < connected_count; i++) {
+                                    if (sock_index == clientList[i].client_fd){
+                                        printf("status -> %d\n", clientList[i].status);
+                                        clientList[i].status = 1;
+                                        if (clientList[i].buffer_count > 0){
+                                            printf("buffer here !!!");
+                                            for (int j = 0; j < clientList[i].buffer_count; j++) {//传缓存消息给对应用户
+                                                char* pass = clientList[i].bufferList[j];
+                                                printf("pass -> %s\n", pass);
+                                                send(sock_index, pass, strlen(pass), 0);
+                                                memset(pass, 0, strlen(pass));
+                                            }
+                                            clientList[i].buffer_count = 0;
+                                        }
+                                        printf("no buffer\n");
+                                        break;
                                     }
                                 }
                             }

@@ -189,6 +189,7 @@ int c_startUp(char *port) {
                                     login = 1;
                                     cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
                                     cse4589_print_and_log("[%s:END]\n", cmd);
+                                    send(server,"RELOGIN", strlen("RELOGIN"), 0);
                                 }
                             }
                         } else if (strcmp("PORT", cmd) == 0) {
