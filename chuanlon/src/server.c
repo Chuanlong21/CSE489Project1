@@ -263,27 +263,31 @@ int s_startUp(char *port)
                                 remove_sck(sort_fd, client_port, sock_index, connected_count);
                                 connected_count -= 1;
                             }
-                            else if(strcmp("SEND", cmd) == 0){
+                            else if(strcmp("SEND", cmd) == 0){ ///////// -----------
                                 printf("right here\n");
                                 printf("%s\n",rev[1]); // IP
                                 printf("%s\n",rev[2]); // MSG
                                 char* from;
                                 int isValid = 1;
-                                int to;
+                                int to = -1;
+                                int toIndex = -1;
                                 for (int i = 0; i < connected_count; i++) {
                                     if (sock_index == clientList[i].client_fd){
                                         from = clientList[i].IP;
+                                        clientList[i].mSend += 1; //不计较对面有没有block我，我就算我发了信息了
                                     }
                                 }
                                 for (int i = 0; i < connected_count; i++) {
                                     if (strcmp(rev[1],clientList[i].IP) == 0){
+                                        toIndex = i;
                                         to = clientList[i].client_fd;
                                         if (is_blocked(clientList[i].block_list,clientList[i].block_count,from) == 1){
                                             isValid = 0;
                                         }
                                     }
                                 }
-                                if (isValid == 1){
+                                if (isValid == 1 && to != -1 && toIndex != -1){
+                                    clientList[toIndex].mRev += 1; //只有我成功接收到了，才算接收
                                     cse4589_print_and_log("[%s:SUCCESS]\n", "RELAYED");
                                     cse4589_print_and_log("msg from:%s, to:%s\n[msg]:%s\n", from, rev[1], rev[2]);
                                     cse4589_print_and_log("[%s:END]\n", "RELAYED");
@@ -296,8 +300,42 @@ int s_startUp(char *port)
                                     send(to,result, strlen(result),0);
                                 }
 
-                            }else if(strcmp("BROADCAST", cmd) == 0){
+                            }else if(strcmp("BROADCAST", cmd) == 0){ ///////// -----------
                                 printf("%s\n",rev[1]); // MSG
+                                char* from;
+                                for (int i = 0; i < connected_count; i++) {
+                                    if (sock_index == clientList[i].client_fd){
+                                        from = clientList[i].IP;
+                                        clientList[i].mSend += 1; //广播也算我发了信息
+                                    }
+                                }
+
+                                char result[6 + strlen(from) +strlen(rev[1])];
+                                strcpy(result, "bro: ");
+                                strcat(result,from);
+                                strcat(result, " ");
+                                strcat(result,rev[1]);
+                                printf("result-> %s\n",result);
+
+                                cse4589_print_and_log("[%s:SUCCESS]\n", "RELAYED");
+                                cse4589_print_and_log("msg from:%s, to:%s\n[msg]:%s\n", from, "255.255.255.255", rev[1]);
+                                cse4589_print_and_log("[%s:END]\n", "RELAYED");
+                                for (int i = 0; i < connected_count; i++) {
+                                    if (sock_index == clientList[i].client_fd || clientList[i].status == 0){
+                                        continue;
+                                    }
+                                    int check = 1;
+                                    for (int j = 0; j < clientList[i].block_count; j++) {
+                                        if (strcmp(from, clientList[i].block_list[j].IP) == 0){
+                                            check = 0;
+                                            break;
+                                        }
+                                    }
+                                    if (check == 1){
+                                        clientList[i].mRev += 1; //收到广播就算接收
+                                        send(clientList[i].client_fd, result, strlen(result), 0);
+                                    }
+                                }
                             } else if(strcmp("BLOCK", cmd) == 0){
                                 printf("%s\n",rev[1]); // MSG
                                 int current_block_count;

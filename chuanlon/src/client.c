@@ -240,11 +240,13 @@ int c_startUp(char *port) {
                                 } else error(cmd);
                             } else if (strcmp("BROADCAST", cmd) == 0) {
                                 rev[1][strlen(rev[1]) - 1] = '\0';
-                                char result[10 + strlen(rev[1])];
-                                strcpy(result, "BROADCAST ");
-                                strcat(result, rev[1]);
-                                printf("result: %s\n", result);
-                                send(server, result, strlen(result), 0);
+                                if (strlen(rev[1]) <= 256){
+                                    char result[10 + strlen(rev[1])];
+                                    strcpy(result, "BROADCAST ");
+                                    strcat(result, rev[1]);
+                                    printf("result: %s\n", result);
+                                    send(server, result, strlen(result), 0);
+                                }
                             } else if (strcmp("BLOCK", cmd) == 0) {
                                 if (count == 2) {
                                     rev[1][strlen(rev[1]) - 1] = '\0';
@@ -302,7 +304,7 @@ int c_startUp(char *port) {
                         if (recv(server, buffer, BUFFER_SIZE, 0) <= 0) {
                             close(server);
                         } else {
-                            if (strstr(buffer, "msg: ") != NULL) {
+                            if (strstr(buffer, "msg: ") != NULL || strstr(buffer, "bro: ") != NULL) {
                                 char *co[3];
                                 int n = 0;
                                 char *pN = strtok(buffer, " ");
@@ -317,6 +319,7 @@ int c_startUp(char *port) {
                                 cse4589_print_and_log("[%s:SUCCESS]\n", "RECEIVED");
                                 cse4589_print_and_log("msg from:%s\n[msg]:%s\n", co[1], co[2]);
                                 cse4589_print_and_log("[%s:END]\n", "RECEIVED");
+
                             }
                         }
                     }
