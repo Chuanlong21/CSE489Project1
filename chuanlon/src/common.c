@@ -149,33 +149,11 @@ void listing(int* fds, int count){
         }
         list_id += 1;
     }
-
-    // for (int i = 0; i < count; i++){
-
-    //     int fd = connectd[i];
-    //     struct sockaddr_in client_addr;
-    //     socklen_t len;
-
-    //     if (getpeername(fd, (struct sockaddr *)&client_addr, &len) == 0){
-
-    //         printf("getpeername success\n");
-
-    //         char ipv4addr[sizeof(struct in_addr)];
-    //         inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), ipv4addr);  
-    //         struct hostent *h_retval;
-    //         h_retval = gethostbyaddr(&ipv4addr, sizeof(ipv4addr), AF_INET);
-    //         if(h_retval){
-    //             printf("%-5d%-35s%-20s%-8d\n", fd, h_retval->h_name, inet_ntoa(client_addr.sin_addr), ntohs(client_addr.sin_port));
-    //         }
-    //         else{
-    //             printf("Error AHAHA:%s\n", hstrerror(h_errno));
-    //         }
-    //     }else{
-    //         perror("getpeername");
-    //     }
-    // }
 }
 
+// void blocked_display(char* cmd, ){
+
+// }
 
 void error(char* cmd){
     cse4589_print_and_log("[%s:ERROR]\n", cmd);

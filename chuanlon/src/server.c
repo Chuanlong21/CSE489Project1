@@ -234,22 +234,7 @@ int s_startUp(char *port)
 
                         connected_count += 1;
 
-                        // for (i = 0 ; i < connected_count; i++) {
-                        //     printf("get IP for client %d\n", i);
-                        //     struct sockaddr_in client;
-                        //     socklen_t len = sizeof(struct sockaddr_in);                   
-                        //     if (getpeername(client_fd[i], (struct sockaddr *)&client, &len) == 0){
-                        //         printf("getpeername succeeded\n");
-                        //         client_ip[i] = inet_ntoa(client.sin_addr);
-                        //         printf("ip: %s\n", client_ip[i]);
-                        //     }
-                        // }
-                        // printf("ip sorted\n");
-                        // for (i = 0 ; i < connected_count; i++){
-                        //     printf("i: \n", i);
-                        //     printf(client_ip[i]);
-                        // }
-//                        printf("Updated Client Count: %d\n", connected_count);
+                    
 
 
                         client_list(fdaccept,sort_fd, connected_count);
