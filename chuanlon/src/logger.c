@@ -99,7 +99,7 @@ void cse4589_print_and_log(const char* format, ...)
 	}
 
 	va_start(args_pointer, format);
-//	ret_log = vfprintf(fp, format, args_pointer); //等解开
+	ret_log = vfprintf(fp, format, args_pointer); //等解开
 
 	/* clean up */
 	fclose(fp);

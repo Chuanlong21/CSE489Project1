@@ -256,7 +256,6 @@ int s_startUp(char *port)
                             //Process incoming data from existing clients here ...
 
                             if (strcmp("REFRESH",cmd) == 0){
-                                printf("!23132");
                                 client_list(sock_index,sort_fd, connected_count);
                             }
                             else if (strcmp("EXIT", cmd) == 0){
