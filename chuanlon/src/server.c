@@ -220,6 +220,7 @@ int s_startUp(char *port)
                                 .block_list = newBlocked, .block_count = 0, .status = 1, .mRev = 0, .mSend =0 };
                         clientList[connected_count] = c;
                         char* tem = clientList[connected_count].IP;
+                        printf("get socket: %d\n", fdaccept);
                         printf("added ip: %s\n", tem);
                         connected_count += 1;
                         client_list(fdaccept,sort_fd, connected_count);
@@ -267,14 +268,34 @@ int s_startUp(char *port)
                                 printf("%s\n",rev[1]); // IP
                                 printf("%s\n",rev[2]); // MSG
                                 char* from;
-                                for (int i = 0; i < connected_count; ++i) {
+                                int isValid = 1;
+                                int to;
+                                for (int i = 0; i < connected_count; i++) {
                                     if (sock_index == clientList[i].client_fd){
                                         from = clientList[i].IP;
                                     }
                                 }
-                                cse4589_print_and_log("[%s:SUCCESS]\n", "RELAYED");
-                                cse4589_print_and_log("msg from:%s, to:%s\n[msg]:%s\n", from, rev[1], rev[2]);
-                                cse4589_print_and_log("[%s:END]\n", "RELAYED");
+                                for (int i = 0; i < connected_count; i++) {
+                                    if (strcmp(rev[1],clientList[i].IP) == 0){
+                                        to = clientList[i].client_fd;
+                                        if (is_blocked(clientList[i].block_list,clientList[i].block_count,from) == 1){
+                                            isValid = 0;
+                                        }
+                                    }
+                                }
+                                if (isValid == 1){
+                                    cse4589_print_and_log("[%s:SUCCESS]\n", "RELAYED");
+                                    cse4589_print_and_log("msg from:%s, to:%s\n[msg]:%s\n", from, rev[1], rev[2]);
+                                    cse4589_print_and_log("[%s:END]\n", "RELAYED");
+                                    char result[6 + strlen(from) +strlen(rev[2])];
+                                    strcpy(result, "msg: ");
+                                    strcat(result,from);
+                                    strcat(result, " ");
+                                    strcat(result,rev[2]);
+                                    printf("result-> %s\n",result);
+                                    send(to,result, strlen(result),0);
+                                }
+
                             }else if(strcmp("BROADCAST", cmd) == 0){
                                 printf("%s\n",rev[1]); // MSG
                             } else if(strcmp("BLOCK", cmd) == 0){
