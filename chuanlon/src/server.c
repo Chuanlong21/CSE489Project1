@@ -330,10 +330,10 @@ int s_startUp(char *port)
                     else
                     {
                         /* Initialize buffer to receieve response */
-                        char *buffer = (char *)malloc(sizeof(char) * BUFFER_SIZE);
-                        memset(buffer, '\0', BUFFER_SIZE);
+                        char *buffer = (char *)malloc(sizeof(char) * 1000);
+                        memset(buffer, '\0', 1000);
 
-                        if (recv(sock_index, buffer, BUFFER_SIZE, 0) <= 0)
+                        if (recv(sock_index, buffer, 1000, 0) <= 0)
                         {
                             // locate client index to remove
                             int rmv_idx;
@@ -360,19 +360,19 @@ int s_startUp(char *port)
                         {
                             char *cmd = (char *)malloc(sizeof(char) * CMD_SIZE);
                             memset(cmd, '\0', CMD_SIZE);
+
                             char *rev[3];
                             int count = 0;
                             char *pNext = strtok(buffer, " ");
-
-                            while (pNext != NULL)
-                            {
-                                if (count >= 3)
-                                {
-                                    break;
-                                }
-                                rev[count] = pNext;
-                                ++count;
+                            rev[count ++] = pNext;
+                            if (pNext != NULL && count < 2) {
                                 pNext = strtok(NULL, " ");
+                                rev[count ++] = pNext;
+                            }
+
+                            pNext = strtok(NULL, "");
+                            if (pNext != NULL) {
+                                rev[count ++] = pNext;
                             }
 
                             strcpy(cmd, rev[0]);

@@ -131,17 +131,19 @@ int c_startUp(char *port) {
                             exit(-1);
                         }
 
-                        printf("input : %s\n", input);
+
                         char *rev[3];
                         int count = 0;
                         char *pNext = strtok(input, " ");
-                        while (pNext != NULL) {
-                            if (count >= 3) {
-                                break;
-                            }
-                            rev[count] = pNext;
-                            ++count;
+                        rev[count ++] = pNext;
+                        if (pNext != NULL && count < 2) {
                             pNext = strtok(NULL, " ");
+                            rev[count ++] = pNext;
+                        }
+
+                        pNext = strtok(NULL, "");
+                        if (pNext != NULL) {
+                            rev[count ++] = pNext;
                         }
 
                         if (count == 1) {
