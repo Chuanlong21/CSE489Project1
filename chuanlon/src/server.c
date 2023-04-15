@@ -422,11 +422,6 @@ int s_startUp(char *port)
                                 int current_block_count;
                                 char* ip_to_block = malloc(INET_ADDRSTRLEN);
                                 strcpy(ip_to_block, rev[1]);
-                                printf("ip to block: %s\n", ip_to_block);
-                                printf("......Now printing the existing ip list......\n");
-                                for (int i = 0; i < connected_count; i++){
-                                    printf("client ip: %s\n", clientList[i].IP);
-                                }
                                 // Check if the client to block is logged in
                                 int login_check = 0;
                                 for (int i = 0; i < connected_count; i++){
