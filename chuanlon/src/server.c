@@ -373,13 +373,10 @@ int s_startUp(char *port)
                                     //如果他的是登出状态，就缓存消息给他
                                     printf(" %s ,he log out\n", clientList[toIndex].IP);
                                     strcpy(clientList[toIndex].bufferList[clientList[toIndex].buffer_count], result);
-                                    printf("buffer_count %d\n", clientList[toIndex].buffer_count);
-                                    printf("get something %s\n", clientList[toIndex].bufferList[clientList[toIndex].buffer_count]);
                                     clientList[toIndex].buffer_count+=1;
                                 }
 
                             }else if(strcmp("BROADCAST", cmd) == 0){ ///////// -----------
-                                printf("%s\n",rev[1]); // MSG
                                 char* from;
                                 for (int i = 0; i < connected_count; i++) {
                                     if (sock_index == clientList[i].client_fd){
@@ -399,7 +396,6 @@ int s_startUp(char *port)
                                 cse4589_print_and_log("msg from:%s, to:%s\n[msg]:%s\n", from, "255.255.255.255", rev[1]);
                                 cse4589_print_and_log("[%s:END]\n", "RELAYED");
                                 for (int i = 0; i < connected_count; i++) {
-                                    printf("status %d : %d\n", clientList[i].client_fd, clientList[i].status);
                                     if (sock_index == clientList[i].client_fd){
                                         continue;
                                     }
@@ -491,13 +487,9 @@ int s_startUp(char *port)
                             } else if (strcmp("RELOGIN", cmd) == 0){//(待测)
                                 for (int i = 0; i < connected_count; i++) {
                                     if (sock_index == clientList[i].client_fd){
-                                        printf(" %s ,logback\n", clientList[i].IP);
-                                        printf("status -> %d\n", clientList[i].status);
                                         clientList[i].status = 1;
                                         if (clientList[i].buffer_count > 0){
-                                            printf("buffer here !!!\n");
                                             for (int j = 0; j < clientList[i].buffer_count; j++) {//传缓存消息给对应用户
-                                                printf("get something %d\n", clientList[i].buffer_count);
                                                 char* pass = clientList[i].bufferList[j];
                                                 printf("pass -> %s\n", pass);
                                                 send(sock_index, pass, strlen(pass), 0);
@@ -506,7 +498,6 @@ int s_startUp(char *port)
                                             clientList[i].mRev += clientList[i].buffer_count;
                                             clientList[i].buffer_count = 0;
                                         }
-                                        printf("no buffer\n");
                                         break;
                                     }
                                 }
