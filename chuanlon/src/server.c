@@ -250,14 +250,21 @@ int s_startUp(char *port)
                         printf("ip for this client: %s\n", c_ip);
 
                         // Get hostname
-                        char* addr = (char) malloc(sizeof(struct in_addr));
-                        inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), addr); 
-                        struct hostent *gethost_rtval;
-                        gethost_rtval = gethostbyaddr(addr, sizeof(struct in_addr), AF_INET);
-                        free(addr);
-                        printf("hostname for this client: %s\n", gethost_rtval->h_name);
-                        printf("\n");
+                        // char* addr = (char) malloc(sizeof(struct in_addr));
+                        // inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), addr); 
+                        // struct hostent *gethost_rtval;
+                        // gethost_rtval = gethostbyaddr(addr, sizeof(struct in_addr), AF_INET);
+                        // free(addr);
+                        // printf("hostname for this client: %s\n", gethost_rtval->h_name);
+                        // printf("\n");
+                    
 
+                        struct in_addr addr;
+                        if (inet_aton(c_ip, &addr) == 0) {
+                            printf("Invalid IP address\n");
+                            return 1;
+                        }
+                        struct hostent *gethost_rtval = gethostbyaddr((const char *)&addr, sizeof(addr), AF_INET);
                         struct blocked* newBlocked = malloc(sizeof (struct blocked) * 100);
                         printf("......printing the client list before updating client list......\n");
                         for (int i = 0; i < connected_count; i++){
