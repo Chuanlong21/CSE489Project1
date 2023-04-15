@@ -316,7 +316,6 @@ int s_startUp(char *port)
 
                                 if (isValid == 1 && to != -1 && toIndex != -1 && toStatus == 1){
                                     //运行条件是：不能被block，存在to，并且他的状态为登入
-                                    printf("he log in");
                                     clientList[toIndex].mRev += 1; //只有我成功接收到了，才算接收
                                     cse4589_print_and_log("[%s:SUCCESS]\n", "RELAYED");
                                     cse4589_print_and_log("msg from:%s, to:%s\n[msg]:%s\n", from, rev[1], rev[2]);
