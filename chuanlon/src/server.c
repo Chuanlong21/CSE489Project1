@@ -431,7 +431,7 @@ int s_startUp(char *port)
                                 if (isValid == 1 && to != -1 && toIndex != -1 && toStatus == 1)
                                 {
                                     // 运行条件是：不能被block，存在to，并且他的状态为登入
-                                    clientList[toIndex].mRev += 1; // 只有我成功接收到了，才算接收
+                                    // 只有我成功接收到了，才算接收
                                     cse4589_print_and_log("[%s:SUCCESS]\n", "RELAYED");
                                     cse4589_print_and_log("msg from:%s, to:%s\n[msg]:%s\n", from, rev[1], rev[2]);
                                     cse4589_print_and_log("[%s:END]\n", "RELAYED");
@@ -444,6 +444,7 @@ int s_startUp(char *port)
                                     strcpy(clientList[toIndex].bufferList[clientList[toIndex].buffer_count], result);
                                     clientList[toIndex].buffer_count += 1;
                                 }
+                                clientList[toIndex].mRev += 1; 
                             }
                             else if (strcmp("BROADCAST", cmd) == 0)
                             { ///////// -----------
@@ -683,7 +684,6 @@ int s_startUp(char *port)
                                                 send(sock_index, pass, strlen(pass), 0);
                                                 memset(clientList[i].bufferList[j], 0, strlen(pass));
                                             }
-                                            clientList[i].mRev += clientList[i].buffer_count;
                                             clientList[i].buffer_count = 0;
                                         }
                                         break;
