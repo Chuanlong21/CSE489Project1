@@ -427,8 +427,9 @@ int s_startUp(char *port)
                                     cse4589_print_and_log("msg from:%s, to:%s\n[msg]:%s\n", from, rev[1], rev[2]);
                                     cse4589_print_and_log("[%s:END]\n", "RELAYED");
                                     send(sock_index,"YES", strlen("YES"),0);
-                                    size_t len = strlen(result);
 
+                                    //要改就改这里
+                                    size_t len = strlen(result);
                                     size_t len_nbo = htonl(len);
                                     send(to, &len_nbo, sizeof(len_nbo), 0);
                                     send(to, result, len, 0);
@@ -487,7 +488,12 @@ int s_startUp(char *port)
                                         else
                                         {
                                             clientList[i].mRev += 1; // 收到广播就算接收
-                                            send(clientList[i].client_fd, result, strlen(result), 0);
+//                                            send(clientList[i].client_fd, result, strlen(result), 0);
+
+                                            size_t len = strlen(result);
+                                            size_t len_nbo = htonl(len);
+                                            send(clientList[i].client_fd, &len_nbo, sizeof(len_nbo), 0);
+                                            send(clientList[i].client_fd, result, len, 0);
                                         }
                                     }
                                 }
@@ -640,7 +646,13 @@ int s_startUp(char *port)
                                         if (clientList[i].buffer_count > 0){
                                             for (int j = 0; j < clientList[i].buffer_count; j++) {//传缓存消息给对应用户
                                                 char* pass = clientList[i].bufferList[j];
-                                                send(sock_index, pass, strlen(pass), 0);
+//                                                send(sock_index, pass, strlen(pass), 0);
+
+                                                size_t len = strlen(pass);
+                                                size_t len_nbo = htonl(len);
+                                                send(clientList[i].client_fd, &len_nbo, sizeof(len_nbo), 0);
+                                                send(clientList[i].client_fd, pass, len, 0);
+
                                                 memset(clientList[i].bufferList[j], 0, strlen(pass));
                                             }
                                             clientList[i].buffer_count = 0;
