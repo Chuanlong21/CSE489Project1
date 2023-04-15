@@ -186,15 +186,15 @@ int s_startUp(char *port)
                             get_block_list(client_ip, clientList, connected_count);
                             cse4589_print_and_log("[%s:END]\n", cmd);
                         }
-//                        else if (strcmp("STATISTICS\n",cmd) == 0){
-//                            for (int i = 0; i < connected_count; ++i) {
-//                                char * logIN = "logged-in";
-//                                if (clientList[i].status == 0){
-//                                    logIN = "logged-out";
-//                                }
-//                                cse4589_print_and_log("%-5d%-35s%-8d%-8d%-8s\n", i+1, hostname, clientList[i].mSend, clientList[i].mRev, logIN);
-//                            }
-//                        }
+                        else if (strcmp("STATISTICS\n",cmd) == 0){
+                            for (int i = 0; i < connected_count; ++i) {
+                                char * logIN = "logged-in";
+                                if (clientList[i].status == 0){
+                                    logIN = "logged-out";
+                                }
+                                cse4589_print_and_log("%-5d%-35s%-8d%-8d%-8s\n", i+1, clientList[i].hostName, clientList[i].mSend, clientList[i].mRev, logIN);
+                            }
+                        }
                         free(cmd);
                     }
                         /* Check if new client is requesting connection */
@@ -242,15 +242,20 @@ int s_startUp(char *port)
                         gethost_rtval = gethostbyaddr(&addr, sizeof(addr), AF_INET);
 
                         struct blocked* newBlocked = malloc(sizeof (struct blocked) * 100);
+                        char** bc = malloc(sizeof(char*) * 100); // 分配100个指向字符串的指针
+                        for (int x = 0; x < 100; x++) {
+                            bc[x] = malloc(sizeof(char) * 1000); // 每个字符串分配1000个字符的空间
+                        }
                         struct client c = {.client_fd = fdaccept, .IP = c_ip ,
-                                .block_list = newBlocked, .block_count = 0, .status = 1, .mRev = 0, .mSend =0, .hostName = gethost_rtval->h_name};
+                                .block_list = newBlocked, .block_count = 0, .status = 1,
+                                .mRev = 0, .mSend =0, .hostName = gethost_rtval->h_name,
+                                .buffer_count = 0, .bufferList = bc};
                         clientList[connected_count] = c;
                         char* tem = clientList[connected_count].IP;
                         printf("get socket: %d\n", fdaccept);
                         printf("added ip: %s\n", tem);
                         connected_count += 1;
                         client_list(fdaccept,sort_fd, connected_count);
-
                     }
                         /* Read from existing clients */
                     else{
