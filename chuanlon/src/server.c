@@ -271,11 +271,11 @@ int s_startUp(char *port)
                         // struct hostent *gethost_rtval;
                         // gethost_rtval = gethostbyaddr((const char *)&addr, sizeof(addr), AF_INET);
                         char addr[sizeof(struct in_addr)];
-                        inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), addr); 
+                        inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), c_ip); 
+                        printf("adr: %s\n", addr);
                         struct hostent *gethost_rtval;
                         gethost_rtval = gethostbyaddr(&addr, sizeof(addr), AF_INET);
-                        char* host_name = malloc(sizeof(char) * 100);
-                        host_name = gethost_rtval->h_name;
+ 
                         struct blocked* newBlocked = malloc(sizeof (struct blocked) * 100);
                         printf("......printing the client list before updating client list......\n");
                         for (int i = 0; i < connected_count; i++){
@@ -290,7 +290,7 @@ int s_startUp(char *port)
                         clientList[connected_count].client_fd = fdaccept;
                         clientList[connected_count].IP = c_ip ;
                         clientList[connected_count].status = 1; 
-                        clientList[connected_count].hostName = host_name;
+                        strcpy(clientList[connected_count].hostName, gethost_rtval->h_name);
 
                         connected_count += 1;
                         printf("......printing the client ip list after update......\n");
