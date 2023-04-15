@@ -572,6 +572,7 @@ void get_block_list(char* ip, struct client * c_lst, int connect_count){
     printf("Finishing sorting\n");
     for(int i = 0; i < block_count; i++){
         struct blocked blocked_client = blc[i];
+        printf("ip: %s\n", blocked_client.IP);
         cse4589_print_and_log("%-5d%-35s%-20s%-8d\n", i+1, blocked_client.host_name, blocked_client.IP, blocked_client.port);
     }
 
