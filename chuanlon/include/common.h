@@ -15,6 +15,7 @@ struct blocked{
 
 struct client {
     int client_fd;
+    int port;
     char* IP;
     struct blocked *block_list;
     int block_count;
