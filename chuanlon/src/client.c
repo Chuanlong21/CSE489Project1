@@ -335,7 +335,6 @@ int c_startUp(char *port) {
                                 if (pN != NULL) {
                                     co[n ++] = pN;
                                 }
-                                printf("result - > %s\n", co[2]);
                                 cse4589_print_and_log("[%s:SUCCESS]\n", "RECEIVED");
                                 cse4589_print_and_log("msg from:%s\n[msg]:%s\n", co[1], co[2]);
                                 cse4589_print_and_log("[%s:END]\n", "RECEIVED");
