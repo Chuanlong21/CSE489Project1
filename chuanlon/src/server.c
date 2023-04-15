@@ -249,6 +249,10 @@ int s_startUp(char *port)
                         printf("Login client socket: %d\n", clientList[connected_count].client_fd);
                         printf("Login client ip: %s\n", tem);
                         connected_count += 1;
+                        printf("......printing the client ip list after login......\n");
+                        for (int i = 0; i < connected_count; i++){
+                            printf("client ip: %s\n", clientList[i].IP);
+                        }
                         client_list(fdaccept,sort_fd, connected_count);
 
                     }
@@ -383,7 +387,11 @@ int s_startUp(char *port)
                                 int current_block_count;
                                 char* ip_to_block = rev[1];
                                 printf("ip to block: %s\n", ip_to_block);
-                                for(int i = 0; i < connected_count; i++){
+                                printf("......Now printing the existing ip list......\n");
+                                for (int i = 0; i < connected_count; i++){
+                                    printf("client ip: %s\n", clientList[i].IP);
+                                }
+                                for(int i = 0; i < connected_count; i++){                                    
                                     if(clientList[i].client_fd == sock_index){
                                         current_block_count = clientList[i].block_count;
                                         // Check if the client(to block) is already being blocked
