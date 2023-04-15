@@ -551,7 +551,7 @@ int s_startUp(char *port)
                                                 char* pass = clientList[i].bufferList[j];
                                                 printf("pass -> %s\n", pass);
                                                 send(sock_index, pass, strlen(pass), 0);
-                                                memset(pass, 0, strlen(pass));
+                                                memset(clientList[i].bufferList[j], 0, strlen(pass));
                                             }
                                             clientList[i].mRev += clientList[i].buffer_count;
                                             clientList[i].buffer_count = 0;
