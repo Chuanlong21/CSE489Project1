@@ -355,6 +355,8 @@ int s_startUp(char *port)
                                 connected_count--;
                             }
                             close(sock_index);
+                            /* Remove from watched list */
+							FD_CLR(sock_index, &master_list);
                         }
                         else
                         {
