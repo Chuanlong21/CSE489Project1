@@ -249,27 +249,7 @@ int s_startUp(char *port)
                         inet_ntop(AF_INET, &client.sin_addr, c_ip, INET_ADDRSTRLEN);
                         printf("ip for this client: %s\n", c_ip);
 
-                        // Get hostname
-                        // char* addr = (char) malloc(sizeof(struct in_addr));
-                        // inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), addr); 
-                        // struct hostent *gethost_rtval;
-                        // gethost_rtval = gethostbyaddr(addr, sizeof(struct in_addr), AF_INET);
-                        // free(addr);
-                        // printf("hostname for this client: %s\n", gethost_rtval->h_name);
-                        // printf("\n");
-                    
-
-                        // struct in_addr *addr = malloc(sizeof(struct in_addr));
-                        // if (inet_aton(c_ip, addr) == 0) {
-                        //     printf("Invalid IP address\n");
-                        //     return 1;
-                        // }
-                        // if (addr == NULL) {
-                        // printf("Error: memory allocation failed\n");
-                        //     return 1;
-                        // }
-                        // struct hostent *gethost_rtval;
-                        // gethost_rtval = gethostbyaddr((const char *)&addr, sizeof(addr), AF_INET);
+                        // Get hostname for client
                         char addr[sizeof(struct in_addr)];
                         inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), addr); 
                         struct hostent *gethost_rtval;
@@ -291,6 +271,7 @@ int s_startUp(char *port)
                         clientList[connected_count].IP = c_ip ;
                         clientList[connected_count].status = 1; 
                         clientList[connected_count].hostName = host_name;
+                        clientList[connected_count].block_list = newBlocked;
 
                         connected_count += 1;
                         printf("......printing the client ip list after update......\n");
@@ -438,7 +419,8 @@ int s_startUp(char *port)
                             } else if(strcmp("BLOCK", cmd) == 0){
                                 printf("%s\n",rev[1]); // MSG
                                 int current_block_count;
-                                char* ip_to_block = rev[1];
+                                char* ip_to_block = malloc(INET_ADDRSTRLEN);
+                                ip_to_block = rev[1];
                                 printf("ip to block: %s\n", ip_to_block);
                                 printf("......Now printing the existing ip list......\n");
                                 for (int i = 0; i < connected_count; i++){
@@ -451,7 +433,7 @@ int s_startUp(char *port)
                                         if(is_blocked(clientList[i].block_list, current_block_count, ip_to_block) == 0){
                                             int b_fd;
                                             int b_port = 0;
-                                            char *b_hostname;
+   
                                             for (int k = 0; k < connected_count; k++){
                                                 printf("current checking ip: %s\n", clientList[k].IP);
                                                 if(strcmp(clientList[k].IP, ip_to_block) == 0){ //有问题呀
@@ -474,11 +456,15 @@ int s_startUp(char *port)
                                             inet_pton(AF_INET, inet_ntoa(client.sin_addr), addr);
                                             struct hostent *gethost_rtval;
                                             gethost_rtval = gethostbyaddr(&addr, sizeof(addr), AF_INET);
-                                            b_hostname = gethost_rtval->h_name;
+                                            char * b_hostname = malloc((strlen(gethost_rtval->h_name) + 1)* sizeof(char));
+                                            strcpy(b_hostname, gethost_rtval->h_name);
                                             printf("blocked client hostname: %s\n", b_hostname);
                                             // Initialize blocked client
-                                            struct blocked b = {.IP = ip_to_block, .host_name = b_hostname, .port = b_port};
-                                            clientList[i].block_list[current_block_count] = b;
+                                            struct blocked *b = malloc(sizeof(struct blocked));
+                                            b->IP = ip_to_block; 
+                                            b->host_name = b_hostname;
+                                            b->port = b_port;
+                                            clientList[i].block_list[current_block_count] = *b;
                                             clientList[i].block_count ++;
                                             printf("Blocked client with ip: %s\n", ip_to_block);
                                             // Notify client about finishing the blocking event
