@@ -323,6 +323,7 @@ int c_startUp(char *port) {
 
                             }
                         }
+                        free(buffer);
                     }
                 }
             }
