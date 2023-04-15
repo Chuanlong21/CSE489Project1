@@ -312,34 +312,37 @@ int c_startUp(char *port) {
                             close(server);
                         }
                         else {
-//                            if (strcmp("START", buffer) == 0){
-//                                memset(buffer, '\0', 1000);
-//                                while (1){
-//                                    if (recv(server, buffer, 1000, 0) <= 0) {
-//                                        // handle error or connection closed
-//                                        break;
-//                                    } else {
-//
-//                                    }
-//                                }
-//                            }
-                            if (strstr(buffer, "msg: ") != NULL || strstr(buffer, "bro: ") != NULL) {
-                                char *co[3];
-                                int n = 0;
-                                char *pN = strtok(buffer, " ");
-                                co[n ++] = pN;
-                                pN = strtok(NULL, " ");
-                                if (pN != NULL && n < 2) {
-                                    co[n ++] = pN;
+                            if (strcmp("START_", buffer) == 0){
+                                memset(buffer, '\0', 1000);
+                                while (1){
+                                    if (recv(server, buffer, 1000, 0) <= 0) {
+                                        break;
+                                    } else {
+                                        if (strstr("END_", buffer) != NULL){
+                                            break;
+                                        }
+                                    }
                                 }
-                                pN = strtok(NULL, "");
-                                if (pN != NULL) {
+                                printf("12312312132\n");
+                                if (strstr(buffer, "msg: ") != NULL || strstr(buffer, "bro: ") != NULL) {
+                                    char *co[3];
+                                    int n = 0;
+                                    char *pN = strtok(buffer, " ");
                                     co[n ++] = pN;
-                                }
+                                    pN = strtok(NULL, " ");
+                                    if (pN != NULL && n < 2) {
+                                        co[n ++] = pN;
+                                    }
+                                    pN = strtok(NULL, "");
+                                    if (pN != NULL) {
+                                        co[n ++] = pN;
+                                    }
+                                    printf("result - > %s\n", co[2]);
+                                    cse4589_print_and_log("[%s:SUCCESS]\n", "RECEIVED");
+                                    cse4589_print_and_log("msg from:%s\n[msg]:%s\n", co[1], co[2]);
+                                    cse4589_print_and_log("[%s:END]\n", "RECEIVED");
 
-                                cse4589_print_and_log("[%s:SUCCESS]\n", "RECEIVED");
-                                cse4589_print_and_log("msg from:%s\n[msg]:%s\n", co[1], co[2]);
-                                cse4589_print_and_log("[%s:END]\n", "RECEIVED");
+                                }
 
                             }
                         }
