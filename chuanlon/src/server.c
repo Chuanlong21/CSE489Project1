@@ -306,8 +306,7 @@ int s_startUp(char *port)
 
 
                         client_list(fdaccept,sort_fd, connected_count);
-                        free(addr);
-                        free(c_ip);
+
 
                     }
                         /* Read from existing clients */
