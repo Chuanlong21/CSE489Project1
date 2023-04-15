@@ -515,11 +515,12 @@ int s_startUp(char *port)
                                                 printf("only one blocked\n");
                                                 clientList[i].block_count = 0;
                                             }else{
-                                                printf("More than one blocked below:\n");
+                                                printf(".................Before unblock...................\n");
                                                 // print before unblock
                                                 for (int j = 0; j < current_block_count; j++){
-                                                    printf("ip: %s\n", clientList[i].block_list[j]);
+                                                    printf("ip: %s\n", clientList[i].block_list[j].IP);
                                                 }
+                                                printf("...................................................\n");
                                                 // remove blocked client
                                                 for (int k = blocked_check; k < current_block_count-1; k++) {
                                                     clientList[i].block_list[k] = clientList[i].block_list[k + 1];
@@ -527,8 +528,9 @@ int s_startUp(char *port)
                                                 // update block_count
                                                 clientList[i].block_count --;
                                                 // print after unblock
+                                                printf("..................after unblock....................\n");
                                                 for (int j = 0; j < clientList[i].block_count; j++){
-                                                    printf("ip: %s\n", clientList[i].block_list[j]);
+                                                    printf("ip: %s\n", clientList[i].block_list[j].IP);
                                                 }
 
                                             }
