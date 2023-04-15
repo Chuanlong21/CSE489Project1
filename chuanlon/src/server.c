@@ -250,10 +250,11 @@ int s_startUp(char *port)
                         printf("ip for this client: %s\n", c_ip);
 
                         // Get hostname
-                        char *addr = malloc(sizeof(struct in_addr));
+                        char* addr = (char) malloc(sizeof(struct in_addr));
                         inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), addr); 
                         struct hostent *gethost_rtval;
-                        gethost_rtval = gethostbyaddr(&addr, sizeof(addr), AF_INET);
+                        gethost_rtval = gethostbyaddr(addr, sizeof(struct in_addr), AF_INET);
+                        free(addr);
                         printf("hostname for this client: %s\n", gethost_rtval->h_name);
                         printf("\n");
 
@@ -283,6 +284,8 @@ int s_startUp(char *port)
                         }
                         printf("\n");
                         printf(".....................................................");
+                        printf("\n");
+
 
                         client_list(fdaccept,sort_fd, connected_count);
 
