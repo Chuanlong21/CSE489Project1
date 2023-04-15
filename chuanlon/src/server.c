@@ -259,17 +259,21 @@ int s_startUp(char *port)
                         // printf("\n");
                     
 
-                        struct in_addr *addr = malloc(sizeof(struct in_addr));
-                        if (inet_aton(c_ip, addr) == 0) {
-                            printf("Invalid IP address\n");
-                            return 1;
-                        }
-                        if (addr == NULL) {
-                        printf("Error: memory allocation failed\n");
-                            return 1;
-                        }
+                        // struct in_addr *addr = malloc(sizeof(struct in_addr));
+                        // if (inet_aton(c_ip, addr) == 0) {
+                        //     printf("Invalid IP address\n");
+                        //     return 1;
+                        // }
+                        // if (addr == NULL) {
+                        // printf("Error: memory allocation failed\n");
+                        //     return 1;
+                        // }
+                        // struct hostent *gethost_rtval;
+                        // gethost_rtval = gethostbyaddr((const char *)&addr, sizeof(addr), AF_INET);
+                        char addr[sizeof(struct in_addr)];
+                        inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), addr); 
                         struct hostent *gethost_rtval;
-                        gethost_rtval = gethostbyaddr((const char *)&addr, sizeof(addr), AF_INET);
+                        gethost_rtval = gethostbyaddr(&addr, sizeof(addr), AF_INET);
                         char* host_name = malloc(sizeof(char) * 100);
                         host_name = gethost_rtval->h_name;
                         struct blocked* newBlocked = malloc(sizeof (struct blocked) * 100);
