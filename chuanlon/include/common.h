@@ -9,6 +9,7 @@
 
 struct blocked{
     int port;
+    int fd;
     char* IP;
     char* host_name;
 };

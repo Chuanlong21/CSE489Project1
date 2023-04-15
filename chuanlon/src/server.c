@@ -340,14 +340,36 @@ int s_startUp(char *port)
                         {
                             // locate client index to remove
                             int rmv_idx;
-                            printf("remove client at idx: %d\n", rmv_idx);
+                            char rmv_ip;
                             for (int i = 0; i < connected_count; i++){
                                 if(sock_index == clientList[i].client_fd){
                                     rmv_idx = i;
                                     break;
                                 }
                             }
+                            printf("remove client at idx: %d\n", rmv_idx);
 
+                            // remove client from block_list
+                            for (int i = 0; i < connected_count; i++){
+                                struct blocked *blc = clientList[i].block_list;
+                                int blc_count = clientList[i].block_count;
+                                int blc_rm_idx;
+                                // locate rmv index in each client's block_list
+                                for (int k = 0; k < blc_count; k++){
+                                    if(blc[k].fd == sock_index){
+                                        blc_rm_idx = k;
+                                        break;
+                                    }
+                                }
+                                if(blc_rm_idx == 0 && blc_count == 1){
+                                    clientList[i].block_count = 0;
+                                }else{
+                                    for (int j = blc_rm_idx; j < blc_count; j++){
+                                        clientList[i].block_list[j] = clientList[i].block_list[j+1];
+                                        clientList[i].block_count --;
+                                    }
+                                }
+                            }
                             // remove client from client list
                             if(rmv_idx == 0 && connected_count == 1){
                                 connected_count = 0;
@@ -570,6 +592,7 @@ int s_startUp(char *port)
                                                     // Initialize blocked client
                                                     struct blocked *b = malloc(sizeof(struct blocked));
                                                     b->IP = ip_to_block;
+                                                    b->fd = b_fd;
                                                     printf("updated blocked ip: %s", b->IP);
                                                     b->host_name = b_hostname;
                                                     b->port = b_port;
