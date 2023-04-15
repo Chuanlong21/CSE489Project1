@@ -254,7 +254,6 @@ int c_startUp(char *port) {
                                     char result[10 + strlen(rev[1])];
                                     strcpy(result, "BROADCAST ");
                                     strcat(result, rev[1]);
-                                    printf("result: %s\n", result);
                                     send(server, result, strlen(result), 0);
                                 } else error(cmd);
                             } else if (strcmp("BLOCK", cmd) == 0) {
@@ -309,11 +308,26 @@ int c_startUp(char *port) {
                         free(input);
                     }
                     else if (sock_index == server){
-                        char *buffer = (char *) malloc(sizeof(char) * BUFFER_SIZE);
+
+                        uint32_t len_nbo;
+                        if (recv(server, &len_nbo, sizeof(len_nbo), 0) < 0) {
+                            perror("recv");
+                            exit(1);
+                        }
+
+                        size_t len = ntohl(len_nbo);
+                        char* buffer = malloc(len + 1);
                         memset(buffer, '\0', BUFFER_SIZE);
-                        if (recv(server, buffer, BUFFER_SIZE, 0) <= 0) {
-                            close(server);
-                        } else {
+                        if (recv(server, buffer, len, 0) < 0) {
+                            perror("recv");
+                            exit(1);
+                        }
+//                        char *buffer = (char *) malloc(sizeof(char) * BUFFER_SIZE);
+//                        memset(buffer, '\0', BUFFER_SIZE);
+//                        if (recv(server, buffer, BUFFER_SIZE, 0) <= 0) {
+//                            close(server);
+//                        }
+                        else {
                             if (strstr(buffer, "msg: ") != NULL || strstr(buffer, "bro: ") != NULL) {
                                 char *co[3];
                                 int n = 0;

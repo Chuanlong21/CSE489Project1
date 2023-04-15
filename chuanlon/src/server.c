@@ -363,7 +363,11 @@ int s_startUp(char *port)
                                     cse4589_print_and_log("msg from:%s, to:%s\n[msg]:%s\n", from, rev[1], rev[2]);
                                     cse4589_print_and_log("[%s:END]\n", "RELAYED");
                                     send(sock_index,"YES", strlen("YES"),0);
-                                    send(to,result, strlen(result),0);
+                                    //先发送长度，再发送字符串
+                                    size_t result_len = strlen(result);
+                                    uint32_t len_nbo = htonl(result_len);
+                                    send(to, &len_nbo, sizeof(len_nbo), 0);
+                                    send(to, result, result_len, 0);
                                 } else if (isValid == 1 && to != -1 && toIndex != -1 && toStatus == 0){ //(待测)
                                     //如果他的是登出状态，就缓存消息给他
                                     strcpy(clientList[toIndex].bufferList[clientList[toIndex].buffer_count], result);
