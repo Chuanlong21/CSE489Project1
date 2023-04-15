@@ -193,6 +193,7 @@ int s_startUp(char *port)
                             char* client_ip;
                             client_command = strtok(cmd, " ");
                             client_ip = strtok(NULL, " ");
+                            client_ip[strlen(client_ip) - 1] = '\0';
                             printf("Passed in client IP: %s\n", client_ip);
                             cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
                             get_block_list(client_ip, clientList, connected_count);
