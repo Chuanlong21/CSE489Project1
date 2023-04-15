@@ -264,7 +264,8 @@ int s_startUp(char *port)
                             printf("Invalid IP address\n");
                             return 1;
                         }
-                        struct hostent *gethost_rtval = gethostbyaddr((const char *)&addr, sizeof(addr), AF_INET);
+                        struct hostent *gethost_rtval = malloc(sizeof(struct hostent));
+                        gethost_rtval = gethostbyaddr((const char *)&addr, sizeof(addr), AF_INET);
                         struct blocked* newBlocked = malloc(sizeof (struct blocked) * 100);
                         printf("......printing the client list before updating client list......\n");
                         for (int i = 0; i < connected_count; i++){
