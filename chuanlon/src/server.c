@@ -78,6 +78,18 @@ int s_startUp(char *port)
 
     // Initialization for storing client socket information
     struct client clientList[100];
+    for (int i = 0; i < 100; i++) {
+        clientList[i].client_fd = -1; // or whatever default value you want
+        clientList[i].IP = NULL;
+        clientList[i].block_list = NULL;
+        clientList[i].block_count = 0;
+        clientList[i].status = 0;
+        clientList[i].mSend = 0;
+        clientList[i].mRev = 0;
+        clientList[i].hostName = NULL;
+        clientList[i].bufferList = NULL;
+        clientList[i].buffer_count = 0;
+    }
 
     // Maintain a list of connected clients
     // struct client *head = NULL;
@@ -247,9 +259,15 @@ int s_startUp(char *port)
                             printf("client ip: %s\n", clientList[i].IP);
                         }
                         // update the client list
-                        struct client c = {.client_fd = fdaccept, .IP = c_ip ,
-                                .block_list = newBlocked, .block_count = 0, .status = 1, .mRev = 0, .mSend =0, .hostName = gethost_rtval->h_name};
-                        clientList[connected_count] = c;
+                        clientList[connected_count].client_fd = fdaccept;
+                        clientList[connected_count].IP = c_ip ;
+                        clientList[connected_count].block_list = newBlocked;
+                        clientList[connected_count].block_count = 0;
+                        clientList[connected_count].status = 1; 
+                        clientList[connected_count].mRev = 0; 
+                        clientList[connected_count].mSend =0; 
+                        clientList[connected_count].hostName = gethost_rtval->h_name;
+
                         char* tem = clientList[connected_count].IP;
                         printf("Login client socket: %d\n", clientList[connected_count].client_fd);
                         printf("Login client ip: %s\n", tem);
