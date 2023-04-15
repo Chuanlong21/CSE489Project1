@@ -61,7 +61,7 @@ void intArrToString(char* str,int count, int arr[]);
 void remove_sck(int fds[100], int pts[100], int sck_idx, int count);
 int is_blocked(struct blocked* block_list, int block_count, char* client_ip);
 void get_block_list(char* ip, struct client * c_lst, int connect_count);
-int blocked_cmd(char* input);
+
 
 int s_startUp(char *port)
 {
@@ -169,37 +169,52 @@ int s_startUp(char *port)
 
                     /* Check if new command on STDIN */
                     if (sock_index == STDIN){
+                        char *input = (char *) malloc(sizeof(char) * CMD_SIZE);
+                        memset(input, '\0', CMD_SIZE);
                         char *cmd = (char*) malloc(sizeof(char)*CMD_SIZE);
                         memset(cmd, '\0', CMD_SIZE);
-
                         //COMMAND
-                        if(fgets(cmd, CMD_SIZE-1, stdin) == NULL) //Mind the newline character that will be written to cmd
+                        if(fgets(input, CMD_SIZE-1, stdin) == NULL) //Mind the newline character that will be written to cmd
                             exit(-1);
 
+                        char *rev[2];
+                        int count = 0;
+                        char *pNext = strtok(input, " ");
+                        while (pNext != NULL) {
+                            if (count >= 2) {
+                                break;
+                            }
+                            rev[count] = pNext;
+                            ++count;
+                            pNext = strtok(NULL, " ");
+                        }
+
+                        if (count == 1) {
+                            rev[0][strlen(rev[0]) - 1] = '\0';
+                        }
+
+                        strcpy(cmd, rev[0]);
+
                         //Process PA1 commands here ...
-                        if(strcmp("PORT\n", cmd) == 0){
+                        if(strcmp("PORT", cmd) == 0){
                             show_port(port);
-                        }else if (strcmp("AUTHOR\n", cmd) == 0){
+                        }else if (strcmp("AUTHOR", cmd) == 0){
                             show_Author();
-                        }else if (strcmp("IP\n", cmd) == 0){
+                        }else if (strcmp("IP", cmd) == 0){
                             show_ip(server_socket);
-                        }else if (strcmp("LIST\n", cmd) == 0){
-                            cmd[strlen(cmd) - 1] ='\0';
+                        }else if (strcmp("LIST", cmd) == 0){
                             cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
                             listing(sorted_fd, connected_count);
                             cse4589_print_and_log("[%s:END]\n", cmd);
-                        }else if (blocked_cmd(cmd) == 0){
-                            char* client_command;
-                            char* client_ip;
-                            client_command = strtok(cmd, " ");
-                            client_ip = strtok(NULL, " ");
-                            client_ip[strlen(client_ip) - 1] = '\0';
-                            printf("Passed in client IP: %s\n", client_ip);
-                            cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
-                            get_block_list(client_ip, clientList, connected_count);
-                            cse4589_print_and_log("[%s:END]\n", cmd);
+                        }else if (strcmp("BLOCKED", cmd) == 0){
+                            rev[1][strlen(rev[1]) - 1] = '\0';
+                            char* client_ip = malloc(INET_ADDRSTRLEN);
+                            strcpy(client_ip,rev[1]);
+                            if (IPv4_verify(rev[1]) == 1) {
+                                get_block_list(client_ip, clientList, connected_count);
+                            } else error(cmd);
                         }
-                        else if (strcmp("STATISTICS\n",cmd) == 0){
+                        else if (strcmp("STATISTICS",cmd) == 0){
                             for (int i = 0; i < connected_count; ++i) {
                                 char * logIN = "logged-in";
                                 if (clientList[i].status == 0){
@@ -503,13 +518,6 @@ int is_blocked(struct blocked* block_list, int block_count, char* client_ip){
     return 0;
 }
 
-int blocked_cmd(char* input){
-    char substr[8];
-    strncpy(substr, &input[0], 7);
-    substr[7] = '\0';
-    // printf("user input: %s\n", substr);
-    return strcmp("BLOCKED", substr);
-}
 
 int compareByPort(const void* a, const void* b) {
     const struct blocked* blockedA = (const struct blocked*) a;
@@ -520,25 +528,39 @@ int compareByPort(const void* a, const void* b) {
 void get_block_list(char* ip, struct client * c_lst, int connect_count){
 
     // Get block list for this client
-    int block_count;
+    int block_count = -1;
     struct blocked *blc;
+    int con = 0;
     printf("connected count: %d\n", connect_count);
     for(int i = 0; i < connect_count; i++){
-        printf("checking ip: %s\n", c_lst[i].IP);
         if(strcmp(c_lst[i].IP, ip) == 0){
+            con = 1;
             block_count = c_lst[i].block_count;
             blc = c_lst[i].block_list;
             printf("Get block count: %d\n", block_count);
             break;
         }
     }
-    // Sort blocked list by increasing port number
-    qsort(blc, block_count, sizeof(struct blocked), compareByPort);
-    printf("Finishing sorting\n");
-    for(int i = 0; i < block_count; i++){
-        struct blocked blocked_client = blc[i];
-        printf("ip: %s\n", blocked_client.IP);
-        cse4589_print_and_log("%-5d%-35s%-20s%-8d\n", i+1, blocked_client.host_name, blocked_client.IP, blocked_client.port);
+
+    if (con == 1 ){
+        if (block_count <= 0){
+            cse4589_print_and_log("[%s:SUCCESS]\n", "BLOCKED");
+            cse4589_print_and_log("[%s:END]\n", "BLOCKED");
+            return;
+        }
+        // Sort blocked list by increasing port number
+        qsort(blc, block_count, sizeof(struct blocked), compareByPort);
+        printf("Finishing sorting\n");
+        cse4589_print_and_log("[%s:SUCCESS]\n", "BLOCKED");
+        for(int i = 0; i < block_count; i++){
+            struct blocked blocked_client = blc[i];
+            printf("ip: %s\n", blocked_client.IP);
+            cse4589_print_and_log("%-5d%-35s%-20s%-8d\n", i+1, blocked_client.host_name, blocked_client.IP, blocked_client.port);
+        }
+        cse4589_print_and_log("[%s:END]\n", "BLOCKED");
+    } else {
+        cse4589_print_and_log("[%s:ERROR]\n", "BLOCKED");
+        cse4589_print_and_log("[%s:END]\n", "BLOCKED");
     }
 
 }
