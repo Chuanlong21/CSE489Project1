@@ -503,6 +503,7 @@ int s_startUp(char *port)
                                                 send(sock_index, pass, strlen(pass), 0);
                                                 memset(pass, 0, strlen(pass));
                                             }
+                                            clientList[i].mRev += clientList[i].buffer_count;
                                             clientList[i].buffer_count = 0;
                                         }
                                         printf("no buffer\n");
