@@ -483,9 +483,10 @@ int s_startUp(char *port)
                                         }
                                         else
                                         {
-                                            clientList[i].mRev += 1; // 收到广播就算接收
+                                             // 收到广播就算接收
                                             send(clientList[i].client_fd, result, strlen(result), 0);
                                         }
+                                        clientList[i].mRev += 1;
                                     }
                                 }
                             } else if(strcmp("BLOCK", cmd) == 0){
