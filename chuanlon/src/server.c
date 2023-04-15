@@ -318,6 +318,9 @@ int s_startUp(char *port)
                         clientList[connected_count].client_fd = fdaccept;
                         clientList[connected_count].port = c_port;
                         clientList[connected_count].IP = c_ip;
+                        clientList[connected_count].mRev = 0;
+                        clientList[connected_count].mSend = 0;
+                        clientList[connected_count].buffer_count = 0;
                         clientList[connected_count].status = 1;
                         clientList[connected_count].hostName = host_name;
                         clientList[connected_count].block_list = newBlocked;
@@ -337,13 +340,36 @@ int s_startUp(char *port)
                         {
                             // locate client index to remove
                             int rmv_idx;
+                            char rmv_ip;
                             for (int i = 0; i < connected_count; i++){
                                 if(sock_index == clientList[i].client_fd){
                                     rmv_idx = i;
                                     break;
                                 }
                             }
+                            printf("remove client at idx: %d\n", rmv_idx);
 
+                            // remove client from block_list
+                            for (int i = 0; i < connected_count; i++){
+                                struct blocked *blc = clientList[i].block_list;
+                                int blc_count = clientList[i].block_count;
+                                int blc_rm_idx;
+                                // locate rmv index in each client's block_list
+                                for (int k = 0; k < blc_count; k++){
+                                    if(blc[k].fd == sock_index){
+                                        blc_rm_idx = k;
+                                        break;
+                                    }
+                                }
+                                if(blc_rm_idx == 0 && blc_count == 1){
+                                    clientList[i].block_count = 0;
+                                }else{
+                                    for (int j = blc_rm_idx; j < blc_count; j++){
+                                        clientList[i].block_list[j] = clientList[i].block_list[j+1];
+                                        clientList[i].block_count --;
+                                    }
+                                }
+                            }
                             // remove client from client list
                             if(rmv_idx == 0 && connected_count == 1){
                                 connected_count = 0;
@@ -354,7 +380,11 @@ int s_startUp(char *port)
                                 // update connected_count
                                 connected_count--;
                             }
+                            printf("updated connect cout: %d\n", connected_count);
+                            printf("last client ip: %s\n", clientList[connected_count-1].IP);
                             close(sock_index);
+                            /* Remove from watched list */
+							FD_CLR(sock_index, &master_list);
                         }
                         else
                         {
@@ -433,16 +463,18 @@ int s_startUp(char *port)
                                     size_t len_nbo = htonl(len);
                                     send(to, &len_nbo, sizeof(len_nbo), 0);
                                     send(to, result, len, 0);
+                                    clientList[toIndex].mRev += 1;
 //                                    send(to,result, strlen(result),0);
                                 } else if (isValid == 1 && to != -1 && toIndex != -1 && toStatus == 0){ //(待测)
                                     //如果他的是登出状态，就缓存消息给他
                                     strcpy(clientList[toIndex].bufferList[clientList[toIndex].buffer_count], result);
                                     clientList[toIndex].buffer_count+=1;
                                     send(sock_index,"YES", strlen("YES"),0);
+                                    clientList[toIndex].mRev += 1;
+
                                 } else {
                                     send(sock_index,"NO", strlen("NO"),0);
                                 }
-                                clientList[toIndex].mRev += 1;
                             }
                             else if (strcmp("BROADCAST", cmd) == 0)
                             { ///////// -----------
@@ -487,14 +519,13 @@ int s_startUp(char *port)
                                         }
                                         else
                                         {
-                                            clientList[i].mRev += 1; // 收到广播就算接收
 //                                            send(clientList[i].client_fd, result, strlen(result), 0);
-
                                             size_t len = strlen(result);
                                             size_t len_nbo = htonl(len);
                                             send(clientList[i].client_fd, &len_nbo, sizeof(len_nbo), 0);
                                             send(clientList[i].client_fd, result, len, 0);
                                         }
+                                        clientList[i].mRev += 1;
                                     }
                                 }
                             } else if(strcmp("BLOCK", cmd) == 0){
@@ -570,6 +601,7 @@ int s_startUp(char *port)
                                                     // Initialize blocked client
                                                     struct blocked *b = malloc(sizeof(struct blocked));
                                                     b->IP = ip_to_block;
+                                                    b->fd = b_fd;
                                                     printf("updated blocked ip: %s", b->IP);
                                                     b->host_name = b_hostname;
                                                     b->port = b_port;
