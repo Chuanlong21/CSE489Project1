@@ -192,6 +192,7 @@ int s_startUp(char *port)
                                 if (clientList[i].status == 0){
                                     logIN = "logged-out";
                                 }
+                                printf("%s\n",clientList[i].IP);
                                 cse4589_print_and_log("%-5d%-35s%-8d%-8d%-8s\n", i+1, clientList[i].hostName, clientList[i].mSend, clientList[i].mRev, logIN);
                             }
                         }
@@ -336,6 +337,7 @@ int s_startUp(char *port)
                                     //如果他的是登出状态，就缓存消息给他
                                     printf(" %s ,he log out\n", clientList[toIndex].IP);
                                     clientList[toIndex].bufferList[clientList[toIndex].buffer_count] = result;
+                                    printf("buffer_count %d\n", clientList[toIndex].buffer_count);
                                     printf("get something %s\n", clientList[toIndex].bufferList[clientList[toIndex].buffer_count]);
                                     clientList[toIndex].buffer_count+=1;
                                 }
@@ -455,7 +457,7 @@ int s_startUp(char *port)
                                         if (clientList[i].buffer_count > 0){
                                             printf("buffer here !!!\n");
                                             for (int j = 0; j < clientList[i].buffer_count; j++) {//传缓存消息给对应用户
-                                                printf("get something %s\n", clientList[i].bufferList[j]);
+                                                printf("get something %d\n", clientList[i].buffer_count);
                                                 char* pass = clientList[i].bufferList[j];
                                                 printf("pass -> %s\n", pass);
                                                 send(sock_index, pass, strlen(pass), 0);
