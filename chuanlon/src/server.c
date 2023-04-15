@@ -372,7 +372,7 @@ int s_startUp(char *port)
                                 } else if (isValid == 1 && to != -1 && toIndex != -1 && toStatus == 0){ //(待测)
                                     //如果他的是登出状态，就缓存消息给他
                                     printf(" %s ,he log out\n", clientList[toIndex].IP);
-                                    clientList[toIndex].bufferList[clientList[toIndex].buffer_count] = result;
+                                    strcpy(clientList[toIndex].bufferList[clientList[toIndex].buffer_count], result);
                                     printf("buffer_count %d\n", clientList[toIndex].buffer_count);
                                     printf("get something %s\n", clientList[toIndex].bufferList[clientList[toIndex].buffer_count]);
                                     clientList[toIndex].buffer_count+=1;
@@ -413,7 +413,7 @@ int s_startUp(char *port)
                                     }
                                     if (check == 1){
                                         if (clientList[i].status == 0){ //缓存信息给不在线的用户(待测)
-                                            clientList[i].bufferList[clientList[i].buffer_count] = result;
+                                            strcpy(clientList[i].bufferList[clientList[i].buffer_count], result);
                                             clientList[i].buffer_count+=1;
                                         } else{
                                             clientList[i].mRev += 1; //收到广播就算接收
