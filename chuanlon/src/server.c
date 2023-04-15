@@ -554,7 +554,9 @@ void get_block_list(char* ip, struct client * c_lst, int connect_count){
     // Get block list for this client
     int block_count;
     struct blocked *blc;
+    printf("connected count: %d\n", connect_count);
     for(int i = 0; i < connect_count; i++){
+        printf("checking ip: %s\n", ip);
         if(strcmp(c_lst[i].IP, ip) == 0){
             block_count = c_lst[i].block_count;
             blc = c_lst[i].block_list;
