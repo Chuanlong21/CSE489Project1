@@ -246,8 +246,8 @@ int s_startUp(char *port)
                                 .block_list = newBlocked, .block_count = 0, .status = 1, .mRev = 0, .mSend =0, .hostName = gethost_rtval->h_name};
                         clientList[connected_count] = c;
                         char* tem = clientList[connected_count].IP;
-                        printf("get socket: %d\n", fdaccept);
-                        printf("added ip: %s\n", tem);
+                        printf("Login client socket: %d\n", clientList[connected_count].client_fd);
+                        printf("Login client ip: %s\n", tem);
                         connected_count += 1;
                         client_list(fdaccept,sort_fd, connected_count);
 
@@ -386,7 +386,6 @@ int s_startUp(char *port)
                                 for(int i = 0; i < connected_count; i++){
                                     if(clientList[i].client_fd == sock_index){
                                         current_block_count = clientList[i].block_count;
-                                        // Check if the client(to block) is already being blocked
                                         // Check if the client(to block) is already being blocked
                                         if(is_blocked(clientList[i].block_list, current_block_count, ip_to_block) == 0){
                                             int b_fd;
