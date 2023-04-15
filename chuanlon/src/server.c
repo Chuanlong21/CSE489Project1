@@ -271,10 +271,10 @@ int s_startUp(char *port)
                         // struct hostent *gethost_rtval;
                         // gethost_rtval = gethostbyaddr((const char *)&addr, sizeof(addr), AF_INET);
                         char addr[sizeof(struct in_addr)];
-                        inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), c_ip); 
+                        inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), addr); 
                         struct hostent *gethost_rtval;
                         gethost_rtval = gethostbyaddr(&addr, sizeof(addr), AF_INET);
-                        char * host_name = malloc(sizeof(char)*100);
+                        char * host_name = malloc((strlen(gethost_rtval->h_name) + 1)* sizeof(char));
                         strcpy(host_name, gethost_rtval->h_name);
                         struct blocked* newBlocked = malloc(sizeof (struct blocked) * 100);
                         printf("......printing the client list before updating client list......\n");
