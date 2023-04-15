@@ -242,6 +242,11 @@ int s_startUp(char *port)
                         gethost_rtval = gethostbyaddr(&addr, sizeof(addr), AF_INET);
 
                         struct blocked* newBlocked = malloc(sizeof (struct blocked) * 100);
+                        printf("......printing the client ip list before updating client list......\n");
+                        for (int i = 0; i < connected_count; i++){
+                            printf("client ip: %s\n", clientList[i].IP);
+                        }
+                        // update the client list
                         struct client c = {.client_fd = fdaccept, .IP = c_ip ,
                                 .block_list = newBlocked, .block_count = 0, .status = 1, .mRev = 0, .mSend =0, .hostName = gethost_rtval->h_name};
                         clientList[connected_count] = c;
