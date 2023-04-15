@@ -307,11 +307,22 @@ int c_startUp(char *port) {
                     }
                     else if (sock_index == server){
                         char *buffer = (char *) malloc(sizeof(char) * 1000);
-                        memset(buffer, '\0', BUFFER_SIZE);
+                        memset(buffer, '\0', 1000);
                         if (recv(server, buffer, 1000, 0) <= 0) {
                             close(server);
                         }
                         else {
+//                            if (strcmp("START", buffer) == 0){
+//                                memset(buffer, '\0', 1000);
+//                                while (1){
+//                                    if (recv(server, buffer, 1000, 0) <= 0) {
+//                                        // handle error or connection closed
+//                                        break;
+//                                    } else {
+//
+//                                    }
+//                                }
+//                            }
                             if (strstr(buffer, "msg: ") != NULL || strstr(buffer, "bro: ") != NULL) {
                                 char *co[3];
                                 int n = 0;
