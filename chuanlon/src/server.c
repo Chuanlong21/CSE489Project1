@@ -463,9 +463,11 @@ int s_startUp(char *port)
                                             // Initialize blocked client
                                             struct blocked *b = malloc(sizeof(struct blocked));
                                             b->IP = ip_to_block; 
+                                            printf("updated blocked ip: %s", b->IP);
                                             b->host_name = b_hostname;
                                             b->port = b_port;
                                             clientList[i].block_list[current_block_count] = *b;
+                                            printf("hey: %s\n", clientList[i].block_list[clientList[i].block_count].IP);
                                             clientList[i].block_count ++;
                                             printf("Blocked client with ip: %s\n", ip_to_block);
                                             // Notify client about finishing the blocking event
