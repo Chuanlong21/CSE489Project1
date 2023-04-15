@@ -58,6 +58,7 @@ void intArrToString(char *str, int count, int arr[]);
 void remove_sck(int fds[100], int pts[100], int sck_idx, int count);
 int is_blocked(struct blocked *block_list, int block_count, char *client_ip);
 void get_block_list(char *ip, struct client *c_lst, int connect_count);
+int clients_sort(const void *a, const void *b);
 
 int s_startUp(char *port)
 {
@@ -76,7 +77,8 @@ int s_startUp(char *port)
     struct client clientList[100];
     for (int i = 0; i < 100; i++)
     {
-        clientList[i].client_fd = -1; // or whatever default value you want
+        clientList[i].client_fd = -1; 
+        clientList[i].port = 0;
         clientList[i].IP = NULL;
         clientList[i].block_list = NULL;
         clientList[i].block_count = 0;
@@ -240,6 +242,10 @@ int s_startUp(char *port)
                         }
                         else if (strcmp("STATISTICS", cmd) == 0)
                         {
+                            // sort clients based on port number
+
+                            qsort(clientList, connected_count, sizeof(struct client), clients_sort);
+
                             for (int i = 0; i < connected_count; ++i)
                             {
                                 char *logIN = "logged-in";
@@ -270,6 +276,7 @@ int s_startUp(char *port)
                         // add to array storage
                         //                        printf("Client Count: %d\n", connected_count);
                         client_fd[connected_count] = fdaccept;
+                        int c_port;
                         // printf(fdaccept);
                         // printf(client_fd[0]);
                         struct sockaddr_in client;
@@ -277,6 +284,7 @@ int s_startUp(char *port)
                         if (getpeername(fdaccept, (struct sockaddr *)&client, &len) == 0)
                         {
                             //                            printf("first getpeername success\n");
+                            c_port = ntohs(client_addr.sin_port);
                             client_port[connected_count] = ntohs(client_addr.sin_port);
                         }
                         int perm[connected_count + 1], i;
@@ -310,6 +318,7 @@ int s_startUp(char *port)
                         }
                         // update the client list
                         clientList[connected_count].client_fd = fdaccept;
+                        clientList[connected_count].port = c_port;
                         clientList[connected_count].IP = c_ip;
                         clientList[connected_count].status = 1;
                         clientList[connected_count].hostName = host_name;
@@ -689,6 +698,12 @@ int is_blocked(struct blocked *block_list, int block_count, char *client_ip)
         }
     }
     return -1;
+}
+
+int clients_sort(const void *a, const void *b){
+    const struct client *c_a = (const struct client *)a;
+    const struct client *c_b = (const struct client *)b;
+    return c_a->port - c_b->port;
 }
 
 int compareByPort(const void *a, const void *b)
