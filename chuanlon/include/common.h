@@ -21,6 +21,7 @@ struct client {
     int status; //0 for logout; 1 for login
     int mSend;
     int mRev;
+    char* hostName;
     char** bufferList;
     int buffer_count;
 };
