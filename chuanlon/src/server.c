@@ -427,12 +427,12 @@ int s_startUp(char *port)
                                     cse4589_print_and_log("msg from:%s, to:%s\n[msg]:%s\n", from, rev[1], rev[2]);
                                     cse4589_print_and_log("[%s:END]\n", "RELAYED");
                                     send(sock_index,"YES", strlen("YES"),0);
+                                    size_t len = strlen(result);
 
-                                    send(to,"START_", strlen("START_"), 0);
-                                    printf("sending");
-                                    send(to,result, strlen(result),0);
-                                    printf("sending end");
-                                    send(to," END_", strlen(" END_"), 0);
+                                    size_t len_nbo = htonl(len);
+                                    send(to, &len_nbo, sizeof(len_nbo), 0);
+                                    send(to, result, len, 0);
+//                                    send(to,result, strlen(result),0);
                                 } else if (isValid == 1 && to != -1 && toIndex != -1 && toStatus == 0){ //(待测)
                                     //如果他的是登出状态，就缓存消息给他
                                     strcpy(clientList[toIndex].bufferList[clientList[toIndex].buffer_count], result);

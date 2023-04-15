@@ -105,6 +105,8 @@ int c_startUp(char *port) {
     char *msg = (char *) malloc(1000 * sizeof(char));
     char *store = (char *) malloc(sizeof(char) * 1000);
     memset(store, '\0', 1000);
+    int isStart = -1;
+    int isEnd = -1;
 
     while (TRUE) {
         memcpy(&watch_list, &master_list, sizeof(master_list));
@@ -307,16 +309,19 @@ int c_startUp(char *port) {
                         free(input);
                     }
                     else if (sock_index == server){
-                        char *buffer = (char *) malloc(sizeof(char) * 1000);
-                        memset(buffer, '\0', 1000);
-                        if (recv(server, buffer, 1000, 0) <= 0) {
+                        size_t len_nbo;
+                        recv(server, &len_nbo, sizeof(len_nbo), 0);
+                        size_t len = ntohl(len_nbo);
+
+                        char *buffer = malloc(len + 1);
+                        memset(buffer, '\0', len + 1);
+                        if (recv(server, buffer, len, 0) <= 0) {
                             close(server);
                         }
                         else {
-                            if (strcmp("START_", buffer) == 0){
-                                strcpy(store,buffer);
-                                printf("%s",store);
-                            }
+                            buffer[len] = '\0';
+                            printf("Received message: %s\n", buffer);
+
                             if (strstr(buffer, "msg: ") != NULL || strstr(buffer, "bro: ") != NULL) {
                                 char *co[3];
                                 int n = 0;
@@ -334,9 +339,9 @@ int c_startUp(char *port) {
                                 cse4589_print_and_log("[%s:SUCCESS]\n", "RECEIVED");
                                 cse4589_print_and_log("msg from:%s\n[msg]:%s\n", co[1], co[2]);
                                 cse4589_print_and_log("[%s:END]\n", "RECEIVED");
-
                             }
                         }
+                        free(buffer);
                     }
                 }
             }
