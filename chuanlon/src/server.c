@@ -422,55 +422,125 @@ int s_startUp(char *port)
                                 int current_block_count;
                                 char* ip_to_block = malloc(INET_ADDRSTRLEN);
                                 strcpy(ip_to_block, rev[1]);
-                                for(int i = 0; i < connected_count; i++){
-                                    if(clientList[i].client_fd == sock_index){
-                                        current_block_count = clientList[i].block_count;
-                                        // Check if the client(to block) is already being blocked
-                                        if(is_blocked(clientList[i].block_list, current_block_count, ip_to_block) == -1){
-                                            int b_fd;
-                                            int b_port = 0;
-
-                                            for (int k = 0; k < connected_count; k++){
-                                                if(strcmp(clientList[k].IP, ip_to_block) == 0){
-                                                    b_fd = clientList[k].client_fd;
-                                                    break;
-                                                }
-                                            }
-                                            // Get port number for blocked client
-                                            struct sockaddr_in client;
-                                            socklen_t len = sizeof(struct sockaddr_in);                
-                                            if (getpeername(b_fd, (struct sockaddr *)&client, &len) == 0){
-                                                b_port = ntohs(client.sin_port);
-                                                printf("blocked client port number: %d\n", b_port);
-                                            }else{
-                                                printf("gepteername failed\n");
-                                            }
-                                            // Get hostname for blocked client
-                                            char addr[sizeof(struct in_addr)];
-                                            inet_pton(AF_INET, inet_ntoa(client.sin_addr), addr);
-                                            struct hostent *gethost_rtval;
-                                            gethost_rtval = gethostbyaddr(&addr, sizeof(addr), AF_INET);
-                                            char * b_hostname = malloc((strlen(gethost_rtval->h_name) + 1)* sizeof(char));
-                                            strcpy(b_hostname, gethost_rtval->h_name);
-                                            // Initialize blocked client
-                                            struct blocked *b = malloc(sizeof(struct blocked));
-                                            b->IP = ip_to_block;
-                                            b->host_name = b_hostname;
-                                            b->port = b_port;
-                                            clientList[i].block_list[current_block_count] = *b;
-                                            clientList[i].block_count ++;
-                                            send(sock_index, "YES", 3, 0);
-                                            printf("sent yes to client");
-                                        }else{
-                                            send(sock_index, "NO", 2, 0);
-                                            printf("sent no to client");
-                                        }
+                                printf("ip to block: %s\n", ip_to_block);
+                                printf("......Now printing the existing ip list......\n");
+                                for (int i = 0; i < connected_count; i++){
+                                    printf("client ip: %s\n", clientList[i].IP);
+                                }
+                                // Check if the client to block is logged in
+                                int login_check = 0;
+                                for (int i = 0; i < connected_count; i++){
+                                    if(strcmp(clientList[i].IP, ip_to_block) == 0){
+                                        login_check = 1;
                                         break;
                                     }
                                 }
+                                if (login_check == 0){
+                                    send(sock_index, "NO", 2, 0);
+                                }else{
+                                    for(int i = 0; i < connected_count; i++){
+                                        // Locate the sender
+                                        if(clientList[i].client_fd == sock_index){
+                                            current_block_count = clientList[i].block_count;
+                                            // Check if the client(to block) is already being blocked
+                                            if(is_blocked(clientList[i].block_list, current_block_count, ip_to_block) == -1){
+                                                int b_fd;
+                                                int b_port = 0;
+
+                                                for (int k = 0; k < connected_count; k++){
+                                                    printf("current checking ip: %s\n", clientList[k].IP);
+                                                    if(strcmp(clientList[k].IP, ip_to_block) == 0){ //有问题呀
+                                                        b_fd = clientList[k].client_fd;
+                                                        printf("blocked client fd: %d\n", b_fd);
+                                                        break;
+                                                    }
+                                                }
+                                                // Get port number for blocked client
+                                                struct sockaddr_in client;
+                                                socklen_t len = sizeof(struct sockaddr_in);
+                                                if (getpeername(b_fd, (struct sockaddr *)&client, &len) == 0){
+                                                    b_port = ntohs(client.sin_port);
+                                                    printf("blocked client port number: %d\n", b_port);
+                                                }else{
+                                                    printf("gepteername failed\n");
+                                                }
+                                                // Get hostname for blocked client
+                                                char addr[sizeof(struct in_addr)];
+                                                inet_pton(AF_INET, inet_ntoa(client.sin_addr), addr);
+                                                struct hostent *gethost_rtval;
+                                                gethost_rtval = gethostbyaddr(&addr, sizeof(addr), AF_INET);
+                                                char * b_hostname = malloc((strlen(gethost_rtval->h_name) + 1)* sizeof(char));
+                                                strcpy(b_hostname, gethost_rtval->h_name);
+                                                printf("blocked client hostname: %s\n", b_hostname);
+                                                // Initialize blocked client
+                                                struct blocked *b = malloc(sizeof(struct blocked));
+                                                b->IP = ip_to_block;
+                                                printf("updated blocked ip: %s", b->IP);
+                                                b->host_name = b_hostname;
+                                                b->port = b_port;
+                                                clientList[i].block_list[current_block_count] = *b;
+                                                printf("hey: %s\n", clientList[i].block_list[clientList[i].block_count].IP);
+                                                clientList[i].block_count ++;
+                                                printf("Blocked client with ip: %s\n", ip_to_block);
+                                                // Notify client about finishing the blocking event
+                                                // Notify client about finishing the blocking event
+                                                send(sock_index, "YES", 3, 0);
+                                                printf("sent yes to client");
+                                            }else{
+                                                printf("This ip is already in block list: %s\n", ip_to_block);
+                                                send(sock_index, "NO", 2, 0);
+                                                printf("sent no to client");
+                                            }
+                                            break;
+                                        }
+                                    }
+                                }
+
                             } else if (strcmp("UNBLOCK", cmd) == 0){
                                 printf("%s\n",rev[1]); // MSG
-                                send(sock_index,"YES",3,0);
+                                int current_block_count;
+                                char* ip_to_unblock = malloc(INET_ADDRSTRLEN);
+                                strcpy(ip_to_unblock, rev[1]);
+                                printf("ip to unblock: %s\n", ip_to_unblock);
+                                // Check if the client(to block) is already being blocked
+                                for(int i = 0; i < connected_count; i++){
+                                    if(clientList[i].client_fd == sock_index){
+                                        current_block_count = clientList[i].block_count;
+                                        printf("current block count: %d\n", current_block_count);
+                                        // Check if the client(to block) is already being blocked
+                                        int blocked_check = is_blocked(clientList[i].block_list, current_block_count, ip_to_unblock);
+                                        printf("blocked_checked: %d\n", blocked_check);
+                                        if(blocked_check != -1){
+                                            if(blocked_check == 0 && current_block_count == 1){
+                                                printf("only one blocked\n");
+                                                clientList[i].block_count = 0;
+                                            }else{
+                                                printf(".................Before unblock...................\n");
+                                                // print before unblock
+                                                for (int j = 0; j < current_block_count; j++){
+                                                    printf("ip: %s\n", clientList[i].block_list[j].IP);
+                                                }
+                                                printf("...................................................\n");
+                                                // remove blocked client
+                                                for (int k = blocked_check; k < current_block_count-1; k++) {
+                                                    clientList[i].block_list[k] = clientList[i].block_list[k + 1];
+                                                }
+                                                // update block_count
+                                                clientList[i].block_count --;
+                                                // print after unblock
+                                                printf("..................after unblock....................\n");
+                                                for (int j = 0; j < clientList[i].block_count; j++){
+                                                    printf("ip: %s\n", clientList[i].block_list[j].IP);
+                                                }
+
+                                            }
+                                            send(sock_index,"YES",3,0);
+                                        }else{
+                                            printf("This client is not in blocked_list");
+                                            send(sock_index,"NO",2,0);
+                                        }
+                                    }
+                                }
                             } else if(strcmp("LOGOUT", cmd) == 0){
                                 for (int i = 0; i < connected_count; i++) {
                                     if (sock_index == clientList[i].client_fd){
