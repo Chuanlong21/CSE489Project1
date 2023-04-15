@@ -263,10 +263,8 @@ int s_startUp(char *port)
                         for (i = 0 ; i < connected_count + 1; i++) {
                             sort_fd[i] = client_fd[perm[i]];
                         }
-                        printf("fd for this client: %d\n", fdaccept);
                         char *c_ip = malloc(INET_ADDRSTRLEN); // stores the client side IP address
                         inet_ntop(AF_INET, &client.sin_addr, c_ip, INET_ADDRSTRLEN);
-                        printf("ip for this client: %s\n", c_ip);
 
                         // Get hostname for client
                         char addr[sizeof(struct in_addr)];
@@ -330,9 +328,6 @@ int s_startUp(char *port)
                                 connected_count -= 1;
                             }
                             else if(strcmp("SEND", cmd) == 0){ ///////// -----------
-                                printf("right here\n");
-                                printf("%s\n",rev[1]); // IP
-                                printf("%s\n",rev[2]); // MSG
                                 char* from;
                                 int isValid = 1;
                                 int to = -1;
@@ -360,7 +355,6 @@ int s_startUp(char *port)
                                 strcat(result,from);
                                 strcat(result, " ");
                                 strcat(result,rev[2]);
-                                printf("result-> %s\n",result);
 
                                 if (isValid == 1 && to != -1 && toIndex != -1 && toStatus == 1){
                                     //运行条件是：不能被block，存在to，并且他的状态为登入
@@ -372,7 +366,6 @@ int s_startUp(char *port)
                                     send(to,result, strlen(result),0);
                                 } else if (isValid == 1 && to != -1 && toIndex != -1 && toStatus == 0){ //(待测)
                                     //如果他的是登出状态，就缓存消息给他
-                                    printf(" %s ,he log out\n", clientList[toIndex].IP);
                                     strcpy(clientList[toIndex].bufferList[clientList[toIndex].buffer_count], result);
                                     clientList[toIndex].buffer_count+=1;
                                     send(sock_index,"YES", strlen("YES"),0);
@@ -394,7 +387,6 @@ int s_startUp(char *port)
                                 strcat(result,from);
                                 strcat(result, " ");
                                 strcat(result,rev[1]);
-                                printf("result-> %s\n",result);
 
                                 cse4589_print_and_log("[%s:SUCCESS]\n", "RELAYED");
                                 cse4589_print_and_log("msg from:%s, to:%s\n[msg]:%s\n", from, "255.255.255.255", rev[1]);
@@ -405,7 +397,6 @@ int s_startUp(char *port)
                                     }
                                     int check = 1;
                                     for (int j = 0; j < clientList[i].block_count; j++) {
-                                        printf("block : %s\n",clientList[i].block_list[j].IP);
                                         if (strcmp(from, clientList[i].block_list[j].IP) == 0){
                                             check = 0;
                                             break;
@@ -422,7 +413,6 @@ int s_startUp(char *port)
                                     }
                                 }
                             } else if(strcmp("BLOCK", cmd) == 0){
-                                printf("%s\n",rev[1]); // MSG
                                 int current_block_count;
                                 char* ip_to_block = malloc(INET_ADDRSTRLEN);
                                 strcpy(ip_to_block, rev[1]);
@@ -447,10 +437,8 @@ int s_startUp(char *port)
                                                 int b_port = 0;
 
                                                 for (int k = 0; k < connected_count; k++){
-                                                    printf("current checking ip: %s\n", clientList[k].IP);
                                                     if(strcmp(clientList[k].IP, ip_to_block) == 0){ //有问题呀
                                                         b_fd = clientList[k].client_fd;
-                                                        printf("blocked client fd: %d\n", b_fd);
                                                         break;
                                                     }
                                                 }
@@ -470,25 +458,17 @@ int s_startUp(char *port)
                                                 gethost_rtval = gethostbyaddr(&addr, sizeof(addr), AF_INET);
                                                 char * b_hostname = malloc((strlen(gethost_rtval->h_name) + 1)* sizeof(char));
                                                 strcpy(b_hostname, gethost_rtval->h_name);
-                                                printf("blocked client hostname: %s\n", b_hostname);
                                                 // Initialize blocked client
                                                 struct blocked *b = malloc(sizeof(struct blocked));
                                                 b->IP = ip_to_block;
-                                                printf("updated blocked ip: %s", b->IP);
                                                 b->host_name = b_hostname;
                                                 b->port = b_port;
                                                 clientList[i].block_list[current_block_count] = *b;
-                                                printf("hey: %s\n", clientList[i].block_list[clientList[i].block_count].IP);
                                                 clientList[i].block_count ++;
-                                                printf("Blocked client with ip: %s\n", ip_to_block);
-                                                // Notify client about finishing the blocking event
                                                 // Notify client about finishing the blocking event
                                                 send(sock_index, "YES", 3, 0);
-                                                printf("sent yes to client");
                                             }else{
-                                                printf("This ip is already in block list: %s\n", ip_to_block);
                                                 send(sock_index, "NO", 2, 0);
-                                                printf("sent no to client");
                                             }
                                             break;
                                         }
@@ -500,42 +480,25 @@ int s_startUp(char *port)
                                 int current_block_count;
                                 char* ip_to_unblock = malloc(INET_ADDRSTRLEN);
                                 strcpy(ip_to_unblock, rev[1]);
-                                printf("ip to unblock: %s\n", ip_to_unblock);
                                 // Check if the client(to block) is already being blocked
                                 for(int i = 0; i < connected_count; i++){
                                     if(clientList[i].client_fd == sock_index){
                                         current_block_count = clientList[i].block_count;
-                                        printf("current block count: %d\n", current_block_count);
                                         // Check if the client(to block) is already being blocked
                                         int blocked_check = is_blocked(clientList[i].block_list, current_block_count, ip_to_unblock);
-                                        printf("blocked_checked: %d\n", blocked_check);
                                         if(blocked_check != -1){
                                             if(blocked_check == 0 && current_block_count == 1){
-                                                printf("only one blocked\n");
                                                 clientList[i].block_count = 0;
                                             }else{
-                                                printf(".................Before unblock...................\n");
-                                                // print before unblock
-                                                for (int j = 0; j < current_block_count; j++){
-                                                    printf("ip: %s\n", clientList[i].block_list[j].IP);
-                                                }
-                                                printf("...................................................\n");
                                                 // remove blocked client
                                                 for (int k = blocked_check; k < current_block_count-1; k++) {
                                                     clientList[i].block_list[k] = clientList[i].block_list[k + 1];
                                                 }
                                                 // update block_count
                                                 clientList[i].block_count --;
-                                                // print after unblock
-                                                printf("..................after unblock....................\n");
-                                                for (int j = 0; j < clientList[i].block_count; j++){
-                                                    printf("ip: %s\n", clientList[i].block_list[j].IP);
-                                                }
-
                                             }
                                             send(sock_index,"YES",3,0);
                                         }else{
-                                            printf("This client is not in blocked_list");
                                             send(sock_index,"NO",2,0);
                                         }
                                     }
@@ -553,7 +516,6 @@ int s_startUp(char *port)
                                         if (clientList[i].buffer_count > 0){
                                             for (int j = 0; j < clientList[i].buffer_count; j++) {//传缓存消息给对应用户
                                                 char* pass = clientList[i].bufferList[j];
-                                                printf("pass -> %s\n", pass);
                                                 send(sock_index, pass, strlen(pass), 0);
                                                 memset(clientList[i].bufferList[j], 0, strlen(pass));
                                             }
