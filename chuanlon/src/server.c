@@ -244,38 +244,42 @@ int s_startUp(char *port)
                         for (i = 0 ; i < connected_count + 1; i++) {
                             sort_fd[i] = client_fd[perm[i]];
                         }
+                        printf("fd for this client: %d\n", fdaccept);
                         char c_ip[INET_ADDRSTRLEN]; // stores the client side IP address
                         inet_ntop(AF_INET, &client.sin_addr, c_ip, sizeof(c_ip));
+                        printf("ip for this client: %s\n", c_ip);
 
                         // Get hostname
                         char addr[sizeof(struct in_addr)];
                         inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), addr); 
                         struct hostent *gethost_rtval;
                         gethost_rtval = gethostbyaddr(&addr, sizeof(addr), AF_INET);
+                        printf("hostname for this client: %s\n", gethost_rtval->h_name);
+                        printf("\n");
 
                         struct blocked* newBlocked = malloc(sizeof (struct blocked) * 100);
-                        printf("......printing the client ip list before updating client list......\n");
+                        printf("......printing the client list before updating client list......\n");
                         for (int i = 0; i < connected_count; i++){
-                            printf("client ip: %s\n", clientList[i].IP);
+                            printf("ip: %s\n", clientList[i].IP);
+                            printf("fd: %d\n", clientList[i].client_fd);
+                            printf("hostname: %s\n", clientList[i].hostName);
+                            printf("status: %d\n", clientList[i].status);
+
                         }
+                        printf("\n");
                         // update the client list
                         clientList[connected_count].client_fd = fdaccept;
                         clientList[connected_count].IP = c_ip ;
-                        clientList[connected_count].block_list = newBlocked;
-                        clientList[connected_count].block_count = 0;
                         clientList[connected_count].status = 1; 
-                        clientList[connected_count].mRev = 0; 
-                        clientList[connected_count].mSend =0; 
                         clientList[connected_count].hostName = gethost_rtval->h_name;
 
-                        char* tem = clientList[connected_count].IP;
-                        printf("Login client socket: %d\n", clientList[connected_count].client_fd);
-                        printf("Login client ip: %s\n", tem);
                         connected_count += 1;
-                        printf("......printing the client ip list after login......\n");
+                        printf("......printing the client ip list after update......\n");
                         for (int i = 0; i < connected_count; i++){
                             printf("client ip: %s\n", clientList[i].IP);
                         }
+                        printf("\n");
+
                         client_list(fdaccept,sort_fd, connected_count);
 
                     }
