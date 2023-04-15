@@ -318,6 +318,9 @@ int s_startUp(char *port)
                         clientList[connected_count].client_fd = fdaccept;
                         clientList[connected_count].port = c_port;
                         clientList[connected_count].IP = c_ip;
+                        clientList[connected_count].mRev = 0;
+                        clientList[connected_count].mSend = 0;
+                        clientList[connected_count].buffer_count = 0;
                         clientList[connected_count].status = 1;
                         clientList[connected_count].hostName = host_name;
                         clientList[connected_count].block_list = newBlocked;
@@ -337,6 +340,7 @@ int s_startUp(char *port)
                         {
                             // locate client index to remove
                             int rmv_idx;
+                            printf("remove client at idx: %d\n", rmv_idx);
                             for (int i = 0; i < connected_count; i++){
                                 if(sock_index == clientList[i].client_fd){
                                     rmv_idx = i;
@@ -354,6 +358,8 @@ int s_startUp(char *port)
                                 // update connected_count
                                 connected_count--;
                             }
+                            printf("updated connect cout: %d\n", connected_count);
+                            printf("last client ip: %s\n", clientList[connected_count-1].IP);
                             close(sock_index);
                             /* Remove from watched list */
 							FD_CLR(sock_index, &master_list);
