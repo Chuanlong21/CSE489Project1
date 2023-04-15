@@ -276,9 +276,13 @@ int s_startUp(char *port)
                         connected_count += 1;
                         printf("......printing the client ip list after update......\n");
                         for (int i = 0; i < connected_count; i++){
-                            printf("client ip: %s\n", clientList[i].IP);
+                            printf("ip: %s\n", clientList[i].IP);
+                            printf("fd: %d\n", clientList[i].client_fd);
+                            printf("hostname: %s\n", clientList[i].hostName);
+                            printf("status: %d\n", clientList[i].status);
                         }
                         printf("\n");
+                        printf(".....................................................");
 
                         client_list(fdaccept,sort_fd, connected_count);
 
