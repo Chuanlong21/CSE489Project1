@@ -498,30 +498,33 @@ int s_startUp(char *port)
                                         if (clientList[i].client_fd == sock_index)
                                         {
                                             current_block_count = clientList[i].block_count;
-                                            // Check if the client is logged out
-                                            if (clientList[i].status == 0)
-                                            {
-                                                send(sock_index, "NO", 2, 0);
-                                            }
-                                            else
-                                            {
 
-                                                // Check if the client(to block) is already being blocked
-                                                if (is_blocked(clientList[i].block_list, current_block_count, ip_to_block) == -1)
+                                            // Check if the client(to block) is already being blocked
+                                            if (is_blocked(clientList[i].block_list, current_block_count, ip_to_block) == -1)
+                                            {
+                                                int b_fd;
+                                                int b_port = 0;
+                                                int b_status = 0;
+
+                                                for (int k = 0; k < connected_count; k++)
                                                 {
-                                                    int b_fd;
-                                                    int b_port = 0;
-
-                                                    for (int k = 0; k < connected_count; k++)
+                                                    printf("current checking ip: %s\n", clientList[k].IP);
+                                                    if (strcmp(clientList[k].IP, ip_to_block) == 0)
                                                     {
-                                                        printf("current checking ip: %s\n", clientList[k].IP);
-                                                        if (strcmp(clientList[k].IP, ip_to_block) == 0)
-                                                        {
-                                                            b_fd = clientList[k].client_fd;
-                                                            printf("blocked client fd: %d\n", b_fd);
-                                                            break;
-                                                        }
+                                                        b_fd = clientList[k].client_fd;
+                                                        b_status = clientList[k].status;
+                                                        printf("blocked client fd: %d\n", b_fd);
+                                                        break;
                                                     }
+                                                }
+                                                // Check if the client is logged out
+                                                if (b_status == 0)
+                                                {
+                                                    printf("Client is logged out.");
+                                                    send(sock_index, "NO", 2, 0);
+                                                }
+                                                else
+                                                {
                                                     // Get port number for blocked client
                                                     struct sockaddr_in client;
                                                     socklen_t len = sizeof(struct sockaddr_in);
@@ -557,14 +560,14 @@ int s_startUp(char *port)
                                                     send(sock_index, "YES", 3, 0);
                                                     printf("sent yes to client");
                                                 }
-                                                else
-                                                {
-                                                    printf("This ip is already in block list: %s\n", ip_to_block);
-                                                    send(sock_index, "NO", 2, 0);
-                                                    printf("sent no to client");
-                                                }
-                                                break;
                                             }
+                                            else
+                                            {
+                                                printf("This ip is already in block list: %s\n", ip_to_block);
+                                                send(sock_index, "NO", 2, 0);
+                                                printf("sent no to client");
+                                            }
+                                            break;
                                         }
                                     }
                                 }
