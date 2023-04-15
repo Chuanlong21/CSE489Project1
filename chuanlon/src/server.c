@@ -335,8 +335,9 @@ int s_startUp(char *port)
                                     send(to,result, strlen(result),0);
                                 } else if (isValid == 1 && to != -1 && toIndex != -1 && toStatus == 0){ //(待测)
                                     //如果他的是登出状态，就缓存消息给他
-                                    printf("he log out");
+                                    printf(" %s ,he log out\n", clientList[toIndex].IP);
                                     clientList[toIndex].bufferList[clientList[toIndex].buffer_count] = result;
+                                    printf("get something %s\n", clientList[toIndex].bufferList[clientList[toIndex].buffer_count]);
                                     clientList[toIndex].buffer_count+=1;
                                 }
 
@@ -452,7 +453,7 @@ int s_startUp(char *port)
                                         printf("status -> %d\n", clientList[i].status);
                                         clientList[i].status = 1;
                                         if (clientList[i].buffer_count > 0){
-                                            printf("buffer here !!!");
+                                            printf("buffer here !!!\n");
                                             for (int j = 0; j < clientList[i].buffer_count; j++) {//传缓存消息给对应用户
                                                 char* pass = clientList[i].bufferList[j];
                                                 printf("pass -> %s\n", pass);
