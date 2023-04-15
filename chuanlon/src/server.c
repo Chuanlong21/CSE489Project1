@@ -245,15 +245,15 @@ int s_startUp(char *port)
                             sort_fd[i] = client_fd[perm[i]];
                         }
                         printf("fd for this client: %d\n", fdaccept);
-                        char c_ip[INET_ADDRSTRLEN]; // stores the client side IP address
-                        inet_ntop(AF_INET, &client.sin_addr, c_ip, sizeof(c_ip));
+                        char *c_ip = malloc(INET_ADDRSTRLEN); // stores the client side IP address
+                        inet_ntop(AF_INET, &client.sin_addr, c_ip, INET_ADDRSTRLEN);
                         printf("ip for this client: %s\n", c_ip);
 
                         // Get hostname
-                        char addr[sizeof(struct in_addr)];
-                        inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), addr); 
+                        // char *addr[sizeof(struct in_addr)];
+                        // inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), addr); 
                         struct hostent *gethost_rtval;
-                        gethost_rtval = gethostbyaddr(&addr, sizeof(addr), AF_INET);
+                        gethost_rtval = gethostbyaddr(&c_ip, sizeof(c_ip), AF_INET);
                         printf("hostname for this client: %s\n", gethost_rtval->h_name);
                         printf("\n");
 
