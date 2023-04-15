@@ -337,6 +337,25 @@ int s_startUp(char *port)
 
                         if (recv(sock_index, buffer, BUFFER_SIZE, 0) <= 0)
                         {
+                            // locate client index to remove
+                            int rmv_idx;
+                            for (int i = 0; i < connected_count; i++){
+                                if(sock_index == clientList[i].client_fd){
+                                    rmv_idx = i;
+                                    break;
+                                }
+                            }
+
+                            // remove client from client list
+                            if(rmv_idx == 0 && connected_count == 1){
+                                connected_count = 0;
+                            }else{
+                                for (int k = rmv_idx; k < connected_count - 1; k++){
+                                    clientList[k] = clientList[k + 1];
+                                }                            
+                                // update connected_count
+                                connected_count--;
+                            }                            
                             close(sock_index);
                         }
                         else
