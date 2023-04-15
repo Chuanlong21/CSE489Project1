@@ -429,7 +429,9 @@ int s_startUp(char *port)
                                     send(sock_index,"YES", strlen("YES"),0);
 
                                     send(to,"START_", strlen("START_"), 0);
+                                    printf("sending");
                                     send(to,result, strlen(result),0);
+                                    printf("sending end");
                                     send(to," END_", strlen(" END_"), 0);
                                 } else if (isValid == 1 && to != -1 && toIndex != -1 && toStatus == 0){ //(待测)
                                     //如果他的是登出状态，就缓存消息给他

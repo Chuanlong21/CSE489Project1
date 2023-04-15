@@ -103,7 +103,8 @@ int c_startUp(char *port) {
     FD_SET(STDIN, &master_list);
     head_socket = STDIN;
     char *msg = (char *) malloc(1000 * sizeof(char));
-
+    char *store = (char *) malloc(sizeof(char) * 1000);
+    memset(store, '\0', 1000);
 
     while (TRUE) {
         memcpy(&watch_list, &master_list, sizeof(master_list));
@@ -313,36 +314,26 @@ int c_startUp(char *port) {
                         }
                         else {
                             if (strcmp("START_", buffer) == 0){
-                                memset(buffer, '\0', 1000);
-                                while (1){
-                                    if (recv(server, buffer, 1000, 0) <= 0) {
-                                        break;
-                                    } else {
-                                        if (strstr("END_", buffer) != NULL){
-                                            break;
-                                        }
-                                    }
-                                }
-                                printf("12312312132\n");
-                                if (strstr(buffer, "msg: ") != NULL || strstr(buffer, "bro: ") != NULL) {
-                                    char *co[3];
-                                    int n = 0;
-                                    char *pN = strtok(buffer, " ");
+                                strcpy(store,buffer);
+                                printf("%s",store);
+                            }
+                            if (strstr(buffer, "msg: ") != NULL || strstr(buffer, "bro: ") != NULL) {
+                                char *co[3];
+                                int n = 0;
+                                char *pN = strtok(buffer, " ");
+                                co[n ++] = pN;
+                                pN = strtok(NULL, " ");
+                                if (pN != NULL && n < 2) {
                                     co[n ++] = pN;
-                                    pN = strtok(NULL, " ");
-                                    if (pN != NULL && n < 2) {
-                                        co[n ++] = pN;
-                                    }
-                                    pN = strtok(NULL, "");
-                                    if (pN != NULL) {
-                                        co[n ++] = pN;
-                                    }
-                                    printf("result - > %s\n", co[2]);
-                                    cse4589_print_and_log("[%s:SUCCESS]\n", "RECEIVED");
-                                    cse4589_print_and_log("msg from:%s\n[msg]:%s\n", co[1], co[2]);
-                                    cse4589_print_and_log("[%s:END]\n", "RECEIVED");
-
                                 }
+                                pN = strtok(NULL, "");
+                                if (pN != NULL) {
+                                    co[n ++] = pN;
+                                }
+                                printf("result - > %s\n", co[2]);
+                                cse4589_print_and_log("[%s:SUCCESS]\n", "RECEIVED");
+                                cse4589_print_and_log("msg from:%s\n[msg]:%s\n", co[1], co[2]);
+                                cse4589_print_and_log("[%s:END]\n", "RECEIVED");
 
                             }
                         }
