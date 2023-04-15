@@ -192,7 +192,6 @@ int s_startUp(char *port)
                                 if (clientList[i].status == 0){
                                     logIN = "logged-out";
                                 }
-                                printf("%s\n",clientList[i].IP);
                                 cse4589_print_and_log("%-5d%-35s%-8d%-8d%-8s\n", i+1, clientList[i].hostName, clientList[i].mSend, clientList[i].mRev, logIN);
                             }
                         }
