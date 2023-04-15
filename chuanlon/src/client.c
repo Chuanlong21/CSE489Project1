@@ -131,16 +131,14 @@ int c_startUp(char *port) {
                             exit(-1);
                         }
 
-
                         char *rev[3];
                         int count = 0;
                         char *pNext = strtok(input, " ");
                         rev[count ++] = pNext;
+                        pNext = strtok(NULL, " ");
                         if (pNext != NULL && count < 2) {
-                            pNext = strtok(NULL, " ");
                             rev[count ++] = pNext;
                         }
-
                         pNext = strtok(NULL, "");
                         if (pNext != NULL) {
                             rev[count ++] = pNext;
@@ -320,14 +318,16 @@ int c_startUp(char *port) {
                                 char *co[3];
                                 int n = 0;
                                 char *pN = strtok(buffer, " ");
-                                while (pN != NULL) {
-                                    if (n >= 3) {
-                                        break;
-                                    }
-                                    co[n] = pN;
-                                    ++n;
-                                    pN = strtok(NULL, " ");
+                                co[n ++] = pN;
+                                pN = strtok(NULL, " ");
+                                if (pN != NULL && n < 2) {
+                                    co[n ++] = pN;
                                 }
+                                pN = strtok(NULL, "");
+                                if (pN != NULL) {
+                                    co[n ++] = pN;
+                                }
+
                                 cse4589_print_and_log("[%s:SUCCESS]\n", "RECEIVED");
                                 cse4589_print_and_log("msg from:%s\n[msg]:%s\n", co[1], co[2]);
                                 cse4589_print_and_log("[%s:END]\n", "RECEIVED");

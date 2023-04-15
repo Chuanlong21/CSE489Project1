@@ -365,11 +365,10 @@ int s_startUp(char *port)
                             int count = 0;
                             char *pNext = strtok(buffer, " ");
                             rev[count ++] = pNext;
+                            pNext = strtok(NULL, " ");
                             if (pNext != NULL && count < 2) {
-                                pNext = strtok(NULL, " ");
                                 rev[count ++] = pNext;
                             }
-
                             pNext = strtok(NULL, "");
                             if (pNext != NULL) {
                                 rev[count ++] = pNext;
@@ -420,7 +419,6 @@ int s_startUp(char *port)
                                 strcat(result, from);
                                 strcat(result, " ");
                                 strcat(result,rev[2]);
-
                                 if (isValid == 1 && to != -1 && toIndex != -1 && toStatus == 1)
                                 {
                                     // 运行条件是：不能被block，存在to，并且他的状态为登入
