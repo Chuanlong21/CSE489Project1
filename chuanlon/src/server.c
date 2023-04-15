@@ -34,7 +34,7 @@
 #include <sys/types.h>
 #include <netdb.h>
 #include <arpa/inet.h>
-
+#include <fcntl.h>
 #include <../include/logger.h>
 #include <../include/common.h>
 
@@ -512,6 +512,8 @@ int s_startUp(char *port)
                             } else if (strcmp("RELOGIN", cmd) == 0){//(待测)
                                 for (int i = 0; i < connected_count; i++) {
                                     if (sock_index == clientList[i].client_fd){
+                                        int flags = fcntl(sock_index, F_GETFL, 0);
+                                        fcntl(sock_index, F_SETFL, flags | O_NONBLOCK);
                                         clientList[i].status = 1;
                                         if (clientList[i].buffer_count > 0){
                                             for (int j = 0; j < clientList[i].buffer_count; j++) {//传缓存消息给对应用户
@@ -522,11 +524,11 @@ int s_startUp(char *port)
                                             clientList[i].mRev += clientList[i].buffer_count;
                                             clientList[i].buffer_count = 0;
                                         }
+                                        fcntl(sock_index, F_SETFL, flags & ~O_NONBLOCK);
                                         break;
                                     }
                                 }
                             }
-                            printf("\nClient sent me: %s\n", cmd);
 
                         }
 
