@@ -121,15 +121,17 @@ int c_startUp(char *port) {
                 if (FD_ISSET(sock_index, &watch_list)) {
                     /* Check if new command on STDIN */
                     if (sock_index == STDIN) {
-                        char *input = (char *) malloc(sizeof(char) * CMD_SIZE);
+                        char *input = (char *) malloc(sizeof(char) * 1000);
                         memset(input, '\0', CMD_SIZE);
                         char *cmd = (char *) malloc(sizeof(char) * CMD_SIZE);
                         memset(cmd, '\0', CMD_SIZE);
-                        if (fgets(input, CMD_SIZE - 1, stdin) ==
+                        if (fgets(input, 999, stdin) ==
                             NULL) //Mind the newline character that will be written to cmd
                         {
                             exit(-1);
                         }
+
+                        printf("input : %s\n", input);
                         char *rev[3];
                         int count = 0;
                         char *pNext = strtok(input, " ");
@@ -155,10 +157,8 @@ int c_startUp(char *port) {
                                 printf("IP: %s\n", rev[1]);
                                 printf("PORT: %s\n", rev[2]);
                                 if (IPv4_verify(rev[1]) == 1 && validNumber(rev[2]) == 1) {
-                                    printf("123");
                                     //when we have login command, we will need to connect to the host sever
                                     server = connect_to_host(rev[1], rev[2], port);
-                                    printf("%d\n", server);
                                     if (server > -1) {
                                         FD_SET(server, &master_list);
                                         if (server > head_socket) {
@@ -168,7 +168,6 @@ int c_startUp(char *port) {
                                         cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
                                         cse4589_print_and_log("[%s:END]\n", cmd);
                                     } else {
-                                        printf("1");
                                         cse4589_print_and_log("[%s:ERROR]\n", cmd);
                                         cse4589_print_and_log("[%s:END]\n", cmd);
                                     }
@@ -227,6 +226,7 @@ int c_startUp(char *port) {
                                 cse4589_print_and_log("%s", msg);
                                 cse4589_print_and_log("[%s:END]\n", cmd);
                             } else if (strcmp("SEND", cmd) == 0) {
+                                printf("rev2 %s\n",rev[2]);
                                 if (count == 3) {
                                     if (IPv4_verify(rev[1]) == 1 && strlen(rev[2]) <= 256) { // 257？
                                         rev[2][strlen(rev[2]) - 1] = '\0';
