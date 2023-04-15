@@ -207,12 +207,15 @@ int s_startUp(char *port)
                             listing(sorted_fd, connected_count);
                             cse4589_print_and_log("[%s:END]\n", cmd);
                         }else if (strcmp("BLOCKED", cmd) == 0){
-                            rev[1][strlen(rev[1]) - 1] = '\0';
-                            char* client_ip = malloc(INET_ADDRSTRLEN);
-                            strcpy(client_ip,rev[1]);
-                            if (IPv4_verify(rev[1]) == 1) {
-                                get_block_list(client_ip, clientList, connected_count);
-                            } else error(cmd);
+                            if (count == 2){
+                                rev[1][strlen(rev[1]) - 1] = '\0';
+                                char* client_ip = malloc(INET_ADDRSTRLEN);
+                                strcpy(client_ip,rev[1]);
+                                if (IPv4_verify(rev[1]) == 1) {
+                                    get_block_list(client_ip, clientList, connected_count);
+                                } else error(cmd);
+                            }else error(cmd);
+
                         }
                         else if (strcmp("STATISTICS",cmd) == 0){
                             for (int i = 0; i < connected_count; ++i) {
@@ -346,7 +349,7 @@ int s_startUp(char *port)
                                         toIndex = i;
                                         toStatus = clientList[i].status;
                                         to = clientList[i].client_fd;
-                                        if (is_blocked(clientList[i].block_list,clientList[i].block_count,from) == 1){
+                                        if (is_blocked(clientList[i].block_list,clientList[i].block_count,from) != -1){
                                             isValid = 0;
                                         }
                                     }
@@ -422,7 +425,7 @@ int s_startUp(char *port)
                                     if(clientList[i].client_fd == sock_index){
                                         current_block_count = clientList[i].block_count;
                                         // Check if the client(to block) is already being blocked
-                                        if(is_blocked(clientList[i].block_list, current_block_count, ip_to_block) == 0){
+                                        if(is_blocked(clientList[i].block_list, current_block_count, ip_to_block) == -1){
                                             int b_fd;
                                             int b_port = 0;
 
@@ -508,14 +511,14 @@ int s_startUp(char *port)
 
 int is_blocked(struct blocked* block_list, int block_count, char* client_ip){
     if (block_count == 0){
-        return 0;
+        return -1;
     }
     for (int i = 0; i < block_count; i++){
         if(strcmp(client_ip, block_list[i].IP) == 0){
-            return 1;
+            return i;
         }
     }
-    return 0;
+    return -1;
 }
 
 
