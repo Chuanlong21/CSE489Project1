@@ -279,7 +279,6 @@ int s_startUp(char *port)
                                     break;
                                 }
                                 rev[count] = pNext;
-                                printf("%s\n",pNext);
                                 ++count;
                                 pNext = strtok(NULL, " ");
                             }
@@ -450,11 +449,13 @@ int s_startUp(char *port)
                             } else if (strcmp("RELOGIN", cmd) == 0){//(待测)
                                 for (int i = 0; i < connected_count; i++) {
                                     if (sock_index == clientList[i].client_fd){
+                                        printf(" %s ,logback\n", clientList[i].IP);
                                         printf("status -> %d\n", clientList[i].status);
                                         clientList[i].status = 1;
                                         if (clientList[i].buffer_count > 0){
                                             printf("buffer here !!!\n");
                                             for (int j = 0; j < clientList[i].buffer_count; j++) {//传缓存消息给对应用户
+                                                printf("get something %s\n", clientList[i].bufferList[j]);
                                                 char* pass = clientList[i].bufferList[j];
                                                 printf("pass -> %s\n", pass);
                                                 send(sock_index, pass, strlen(pass), 0);
