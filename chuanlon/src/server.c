@@ -234,9 +234,16 @@ int s_startUp(char *port)
                         }
                         char c_ip[INET_ADDRSTRLEN]; // stores the client side IP address
                         inet_ntop(AF_INET, &client.sin_addr, c_ip, sizeof(c_ip));
+
+                        // Get hostname
+                        char addr[sizeof(struct in_addr)];
+                        inet_pton(AF_INET, inet_ntoa(client_addr.sin_addr), addr); 
+                        struct hostent *gethost_rtval;
+                        gethost_rtval = gethostbyaddr(&addr, sizeof(addr), AF_INET);
+
                         struct blocked* newBlocked = malloc(sizeof (struct blocked) * 100);
                         struct client c = {.client_fd = fdaccept, .IP = c_ip ,
-                                .block_list = newBlocked, .block_count = 0, .status = 1, .mRev = 0, .mSend =0 };
+                                .block_list = newBlocked, .block_count = 0, .status = 1, .mRev = 0, .mSend =0, .hostName = gethost_rtval->h_name};
                         clientList[connected_count] = c;
                         char* tem = clientList[connected_count].IP;
                         printf("get socket: %d\n", fdaccept);
@@ -375,6 +382,7 @@ int s_startUp(char *port)
                                 printf("%s\n",rev[1]); // MSG
                                 int current_block_count;
                                 char* ip_to_block = rev[1];
+                                printf("ip to block: %s\n", ip_to_block);
                                 for(int i = 0; i < connected_count; i++){
                                     if(clientList[i].client_fd == sock_index){
                                         current_block_count = clientList[i].block_count;
@@ -484,7 +492,7 @@ int blocked_cmd(char* input){
     char substr[8];
     strncpy(substr, &input[0], 7);
     substr[7] = '\0';
-    printf("user input: %s\n", substr);
+    // printf("user input: %s\n", substr);
     return strcmp("BLOCKED", substr);
 }
 
