@@ -421,7 +421,7 @@ int s_startUp(char *port)
                                 printf("%s\n",rev[1]); // MSG
                                 int current_block_count;
                                 char* ip_to_block = malloc(INET_ADDRSTRLEN);
-                                ip_to_block = rev[1];
+                                strcpy(ip_to_block, rev[1]);
                                 printf("ip to block: %s\n", ip_to_block);
                                 printf("......Now printing the existing ip list......\n");
                                 for (int i = 0; i < connected_count; i++){
