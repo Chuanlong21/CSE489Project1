@@ -392,6 +392,7 @@ int s_startUp(char *port)
                                             int b_port = 0;
                                             char *b_hostname;
                                             for (int k = 0; k < connected_count; k++){
+                                                printf("current checking ip: %s\n", clientList[k].IP);
                                                 if(strcmp(clientList[k].IP, ip_to_block) == 0){ //有问题呀
                                                     b_fd = clientList[k].client_fd;
                                                     printf("blocked client fd: %d\n", b_fd);
