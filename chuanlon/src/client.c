@@ -237,7 +237,16 @@ int c_startUp(char *port) {
                                         strcat(result, rev[2]);
                                         printf("result: %s\n", result);
                                         send(server, result, strlen(result), 0);
-                                    }
+                                        //看一下是否send成功了, yes or no
+                                        memset(msg, '\0', 1000);
+                                        if (recv(server, msg, 1000, 0) >= 0) {
+                                            fflush(stdout);
+                                        }
+                                        if (strcmp(msg, "YES") == 0) {
+                                            cse4589_print_and_log("[%s:SUCCESS]\n", cmd);
+                                            cse4589_print_and_log("[%s:END]\n", cmd);
+                                        } else error(cmd);
+                                    } else error(cmd);
                                 } else error(cmd);
                             } else if (strcmp("BROADCAST", cmd) == 0) {
                                 rev[1][strlen(rev[1]) - 1] = '\0';
@@ -247,7 +256,7 @@ int c_startUp(char *port) {
                                     strcat(result, rev[1]);
                                     printf("result: %s\n", result);
                                     send(server, result, strlen(result), 0);
-                                }
+                                } else error(cmd);
                             } else if (strcmp("BLOCK", cmd) == 0) {
                                 if (count == 2) {
                                     rev[1][strlen(rev[1]) - 1] = '\0';
