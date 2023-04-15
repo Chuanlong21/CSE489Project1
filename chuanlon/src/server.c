@@ -277,34 +277,19 @@ int s_startUp(char *port)
                         char * host_name = malloc((strlen(gethost_rtval->h_name) + 1)* sizeof(char));
                         strcpy(host_name, gethost_rtval->h_name);
                         struct blocked* newBlocked = malloc(sizeof (struct blocked) * 100);
-                        printf("......printing the client list before updating client list......\n");
-                        for (int i = 0; i < connected_count; i++){
-                            printf("ip: %s\n", clientList[i].IP);
-                            printf("fd: %d\n", clientList[i].client_fd);
-                            printf("hostname: %s\n", clientList[i].hostName);
-                            printf("status: %d\n", clientList[i].status);
-
+                        char** bc = malloc(sizeof(char*) * 100); // 分配100个指向字符串的指针
+                        for (int x = 0; x < 100; x++) {
+                            bc[x] = malloc(sizeof(char) * 1000); // 每个字符串分配1000个字符的空间
                         }
-                        printf("\n");
                         // update the client list
                         clientList[connected_count].client_fd = fdaccept;
                         clientList[connected_count].IP = c_ip ;
                         clientList[connected_count].status = 1;
                         clientList[connected_count].hostName = host_name;
+                        clientList[connected_count].block_list = newBlocked;
+                        clientList[connected_count].bufferList = bc;
 
                         connected_count += 1;
-                        printf("......printing the client ip list after update......\n");
-                        for (int i = 0; i < connected_count; i++){
-                            printf("ip: %s\n", clientList[i].IP);
-                            printf("fd: %d\n", clientList[i].client_fd);
-                            printf("hostname: %s\n", clientList[i].hostName);
-                            printf("status: %d\n", clientList[i].status);
-                        }
-                        printf("\n");
-                        printf(".....................................................");
-                        printf("\n");
-
-
                         client_list(fdaccept,sort_fd, connected_count);
 
 
