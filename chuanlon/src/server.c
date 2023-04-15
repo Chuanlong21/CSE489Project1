@@ -259,8 +259,8 @@ int s_startUp(char *port)
                         // printf("\n");
                     
 
-                        struct in_addr addr;
-                        if (inet_aton(c_ip, &addr) == 0) {
+                        struct in_addr *addr = malloc(sizeof(struct in_addr));
+                        if (inet_aton(c_ip, addr) == 0) {
                             printf("Invalid IP address\n");
                             return 1;
                         }
