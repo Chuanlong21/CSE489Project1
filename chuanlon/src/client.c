@@ -226,7 +226,6 @@ int c_startUp(char *port) {
                                 cse4589_print_and_log("%s", msg);
                                 cse4589_print_and_log("[%s:END]\n", cmd);
                             } else if (strcmp("SEND", cmd) == 0) {
-                                printf("rev2 %s\n",rev[2]);
                                 if (count == 3) {
                                     if (IPv4_verify(rev[1]) == 1 && strlen(rev[2]) <= 256) { // 257？
                                         rev[2][strlen(rev[2]) - 1] = '\0';
@@ -235,7 +234,6 @@ int c_startUp(char *port) {
                                         strcat(result, rev[1]);
                                         strcat(result, " ");
                                         strcat(result, rev[2]);
-                                        printf("result: %s\n", result);
                                         send(server, result, strlen(result), 0);
                                         //看一下是否send成功了, yes or no
                                         memset(msg, '\0', 1000);
@@ -308,9 +306,9 @@ int c_startUp(char *port) {
                         free(input);
                     }
                     else if (sock_index == server){
-                        char *buffer = (char *) malloc(sizeof(char) * BUFFER_SIZE);
+                        char *buffer = (char *) malloc(sizeof(char) * 1000);
                         memset(buffer, '\0', BUFFER_SIZE);
-                        if (recv(server, buffer, BUFFER_SIZE, 0) <= 0) {
+                        if (recv(server, buffer, 1000, 0) <= 0) {
                             close(server);
                         }
                         else {
