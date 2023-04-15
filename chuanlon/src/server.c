@@ -264,8 +264,14 @@ int s_startUp(char *port)
                             printf("Invalid IP address\n");
                             return 1;
                         }
-                        struct hostent *gethost_rtval = malloc(sizeof(struct hostent));
+                        if (addr == NULL) {
+                        printf("Error: memory allocation failed\n");
+                            return 1;
+                        }
+                        struct hostent *gethost_rtval;
                         gethost_rtval = gethostbyaddr((const char *)&addr, sizeof(addr), AF_INET);
+                        char* host_name = malloc(sizeof(char) * 100);
+                        host_name = gethost_rtval->h_name;
                         struct blocked* newBlocked = malloc(sizeof (struct blocked) * 100);
                         printf("......printing the client list before updating client list......\n");
                         for (int i = 0; i < connected_count; i++){
@@ -280,7 +286,7 @@ int s_startUp(char *port)
                         clientList[connected_count].client_fd = fdaccept;
                         clientList[connected_count].IP = c_ip ;
                         clientList[connected_count].status = 1; 
-                        clientList[connected_count].hostName = gethost_rtval->h_name;
+                        clientList[connected_count].hostName = host_name;
 
                         connected_count += 1;
                         printf("......printing the client ip list after update......\n");
@@ -296,6 +302,8 @@ int s_startUp(char *port)
 
 
                         client_list(fdaccept,sort_fd, connected_count);
+                        free(addr);
+                        free(c_ip);
 
                     }
                         /* Read from existing clients */
