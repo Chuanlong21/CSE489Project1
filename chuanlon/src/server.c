@@ -352,6 +352,7 @@ int s_startUp(char *port)
                                         if (is_blocked(clientList[i].block_list,clientList[i].block_count,from) != -1){
                                             isValid = 0;
                                         }
+                                        break;
                                     }
                                 }
                                 char result[6 + strlen(from) +strlen(rev[2])];
